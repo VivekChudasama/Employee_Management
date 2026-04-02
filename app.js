@@ -2,7 +2,7 @@ const app = require('./routes');
 
 const sequelize = require('./util/database');
 
-const PORT = 3000;
+const PORT = 3001;
 
 sequelize
     .sync()
@@ -16,4 +16,3 @@ sequelize
     .catch(err => {
         console.log(err);
     });
-

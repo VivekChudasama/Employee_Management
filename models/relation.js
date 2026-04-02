@@ -1,6 +1,6 @@
-const employees = require('./employees');
-const department = require('./department');
-const roles = require('./roles');
+const employees = require('./models/employees');
+const department = require('./models/department');
+const roles = require('./models/roles');
 
 // A Department has many Roles
 department.hasMany(roles, { foreignKey: 'Department_id' });
@@ -14,4 +14,4 @@ module.exports = {
     employees,
     department,
     roles
-}
+};

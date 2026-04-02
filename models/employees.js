@@ -1,7 +1,6 @@
 const Sequelize = require('sequelize');
 
 const sequelize = require('../util/database');
-const { stat } = require('node:fs');
 
 const Employees = sequelize.define('employees', {
     id: {
