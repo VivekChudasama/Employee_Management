@@ -9,9 +9,9 @@ router.get('/', Controller.getRoles);
 
 //add, edit, delete role
 // router.get('/add-role', Controller.getAddRole);
-// router.post('/add-role', Controller.postAddRole);
-// router.get('/edit-role/:roleId', Controller.getEditRole);
-// router.put('/edit-role/:roleId', Controller.postEditRole);
-// router.post('/delete-role/:roleId', Controller.postDeleteRole);
+router.post('/add-role', Controller.postAddRole);
+router.get('/edit-role/:roleId', Controller.getEditRole);
+router.put('/edit-role/:roleId', Controller.postEditRole);
+router.delete('/delete-role/:roleId', Controller.postDeleteRole);
 
 export default router;

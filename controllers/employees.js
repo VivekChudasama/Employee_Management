@@ -2,8 +2,14 @@ import employeemodel from '../models/employees.js';
 import departmentModel from '../models/department.js';
 import roleModel  from '../models/roles.js';
 
+import { AppDataSource } from '../util/database.js';
+
+const employeeRepository = AppDataSource.getRepository(employeemodel);
+const departmentRepository = AppDataSource.getRepository(departmentModel);
+const roleRepository = AppDataSource.getRepository(roleModel);
+
 const getEmployees = (req, res, next) => {
-        employeemodel.find({ include: [{ model: roleModel, include: [departmentModel] }] })
+        employeeRepository.find({ include: [{ model: roleModel, include: [departmentModel] }] })
             .then(employees => {
                 res.render('employees/employees_list', {
                     pageTitle: 'Employees',
@@ -17,7 +23,7 @@ const getEmployees = (req, res, next) => {
 
 
 // exports.getAddEmployees = (req, res, next) => {
-//     departmentModel.find()
+//     departmentRepository.find()
 //         .then(departments => {
 //             res.render('employees/add_employee', {
 //                 pageTitle: 'Add Employee',
@@ -33,14 +39,14 @@ const getEmployees = (req, res, next) => {
 //     const { name, email, department_id, role_name, salary, joining_date, status } = req.body;
 
 //     // First create the role
-//     roleModel.create({
+//     roleRepository.create({
 //         role: role_name,
 //         salary: salary,
 //         Department_id: department_id
 //     })
 //         .then(newRole => {
 //             // Then create the employee
-//             return employeemodel.create({
+//             return employeeRepository.create({
 //                 name: name,
 //                 email: email,
 //                 role_id: newRole.id,
@@ -59,10 +65,10 @@ const getEmployees = (req, res, next) => {
 //     const empId = req.params.employeeId;
 
 //     let fetchedDepartments;
-//     departmentModel.find()
+//     departmentRepository.find()
 //         .then(departments => {
 //             fetchedDepartments = departments;
-//             return employeemodel.findByPk(empId, { include: [{ model: roleModel }] });
+//             return employeeRepository.findByPk(empId, { include: [{ model: roleModel }] });
 //         })
 //         .then(employee => {
 //             if (!employee) {
@@ -82,7 +88,7 @@ const getEmployees = (req, res, next) => {
 // exports.postEditEmployee = (req, res, next) => {
 //     const { employeeId, name, email, department_id, role_name, salary, joining_date, status } = req.body;
 
-//     employeemodel.findByPk(employeeId, { include: [{ model: roleModel }] })
+//     employeeRepository.findByPk(employeeId, { include: [{ model: roleModel }] })
 //         .then(employee => {
 //             if (!employee) return res.redirect('/employees');
             
@@ -106,7 +112,7 @@ const getEmployees = (req, res, next) => {
 
 // exports.postDeleteEmployee = (req, res, next) => {
 //     const empId = req.body.employeeId;
-//     employeemodel.findByPk(empId, { include: [{ model: roleModel }] })
+//     employeeRepository.findByPk(empId, { include: [{ model: roleModel }] })
 //         .then(employee => {
 //             if (!employee) return res.redirect('/employees');
 
