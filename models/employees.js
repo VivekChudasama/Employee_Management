@@ -1,35 +1,36 @@
-const Sequelize = require('sequelize');
+import { EntitySchema } from "typeorm";
 
-const sequelize = require('../util/database');
+const employeesSchema = new EntitySchema({
+    name: "employees",
+    columns: {
+        id: {
+            type: "int",
+            generated: true,
+            primary: true
+        },
+        name: {
+            type: "varchar",
+            name: "name"
+        },
+        email: {
+            type: "varchar",
+            name: "email"
+        },
+        role_id: {
+            type: "int",
+            name: "role_id"
+        },
+        status: {
+            type: "enum",
+            enum: ["active", "inactive"],
+            name: "status"
+        },
 
-const Employees = sequelize.define('employees', {
-    id: {
-        type: Sequelize.INTEGER,
-        autoIncrement: true,
-        allowNull: false,
-        primaryKey: true
-    },
-    name: {
-        type: Sequelize.STRING,
-        allowNull: false
-    },
-    email: {
-        type: Sequelize.STRING,
-        allowNull: false
-    },
-    role_id: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-        field: 'Role_id',
-        references: {
-            model: 'role',
-            key: 'id'
-        }
-    },
-    status: {
-        type: Sequelize.ENUM('active', 'inactive'),
-        allowNull: false
+        joining_date: {
+        type: Date,
+        name: "joining_date"
+    }
     }
 });
 
-module.exports = Employees;
+export default employeesSchema;

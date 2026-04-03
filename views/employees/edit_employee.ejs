@@ -1,0 +1,44 @@
+<%- include('../includes/head.ejs') %>
+</head>
+<body>
+    <%- include('../includes/navigation.ejs') %>
+
+    <main>
+        <form class="product-form" action="/employees/edit-employee" method="POST">
+            <input type="hidden" name="employeeId" value="<%= employee.id %>">
+            <div class="form-control">
+                <label for="name">Full Name</label>
+                <input type="text" name="name" id="name" value="<%= employee.name %>" required>
+            </div>
+            <div class="form-control">
+                <label for="email">Email</label>
+                <input type="email" name="email" id="email" value="<%= employee.email %>" required>
+            </div>
+            <div class="form-control">
+                <label for="department_id">Department</label>
+                <select name="department_id" id="department_id" required>
+                    <% departments.forEach(dept => { %>
+                        <option value="<%= dept.id %>" <%= employee.role && employee.role.department_id === dept.id ? 'selected' : '' %>><%= dept.departmentName %></option>
+                    <% }) %>
+                </select>
+            </div>
+            <div class="form-control">
+                <label for="role_name">Role</label>
+                <input type="text" name="role_name" id="role_name" value="<%= employee.role ? employee.role.role : '' %>" required>
+            </div>
+            <div class="form-control">
+                <label for="salary">Salary</label>
+                <input type="number" name="salary" id="salary" value="<%= employee.role ? employee.role.salary : '' %>" required>
+            </div>
+            <div class="form-control">
+                <label for="status">Status</label>
+                <select name="status" id="status" required>
+                    <option value="active" <%= employee.status === 'active' ? 'selected' : '' %>>Active</option>
+                    <option value="inactive" <%= employee.status === 'inactive' ? 'selected' : '' %>>Inactive</option>
+                </select>
+            </div>
+
+            <button class="btn" type="submit">Update Employee</button>
+        </form>
+    </main>
+<%- include('../includes/end.ejs') %>

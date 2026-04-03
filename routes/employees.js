@@ -1,13 +1,11 @@
-const path = require('path');
+import express from 'express';
 
-const express = require('express');
-
-const Controller = require('../controllers/employees');
+import Controller from '../controllers/employees.js';
 
 const router = express.Router();
 
-//get list of employees
-router.get('/employees', Controller.getEmployees);
+// //get list of employees
+router.get('/', Controller.getEmployees);
 
 // //add, edit, delete employee
 // router.get('/add-employee', Controller.getAddEmployees);
@@ -16,4 +14,4 @@ router.get('/employees', Controller.getEmployees);
 // router.post('/edit-employee', Controller.postEditEmployee);
 // router.post('/delete-employee', Controller.postDeleteEmployee);
 
-module.exports = router;
+export default router;

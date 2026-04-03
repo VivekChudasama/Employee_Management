@@ -1,19 +1,17 @@
-const Sequelize = require('sequelize');
+import { EntitySchema } from "typeorm";
 
-const sequelize = require('../util/database');
-
-const Department = sequelize.define('department', {
-  id: {
-    type: Sequelize.INTEGER,
-    autoIncrement: true,
-    allowNull: false,
-    primaryKey: true
-  },
-  departmentName : {
-    type : Sequelize.STRING,
-    allowNull : false,
-    field : 'Department_Name'
-  } 
+const departmentSchema = new EntitySchema({
+    name: "department",
+    columns: {
+        id: {
+            type: "int",
+            generated: true,
+            primary: true
+        },
+        departmentName: {
+            type: "varchar",
+            name: "department_name"
+        }
+    }
 });
-
-module.exports = Department;
+export default departmentSchema;

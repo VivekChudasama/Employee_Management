@@ -1,11 +1,13 @@
-const app = require('./routes');
+import app from './routes.js';
 
-const sequelize = require('./util/database');
+import { AppDataSource }  from './util/database.js';
 
 const PORT = 3001;
 
-sequelize
-    .sync()
+AppDataSource.initialize()
+    .then(() => {
+        console.log('Database initialized');
+    })
     .then(result => {
         console.log('Database synced');
         // Start server

@@ -1,31 +1,26 @@
-const Sequelize = require('sequelize');
+import { EntitySchema } from "typeorm";
 
-const sequelize = require('../util/database');
-
-const Role = sequelize.define('role', {
-    id: {
-        type: Sequelize.INTEGER,
-        autoIncrement: true,
-        allowNull: false,
-        primaryKey: true
-    },
-    role: { 
-        type: Sequelize.STRING, 
-        allowNull: false 
-    },
-    salary: { 
-        type: Sequelize.INTEGER, 
-        allowNull: false 
-    },
-    department_id: {
-        type: Sequelize.INTEGER,
-        allowNull: false ,
-        field: 'Department_id',
-        references: {
-            model: 'department',
-            key: 'id'
+const roleSchema = new EntitySchema({
+    name: "roles",
+    columns: {
+        id: {
+            type: "int",
+            generated: true,
+            primary: true
+        },
+        role: {
+            type: "varchar",
+            name: "role"
+        },
+        salary: {
+            type: "int",
+            name: "salary"
+        },
+        department_id: {
+            type: "int",
+            name: "department_id"
         }
     }
 });
 
-module.exports = Role;
+export default roleSchema;
