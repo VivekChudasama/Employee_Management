@@ -6,6 +6,7 @@ import { fileURLToPath } from 'url';
 
 import errorController from './controllers/error.js';
 import employeeRoutes from './routes/employees.js';
+import roleRoutes from './routes/roles.js';
 
 const app = express();
 
@@ -19,6 +20,6 @@ const __dirname = dirname(__filename);
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/employees', employeeRoutes);
-
+app.use('/roles', roleRoutes);
 
 export default app;

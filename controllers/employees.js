@@ -2,9 +2,8 @@ import employeemodel from '../models/employees.js';
 import departmentModel from '../models/department.js';
 import roleModel  from '../models/roles.js';
 
-export default {
-    getEmployees: (req, res, next) => {
-        employeemodel.findAll({ include: [{ model: roleModel, include: [departmentModel] }] })
+const getEmployees = (req, res, next) => {
+        employeemodel.find({ include: [{ model: roleModel, include: [departmentModel] }] })
             .then(employees => {
                 res.render('employees/employees_list', {
                     pageTitle: 'Employees',
@@ -15,10 +14,10 @@ export default {
             })
             .catch(err => console.log(err));
     }
-}
+
 
 // exports.getAddEmployees = (req, res, next) => {
-//     departmentModel.findAll()
+//     departmentModel.find()
 //         .then(departments => {
 //             res.render('employees/add_employee', {
 //                 pageTitle: 'Add Employee',
@@ -60,7 +59,7 @@ export default {
 //     const empId = req.params.employeeId;
 
 //     let fetchedDepartments;
-//     departmentModel.findAll()
+//     departmentModel.find()
 //         .then(departments => {
 //             fetchedDepartments = departments;
 //             return employeemodel.findByPk(empId, { include: [{ model: roleModel }] });
@@ -124,3 +123,13 @@ export default {
 //         })
 //         .catch(err => console.log(err));
 // };
+
+
+export default {
+    getEmployees
+    // getAddEmployees,
+    // postAddEmployee,
+    // getEditEmployee,
+    // postEditEmployee,
+    // postDeleteEmployee
+};

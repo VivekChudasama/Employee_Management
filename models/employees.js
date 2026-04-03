@@ -1,4 +1,5 @@
 import { EntitySchema } from "typeorm";
+import roles from './roles.js';
 
 const employeesSchema = new EntitySchema({
     name: "employees",
@@ -29,8 +30,16 @@ const employeesSchema = new EntitySchema({
         joining_date: {
         type: Date,
         name: "joining_date"
-    }
-    }
+    },
+    // relationsip: {
+    //     role : {
+    //         type: "many-to-one",
+    //         target: roles,
+    //         inverseSide: "employees",
+    //         joinColumn: { name: "Role_id" }
+    //     }
+    // }
+}
 });
 
 export default employeesSchema;
