@@ -1,6 +1,6 @@
 import app from './routes.js';
 
-import { AppDataSource }  from './util/database.js';
+import { AppDataSource } from './util/database.js';
 
 const PORT = 3001;
 

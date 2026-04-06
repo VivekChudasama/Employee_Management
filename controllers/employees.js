@@ -55,10 +55,10 @@ const getAddEmployees = (req, res, next) => {
             //     departments: departments,
             //     editing: false
             // });
-            res.send({
+            res.status(200).json({
                 message: 'Render add employee form',
                 departments: departments
-            } , 200);
+            });
         })
         .catch(err => console.log(err));
 };
@@ -94,28 +94,19 @@ const getEditEmployee = (req, res, next) => {
     const editMode = req.query.edit;
     const empId = req.params.employeeId;
 
-    let fetchedDepartments;
-    departmentRepository.find()
-        .then(departments => {
-            fetchedDepartments = departments;
-            return employeeRepository.findBy({ id: empId } , { relations: ["role"] });
-        })
+    employeeRepository.findBy({ id: empId }, { relations: ["role"] })
         .then(employee => {
             if (!employee) {
                 return res.redirect('/employees');
             }
-            res.send({
-                employee: employee,
-                departments: fetchedDepartments,
-            });
-        //    res.render('employees/edit_employee', {
-        //         pageTitle: 'Edit Employee',
-        //         path: '/edit-employee',
-        //         employee: employee,
-        //         departments: fetchedDepartments,
-        //         editing: editMode
-        //     }); 
-            
+            //    res.render('employees/edit_employee', {
+            //         pageTitle: 'Edit Employee',
+            //         path: '/edit-employee',
+            //         employee: employee,
+            //         departments: fetchedDepartments,
+            //         editing: editMode
+            //     }); 
+            res.status(200).json({ employee: employee, message: 'Render edit employee form' });
         })
         .catch(err => console.log(err));
 };
@@ -138,7 +129,7 @@ const editEmployee = (req, res, next) => {
             employee.role.salary = salary;
             employee.role.Department_id = department_id;
 
-            return employee.role.save().then(() => employee.save());
+            return employee.role.update().then(() => employee.update());
         })
         .then(() => {
             res.redirect('/employees');

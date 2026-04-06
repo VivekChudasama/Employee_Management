@@ -23,7 +23,7 @@ const getAddRole = (req, res, next) => {
     //     pageTitle: 'Add Role',
     //     path: '/add-role'
     // });
-    res.send({ message: 'Render add role form' } , 200);
+    res.send({ message: 'Render add role form' }, 200);
 };
 
 // Handle add role form submission
@@ -31,7 +31,7 @@ const postAddRole = (req, res, next) => {
     const role = req.body.role || req.body.role_name;
     const salary = req.body.salary;
     const department_id = req.body.department_id;
-    
+
     if (!role) {
         return res.status(400).send({ message: "Role name is required" });
     }
@@ -72,7 +72,7 @@ const editRole = (req, res, next) => {
     const updatedRole = req.body.role || req.body.role_name;
     const updatedSalary = req.body.salary;
     const updatedDepartmentId = req.body.department_id;
-    
+
     roleRepository.update({ id: roleId }, {
         role: updatedRole,
         salary: updatedSalary,

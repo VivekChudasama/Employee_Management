@@ -1,7 +1,7 @@
 import express from 'express';
-import bodyParser from'body-parser';
+import bodyParser from 'body-parser';
 import path from 'path';
-import {dirname} from 'path';
+import { dirname } from 'path';
 import { fileURLToPath } from 'url';
 
 import employeeRoutes from './routes/employees.js';
