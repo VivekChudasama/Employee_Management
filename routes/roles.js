@@ -8,7 +8,7 @@ const router = express.Router();
 router.get('/', Controller.getRoles);
 
 //add, edit, delete role
-// router.get('/add-role', Controller.getAddRole);
+router.get('/add-role', Controller.getAddRole);
 router.post('/add-role', Controller.postAddRole);
 router.get('/edit-role/:roleId', Controller.getEditRole);
 router.put('/edit-role/:roleId', Controller.postEditRole);

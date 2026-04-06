@@ -21,20 +21,20 @@ const roleSchema = new EntitySchema({
         department_id: {
             type: "int",
             name: "department_id"
+        }
+    },
+    relations: {
+        department: {
+            type: "many-to-one",
+            target: "department",
+            inverseSide: "roles",
+            joinColumn: { name: "department_id" }
         },
-        // relationship: {
-        //     department : {
-        //         type: "many-to-one",
-        //         target: department,
-        //         inverseSide: "roles",
-        //         joinColumn: { name: "Department_id" }
-        //     },
-        //     employees : {
-        //         type: "one-to-many",
-        //         target: employees,
-        //         inverseSide: "role"
-        //     }
-        // }
+        employees: {
+            type: "one-to-many",
+            target: "employees",
+            inverseSide: "role"
+        }
     }
 });
 

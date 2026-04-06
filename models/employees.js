@@ -28,18 +28,18 @@ const employeesSchema = new EntitySchema({
         },
 
         joining_date: {
-        type: Date,
-        name: "joining_date"
+            type: Date,
+            name: "joining_date"
+        }
     },
-    // relationsip: {
-    //     role : {
-    //         type: "many-to-one",
-    //         target: roles,
-    //         inverseSide: "employees",
-    //         joinColumn: { name: "Role_id" }
-    //     }
-    // }
-}
+    relations: {
+        role: {
+            type: "many-to-one",
+            target: "roles",
+            inverseSide: "employees",
+            joinColumn: { name: "role_id" }
+        }
+    }
 });
 
 export default employeesSchema;

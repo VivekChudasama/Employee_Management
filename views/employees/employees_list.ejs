@@ -6,7 +6,12 @@
 
             <main>
                 <h1>Employees</h1>
-                <a href="/employees/add-employee" class="btn">Add Employee</a>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <a href="/employees/add-employee" class="btn">Add Employee</a>
+                    <div class="search-container">
+                        <input type="text" id="searchInput" placeholder="Search by Name, Email, or Role..." class="search-input">
+                    </div>
+                </div>
 
                 <% if (employees.length> 0) { %>
                     <table>
@@ -18,7 +23,7 @@
                                 <th>Actions</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody id="employeeTableBody">
                             <% employees.forEach(emp=> { %>
                                 <tr>
                                     <td>
@@ -45,4 +50,6 @@
                         <h1>No Employees Found!</h1>
                         <% } %>
             </main>
+
+            <script src="../../public/js/main.js"></script>
             <%- include('../includes/end.ejs') %>

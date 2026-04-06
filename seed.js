@@ -1,82 +1,43 @@
-// const sequelize = require('./util/database');
-// const { employees, department, roles } = require('./models/relation');
+import { AppDataSource } from './util/database.js';
+import roleModel from './models/roles.js';
+import departmentModel from './models/department.js';
+import employeemodel from './models/employees.js';
 
-// const seedData = async () => {
-//     try {
-//         console.log("Syncing database and wiping old data...");
-//         await sequelize.sync({ force: true });
+async function seedDatabase() {
+    try {
+        await AppDataSource.initialize();
+        console.log("Database connected. Starting seed processing...");
 
-//         console.log("Creating Departments...");
-//         const deptEng = await department.create({ departmentName: 'Engineering' });
-//         const deptHR = await department.create({ departmentName: 'HR' });
-//         const deptSales = await department.create({ departmentName: 'Sales' });
-//         const deptMarketing = await department.create({ departmentName: 'Marketing' });
+        const departmentRepo = AppDataSource.getRepository(departmentModel);
+        const roleRepo = AppDataSource.getRepository(roleModel);
+        const employeeRepo = AppDataSource.getRepository(employeemodel);
 
-//         console.log("Creating Roles...");
-//         const roleSwe = await roles.create({ 
-//             role: 'Software Engineer', 
-//             salary: 45000, 
-//             Department_id: deptEng.id
-//         });
         
-//         const roleHrManager = await roles.create({ 
-//             role: 'HR Manager', 
-//             salary: 30000, 
-//             Department_id: deptHR.id
-//         });
+        // Add Departments
+        const d1 = await departmentRepo.save({ departmentName: "Human Resources" });
+        const d2 = await departmentRepo.save({ departmentName: "Engineering" });
+        const d3 = await departmentRepo.save({ departmentName: "Sales" });
+        const d4 = await departmentRepo.save({ departmentName: "Marketing" });
+
+        // Add Roles
+        const r1 = await roleRepo.save({ role: "Software Engineer", salary: 85000, department_id: d2.id });
+        const r2 = await roleRepo.save({ role: "DevOps Engineer", salary: 90000, department_id: d2.id });
+        const r3 = await roleRepo.save({ role: "HR Manager", salary: 75000, department_id: d1.id });
+        const r4 = await roleRepo.save({ role: "Marketing Specialist", salary: 65000, department_id: d4.id });
+        const r5 = await roleRepo.save({ role: "Sales Representative", salary: 55000, department_id: d3.id });
         
-//         const roleSalesLead = await roles.create({ 
-//             role: 'Sales Executive', 
-//             salary: 30000, 
-//             Department_id: deptSales.id
-//         });
+        // Add Employees
+        await employeeRepo.save({ name: "Vivek", email: "vivek@example.com", status: "active", joining_date: new Date(), role_id: r1.id });
+        await employeeRepo.save({ name: "mihir", email: "mihir@example.com", status: "active", joining_date: new Date(), role_id: r2.id });
+        await employeeRepo.save({ name: "Kirtan", email: "kirtan@example.com", status: "inactive", joining_date: new Date(), role_id: r3.id });
+        await employeeRepo.save({ name: "sagar", email: "sagar@example.com", status: "active", joining_date: new Date(), role_id: r4.id });
+        await employeeRepo.save({ name: "priyansh", email: "priyansh@example.com", status: "active", joining_date: new Date(), role_id: r5.id });    
+        console.log("Dummy data successfully seeded into database!");
+        process.exit(0);
+    } catch (err) {
+        console.error("Error writing dummy data:", err);
+        process.exit(1);
+    }
+}
 
-//         const roleMarketingSpecialist = await roles.create({ 
-//             role: 'Marketing Specialist', 
-//             salary: 35000, 
-//             Department_id: deptMarketing.id
-//         });
-
-//         console.log("Creating Employees...");
-//         await employees.create({
-//             name: 'John Doe',
-//             email: 'john.doe@example.com',
-//             role_id: roleSwe.id,
-//             status: 'active',
-//             joining_date: new Date('2025-01-15')
-//         });
-
-//         await employees.create({
-//             name: 'Jane Smith',
-//             email: 'jane.smith@example.com',
-//             role_id: roleHrManager.id,
-//             status: 'active',
-//             joining_date: new Date('2024-06-10')
-//         });
-
-//         await employees.create({
-//             name: 'Robert Brown',
-//             email: 'robert.b@example.com',
-//             role_id: roleSalesLead.id,
-//             status: 'inactive',
-//             joining_date: new Date('2023-11-20')
-//         });
-
-//         await employees.create({
-//             name: 'Emily Davis',
-//             email: 'emily.davis@example.com',
-//             role_id: roleMarketingSpecialist.id,
-//             status: 'active',
-//             joining_date: new Date('2024-03-15')
-//         });
-
-//         console.log("Dummy data successfully injected!");
-//         process.exit();
-
-//     } catch (error) {
-//         console.error("Failed to seed dummy data: ", error);
-//         process.exit(1);
-//     }
-// };
-
-// seedData();
+seedDatabase();

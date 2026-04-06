@@ -25,13 +25,18 @@ const getAddRole = (req, res, next) => {
 };
 
 const postAddRole = (req, res, next) => {
-    const role = req.body.role;
+    const role = req.body.role || req.body.role_name;
     const salary = req.body.salary;
     const department_id = req.body.department_id;
+    
+    if (!role) {
+        return res.status(400).send({ message: "Role name is required" });
+    }
+
     roleRepository.insert({
         role: role,
         salary: salary,
-        Department_id: department_id
+        department_id: department_id
     })
         .then((result) => {
             console.log('Role added');
@@ -59,21 +64,18 @@ const getEditRole = (req, res, next) => {
 
 const postEditRole = (req, res, next) => {
     const roleId = req.params.roleId;
-    const updatedRole = req.body.role;
+    const updatedRole = req.body.role || req.body.role_name;
     const updatedSalary = req.body.salary;
     const updatedDepartmentId = req.body.department_id;
+
+    if (!updatedRole) {
+        return res.status(400).send({ message: "Role name is required for editing" });
+    }
     roleRepository.update({ id: roleId }, {
         role: updatedRole,
         salary: updatedSalary,
-        Department_id: updatedDepartmentId
+        department_id: updatedDepartmentId
     })
-        .set({
-            roleId: roleId,
-            role: updatedRole,
-            salary: updatedSalary,
-            Department_id: updatedDepartmentId
-        })
-        .execute()
         .then(result => {
             console.log('Role updated');
             // res.redirect('/roles');

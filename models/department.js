@@ -12,14 +12,14 @@ const departmentSchema = new EntitySchema({
         departmentName: {
             type: "varchar",
             name: "department_name"
-        },
-        // relationship: {
-        //     roles :{
-        //         type:"one-to-many",
-        //         target: roles,
-        //         inverseSide: "department"
-        //     }
-        // }
+        }
+    },
+    relations: {
+        roles: {
+            type: "one-to-many",
+            target: "roles",
+            inverseSide: "department"
+        }
     }
 });
 export default departmentSchema;

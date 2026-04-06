@@ -8,10 +8,10 @@ const router = express.Router();
 router.get('/', Controller.getEmployees);
 
 // //add, edit, delete employee
-// router.get('/add-employee', Controller.getAddEmployees);
-// router.post('/add-employee', Controller.postAddEmployee);
-// router.get('/edit-employee/:employeeId', Controller.getEditEmployee);
-// router.post('/edit-employee', Controller.postEditEmployee);
-// router.post('/delete-employee', Controller.postDeleteEmployee);
+router.get('/add-employee', Controller.getAddEmployees);
+router.post('/add-employee', Controller.postAddEmployee);
+router.get('/edit-employee/:employeeId', Controller.getEditEmployee);
+router.put('/edit-employee/:employeeId', Controller.postEditEmployee);
+router.post('/delete-employee/:employeeId', Controller.postDeleteEmployee);
 
 export default router;
