@@ -17,7 +17,8 @@ const departmentSchema = new EntitySchema({
         roles: {
             type: "one-to-many",
             target: "roles",
-            inverseSide: "department"
+            inverseSide: "department",
+            onDelete: 'CASCADE'
         }
     }
 });

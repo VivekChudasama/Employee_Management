@@ -26,12 +26,14 @@ const roleSchema = new EntitySchema({
             type: "many-to-one",
             target: "department",
             inverseSide: "roles",
-            joinColumn: { name: "department_id" }
+            joinColumn: { name: "department_id" },
+            onDelete: "CASCADE"
         },
         employees: {
             type: "one-to-many",
             target: "employees",
-            inverseSide: "role"
+            inverseSide: "role",
+            onDelete: "CASCADE"
         }
     }
 });

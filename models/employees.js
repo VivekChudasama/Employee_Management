@@ -36,7 +36,8 @@ const employeesSchema = new EntitySchema({
             type: "many-to-one",
             target: "roles",
             inverseSide: "employees",
-            joinColumn: { name: "role_id" }
+            joinColumn: { name: "role_id" },
+            onDelete: "CASCADE"
         }
     }
 });

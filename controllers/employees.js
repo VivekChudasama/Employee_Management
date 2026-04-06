@@ -86,6 +86,7 @@ const postAddEmployee = (req, res, next) => {
         .catch(err => console.log(err));
 };
 
+
 const getEditEmployee = (req, res, next) => {
     const editMode = req.query.edit;
     const empId = req.params.employeeId;
@@ -137,25 +138,23 @@ const editEmployee = (req, res, next) => {
 };
 
 const deleteEmployee = (req, res, next) => {
-    const empId = req.body.employeeId;
-    employeeRepository.findBy(empId, { include: [{ model: roleModel }] })
-        .then(employee => {
-            if (!employee) return res.redirect('/employees');
+    const empId = req.params.employeeId;
 
-            // Delete employee, then delete their tied role
-            const role = employee.role;
-            return employee.delete().then(() => {
-                if (role) {
-                    return role.delete();
-                }
-            });
-        })
-        .then(() => {
-            res.redirect('/employees');
+    if(roleRepository.count({ employeeId: empId })) {
+        return res.status(400).send({ message: "Cannot delete employee with assigned role" });
+    }
+
+    employeeRepository.delete({ id: empId })
+
+        .then(result => {
+            if (result.affected === 0) {
+                return res.status(404).send({ message: 'Employee ID not found' });
+            }
+            console.log('Employee deleted');
+            res.send({ message: 'Employee deleted' });
         })
         .catch(err => console.log(err));
 };
-
 
 export default {
     getEmployees,

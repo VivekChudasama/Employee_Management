@@ -1,7 +1,9 @@
-import roleSchema from '../models/roles.js';
+import roleModel from '../models/roles.js';
+import employeemodel from '../models/employees.js';
 import { AppDataSource } from '../util/database.js';
 
-const roleRepository = AppDataSource.getRepository(roleSchema);
+const employeeRepository = AppDataSource.getRepository(employeemodel);
+const roleRepository = AppDataSource.getRepository(roleModel);
 
 
 const getRoles = (req, res, next) => {
@@ -28,7 +30,7 @@ const postAddRole = (req, res, next) => {
     const role = req.body.role || req.body.role_name;
     const salary = req.body.salary;
     const department_id = req.body.department_id;
-    
+
     if (!role) {
         return res.status(400).send({ message: "Role name is required" });
     }
@@ -79,11 +81,14 @@ const editRole = (req, res, next) => {
             res.send({ message: 'Role updated' });
         })
         .catch(err => console.log(err));
-}
+};
 
 const deleteRole = (req, res, next) => {
     const roleId = req.params.roleId;
 
+    if (employeeRepository.count({ where: { role_id: roleId } }) > 0) {
+        return res.status(400).send({ message: 'Cannot delete role. There are employees assigned to this role.' });
+    }
     roleRepository.delete({ id: roleId })
 
         .then(result => {
