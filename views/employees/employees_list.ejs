@@ -19,6 +19,9 @@
                             <tr>
                                 <th>Name</th>
                                 <th>Email</th>
+                                <th>Role</th>
+                                <th>Department</th>
+                                <th>Salary</th>
                                 <th>Status</th>
                                 <th>Actions</th>
                             </tr>
@@ -31,6 +34,15 @@
                                     </td>
                                     <td>
                                         <%= emp.email %>
+                                    </td>
+                                    <td>
+                                        <%= emp.role.role %>
+                                    </td>
+                                    <td>
+                                        <%= emp.role.department.departmentName %>
+                                    </td>
+                                    <td>
+                                        $<%= emp.role.salary %>
                                     </td>
                                     <td>
                                         <%= emp.status %>
@@ -50,6 +62,4 @@
                         <h1>No Employees Found!</h1>
                         <% } %>
             </main>
-
-            <script src="../../public/js/main.js"></script>
             <%- include('../includes/end.ejs') %>

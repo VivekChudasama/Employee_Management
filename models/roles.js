@@ -1,6 +1,4 @@
 import { EntitySchema } from "typeorm";
-import department from './department.js';
-import employees from './employees.js';
 
 const roleSchema = new EntitySchema({
     name: "roles",

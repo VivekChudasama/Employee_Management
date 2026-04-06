@@ -11,7 +11,7 @@ router.get('/', Controller.getRoles);
 router.get('/add-role', Controller.getAddRole);
 router.post('/add-role', Controller.postAddRole);
 router.get('/edit-role/:roleId', Controller.getEditRole);
-router.put('/edit-role/:roleId', Controller.postEditRole);
-router.delete('/delete-role/:roleId', Controller.postDeleteRole);
+router.put('/edit-role/:roleId', Controller.editRole);
+router.delete('/delete-role/:roleId', Controller.deleteRole);
 
 export default router;

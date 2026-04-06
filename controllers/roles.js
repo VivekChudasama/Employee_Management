@@ -62,15 +62,12 @@ const getEditRole = (req, res, next) => {
         .catch(err => console.log(err));
 };
 
-const postEditRole = (req, res, next) => {
+const editRole = (req, res, next) => {
     const roleId = req.params.roleId;
     const updatedRole = req.body.role || req.body.role_name;
     const updatedSalary = req.body.salary;
     const updatedDepartmentId = req.body.department_id;
 
-    if (!updatedRole) {
-        return res.status(400).send({ message: "Role name is required for editing" });
-    }
     roleRepository.update({ id: roleId }, {
         role: updatedRole,
         salary: updatedSalary,
@@ -84,7 +81,7 @@ const postEditRole = (req, res, next) => {
         .catch(err => console.log(err));
 }
 
-const postDeleteRole = (req, res, next) => {
+const deleteRole = (req, res, next) => {
     const roleId = req.params.roleId;
 
     roleRepository.delete({ id: roleId })
@@ -92,8 +89,8 @@ const postDeleteRole = (req, res, next) => {
         .then(result => {
             console.log('Role deleted');
             // res.redirect('/roles');
-            if (!roleId) {
-                return res.status(404).send({ message: 'Role ID not found' });
+            if (result.affected === 0) {
+                return res.status(404).send({ message: 'Role-ID not found' });
             }
             res.send({ message: 'Role deleted' });
         })
@@ -106,6 +103,6 @@ export default {
     getAddRole,
     postAddRole,
     getEditRole,
-    postEditRole,
-    postDeleteRole
+    editRole,
+    deleteRole
 };

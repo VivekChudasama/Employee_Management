@@ -3,16 +3,15 @@ import departmentModel from '../models/department.js';
 import roleModel from '../models/roles.js';
 
 import { AppDataSource } from '../util/database.js';
+import { Like } from "typeorm";
 
 const employeeRepository = AppDataSource.getRepository(employeemodel);
 const departmentRepository = AppDataSource.getRepository(departmentModel);
 const roleRepository = AppDataSource.getRepository(roleModel);
 
-import { Like } from "typeorm";
-
 const getEmployees = async (req, res, next) => {
     try {
-        const { search, ajax } = req.query;
+        const { search, ajax} = req.query;
 
         let findOptions = {
             relations: ["role", "role.department"]
@@ -22,8 +21,8 @@ const getEmployees = async (req, res, next) => {
             findOptions.where = [
                 { name: Like(`%${search}%`) },
                 { email: Like(`%${search}%`) },
-                { role: { role: Like(`%${search}%`) } }
-            ];
+                { role: { role: Like(`%${search}%`) } },
+            ]
         }
 
         const employees = await employeeRepository.find(findOptions);
@@ -37,7 +36,7 @@ const getEmployees = async (req, res, next) => {
             employees: employees,
             path: '/employees'
         });
-
+        // res.send(employees);
     }
     catch (err) {
         console.log(err);
@@ -66,14 +65,14 @@ const postAddEmployee = (req, res, next) => {
     const { name, email, department_id, role_name, salary, joining_date, status } = req.body;
 
     // First create the role
-    roleRepository.create({
+    roleRepository.insert({
         role: role_name,
         salary: salary,
         Department_id: department_id
     })
         .then(newRole => {
             // Then create the employee
-            return employeeRepository.create({
+            return employeeRepository.insert({
                 name: name,
                 email: email,
                 role_id: newRole.id,
@@ -95,7 +94,7 @@ const getEditEmployee = (req, res, next) => {
     departmentRepository.find()
         .then(departments => {
             fetchedDepartments = departments;
-            return employeeRepository.findByPk(empId, { include: [{ model: roleModel }] });
+            return employeeRepository.findBy(empId, { include: [{ model: roleModel }] });
         })
         .then(employee => {
             if (!employee) {
@@ -112,7 +111,7 @@ const getEditEmployee = (req, res, next) => {
         .catch(err => console.log(err));
 };
 
-const postEditEmployee = (req, res, next) => {
+const editEmployee = (req, res, next) => {
     const { employeeId, name, email, department_id, role_name, salary, joining_date, status } = req.body;
 
     employeeRepository.findBy(employeeId, { include: [{ model: roleModel }] })
@@ -137,7 +136,7 @@ const postEditEmployee = (req, res, next) => {
         .catch(err => console.log(err));
 };
 
-const postDeleteEmployee = (req, res, next) => {
+const deleteEmployee = (req, res, next) => {
     const empId = req.body.employeeId;
     employeeRepository.findBy(empId, { include: [{ model: roleModel }] })
         .then(employee => {
@@ -163,6 +162,6 @@ export default {
     getAddEmployees,
     postAddEmployee,
     getEditEmployee,
-    postEditEmployee,
-    postDeleteEmployee
+    editEmployee,
+    deleteEmployee
 };
