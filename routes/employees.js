@@ -7,11 +7,13 @@ const router = express.Router();
 // //get list of employees
 router.get('/', Controller.getEmployees);
 
-// //add, edit, delete employee
+// //add new employee
 router.get('/add-employee', Controller.getAddEmployees);
 router.post('/add-employee', Controller.postAddEmployee);
-router.get('/edit-employee/:employeeId', Controller.getEditEmployee);
-router.put('/edit-employee/:employeeId', Controller.editEmployee);
-router.post('/delete-employee/:employeeId', Controller.deleteEmployee);
+
+//edit and delete employee by id
+router.get('/:employeeId', Controller.getEditEmployee);
+router.put('/:employeeId', Controller.editEmployee);
+router.delete('/:employeeId', Controller.deleteEmployee);
 
 export default router;

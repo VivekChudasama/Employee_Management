@@ -3,15 +3,16 @@ import departmentModel from '../models/department.js';
 import roleModel from '../models/roles.js';
 
 import { AppDataSource } from '../util/database.js';
-import { Like } from "typeorm";
 
 const employeeRepository = AppDataSource.getRepository(employeemodel);
 const departmentRepository = AppDataSource.getRepository(departmentModel);
 const roleRepository = AppDataSource.getRepository(roleModel);
 
+import { Like } from "typeorm";
+
 const getEmployees = async (req, res, next) => {
     try {
-        const { search, ajax} = req.query;
+        const { search, ajax } = req.query;
 
         let findOptions = {
             relations: ["role", "role.department"]
@@ -21,8 +22,8 @@ const getEmployees = async (req, res, next) => {
             findOptions.where = [
                 { name: Like(`%${search}%`) },
                 { email: Like(`%${search}%`) },
-                { role: { role: Like(`%${search}%`) } },
-            ]
+                { role: { role: Like(`%${search}%`) } }
+            ];
         }
 
         const employees = await employeeRepository.find(findOptions);
@@ -36,9 +37,7 @@ const getEmployees = async (req, res, next) => {
             employees: employees,
             path: '/employees'
         });
-        // res.send(employees);
-    }
-    catch (err) {
+    } catch (err) {
         console.log(err);
         if (req.query.ajax) return res.status(500).json({ error: "Server error" });
         next(err);
@@ -47,32 +46,30 @@ const getEmployees = async (req, res, next) => {
 
 
 const getAddEmployees = (req, res, next) => {
-    try {
-        departmentRepository.find()
-            .then(departments => {
-                res.render('employees/add_employee', {
-                    pageTitle: 'Add Employee',
-                    path: '/add-employee',
-                    departments: departments,
-                    editing: false
-                });
-            })
-    }
-    catch { (err => console.log(err)) };
+    departmentRepository.find()
+        .then(departments => {
+            res.render('employees/add_employee', {
+                pageTitle: 'Add Employee',
+                path: '/add-employee',
+                departments: departments,
+                editing: false
+            });
+        })
+        .catch(err => console.log(err));
 };
 
 const postAddEmployee = (req, res, next) => {
     const { name, email, department_id, role_name, salary, joining_date, status } = req.body;
 
     // First create the role
-    roleRepository.insert({
+    roleRepository.save({
         role: role_name,
         salary: salary,
         Department_id: department_id
     })
         .then(newRole => {
             // Then create the employee
-            return employeeRepository.insert({
+            return employeeRepository.save({
                 name: name,
                 email: email,
                 role_id: newRole.id,
@@ -85,7 +82,6 @@ const postAddEmployee = (req, res, next) => {
         })
         .catch(err => console.log(err));
 };
-
 
 const getEditEmployee = (req, res, next) => {
     const editMode = req.query.edit;
@@ -138,23 +134,25 @@ const editEmployee = (req, res, next) => {
 };
 
 const deleteEmployee = (req, res, next) => {
-    const empId = req.params.employeeId;
+    const empId = req.body.employeeId;
+    employeeRepository.findBy(empId, { include: [{ model: roleModel }] })
+        .then(employee => {
+            if (!employee) return res.redirect('/employees');
 
-    if(roleRepository.count({ employeeId: empId })) {
-        return res.status(400).send({ message: "Cannot delete employee with assigned role" });
-    }
-
-    employeeRepository.delete({ id: empId })
-
-        .then(result => {
-            if (result.affected === 0) {
-                return res.status(404).send({ message: 'Employee ID not found' });
-            }
-            console.log('Employee deleted');
-            res.send({ message: 'Employee deleted' });
+            // Delete employee, then delete their tied role
+            const role = employee.role;
+            return employee.delete().then(() => {
+                if (role) {
+                    return role.delete();
+                }
+            });
+        })
+        .then(() => {
+            res.redirect('/employees');
         })
         .catch(err => console.log(err));
 };
+
 
 export default {
     getEmployees,

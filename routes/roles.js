@@ -7,11 +7,13 @@ const router = express.Router();
 //get list of the roles
 router.get('/', Controller.getRoles);
 
-//add, edit, delete role
+//add new role
 router.get('/add-role', Controller.getAddRole);
 router.post('/add-role', Controller.postAddRole);
-router.get('/edit-role/:roleId', Controller.getEditRole);
-router.put('/edit-role/:roleId', Controller.editRole);
-router.delete('/delete-role/:roleId', Controller.deleteRole);
+
+//edit and delete role by id
+router.get('/:roleId', Controller.getEditRole);
+router.put('/:roleId', Controller.editRole);
+router.delete('/:roleId', Controller.deleteRole);
 
 export default router;
