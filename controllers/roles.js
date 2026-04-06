@@ -1,11 +1,9 @@
-import roleModel from '../models/roles.js';
-import employeemodel from '../models/employees.js';
+import roleSchema from '../models/roles.js';
 import { AppDataSource } from '../util/database.js';
 
-const employeeRepository = AppDataSource.getRepository(employeemodel);
-const roleRepository = AppDataSource.getRepository(roleModel);
+const roleRepository = AppDataSource.getRepository(roleSchema);
 
-
+//get list of the roles
 const getRoles = (req, res, next) => {
     roleRepository.find()
         .then(roles => {
@@ -19,18 +17,21 @@ const getRoles = (req, res, next) => {
         .catch(err => console.log(err));
 };
 
+// Render add role form
 const getAddRole = (req, res, next) => {
-    res.render('roles/add_role', {
-        pageTitle: 'Add Role',
-        path: '/add-role'
-    });
+    // res.render('roles/add_role', {
+    //     pageTitle: 'Add Role',
+    //     path: '/add-role'
+    // });
+    res.send({ message: 'Render add role form' } , 200);
 };
 
+// Handle add role form submission
 const postAddRole = (req, res, next) => {
     const role = req.body.role || req.body.role_name;
     const salary = req.body.salary;
     const department_id = req.body.department_id;
-
+    
     if (!role) {
         return res.status(400).send({ message: "Role name is required" });
     }
@@ -47,6 +48,7 @@ const postAddRole = (req, res, next) => {
         .catch(err => console.log(err));
 };
 
+// Render edit role form with role data for given role ID
 const getEditRole = (req, res, next) => {
     const roleId = req.params.roleId;
     roleRepository.findBy({ id: roleId })
@@ -64,12 +66,13 @@ const getEditRole = (req, res, next) => {
         .catch(err => console.log(err));
 };
 
+// Handle edit role form submission
 const editRole = (req, res, next) => {
     const roleId = req.params.roleId;
     const updatedRole = req.body.role || req.body.role_name;
     const updatedSalary = req.body.salary;
     const updatedDepartmentId = req.body.department_id;
-
+    
     roleRepository.update({ id: roleId }, {
         role: updatedRole,
         salary: updatedSalary,
@@ -81,21 +84,19 @@ const editRole = (req, res, next) => {
             res.send({ message: 'Role updated' });
         })
         .catch(err => console.log(err));
-};
+}
 
+// Handle delete role request
 const deleteRole = (req, res, next) => {
     const roleId = req.params.roleId;
 
-    if (employeeRepository.count({ where: { role_id: roleId } }) > 0) {
-        return res.status(400).send({ message: 'Cannot delete role. There are employees assigned to this role.' });
-    }
     roleRepository.delete({ id: roleId })
 
         .then(result => {
             console.log('Role deleted');
             // res.redirect('/roles');
-            if (result.affected === 0) {
-                return res.status(404).send({ message: 'Role-ID not found' });
+            if (!roleId) {
+                return res.status(404).send({ message: 'Role ID not found' });
             }
             res.send({ message: 'Role deleted' });
         })

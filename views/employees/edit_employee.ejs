@@ -4,12 +4,12 @@
     <%- include('../includes/navigation.ejs') %>
 
     <main>
-        <form class="product-form" action="/employees/edit-employee" method="POST">
+        <form class="product-form" action="/employees/<% if (editing) { %><%= employee.id %><% } else { %>add-employee<% } %>" method="POST">
             <input type="hidden" name="employeeId" value="<%= employee.id %>">
             <div class="form-control">
                 <label for="name">Full Name</label>
                 <input type="text" name="name" id="name" value="<%= employee.name %>" required>
-            </div>
+            </div> 
             <div class="form-control">
                 <label for="email">Email</label>
                 <input type="email" name="email" id="email" value="<%= employee.email %>" required>

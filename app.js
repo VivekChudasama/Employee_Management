@@ -4,6 +4,7 @@ import { AppDataSource }  from './util/database.js';
 
 const PORT = 3001;
 
+// Initialize database 
 AppDataSource.initialize()
     .then(() => {
         console.log('Database initialized');

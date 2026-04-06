@@ -18,6 +18,7 @@ const departmentSchema = new EntitySchema({
             type: "one-to-many",
             target: "roles",
             inverseSide: "department",
+            cascade : true,
             onDelete: 'CASCADE'
         }
     }
