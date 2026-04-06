@@ -49,16 +49,16 @@ const getEmployees = async (req, res, next) => {
 const getAddEmployees = (req, res, next) => {
     departmentRepository.find()
         .then(departments => {
-            // res.render('employees/add_employee', {
-            //     pageTitle: 'Add Employee',
-            //     path: '/add-employee',
-            //     departments: departments,
-            //     editing: false
-            // });
-            res.status(200).json({
-                message: 'Render add employee form',
-                departments: departments
+            res.render('employees/add_employee', {
+                pageTitle: 'Add Employee',
+                path: '/add-employee',
+                departments: departments,
+                editing: false
             });
+            // res.status(200).json({
+            //     message: 'Render add employee form',
+            //     departments: departments
+            // });
         })
         .catch(err => console.log(err));
 };
@@ -99,14 +99,14 @@ const getEditEmployee = (req, res, next) => {
             if (!employee) {
                 return res.redirect('/employees');
             }
-            //    res.render('employees/edit_employee', {
-            //         pageTitle: 'Edit Employee',
-            //         path: '/edit-employee',
-            //         employee: employee,
-            //         departments: fetchedDepartments,
-            //         editing: editMode
-            //     }); 
-            res.status(200).json({ employee: employee, message: 'Render edit employee form' });
+               res.render('employees/edit_employee', {
+                    pageTitle: 'Edit Employee',
+                    path: '/edit-employee',
+                    employee: employee,
+                    departments: fetchedDepartments,
+                    editing: editMode
+                }); 
+            // res.status(200).json({ employee: employee, message: 'Render edit employee form' });
         })
         .catch(err => console.log(err));
 };
