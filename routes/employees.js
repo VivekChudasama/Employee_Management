@@ -12,8 +12,9 @@ router.get('/add-employee', Controller.getAddEmployees);
 router.post('/add-employee', Controller.postAddEmployee);
 
 //edit and delete employee by id
-router.get('/:employeeId', Controller.getEditEmployee);
-router.put('/:employeeId', Controller.editEmployee);
-router.delete('/:employeeId', Controller.deleteEmployee);
+router.get('/edit-employee/:employeeId', Controller.getEditEmployee);
+router.put('/edit-employee', Controller.editEmployee);
+router.post('/delete-employee', Controller.deleteEmployee);
 
 export default router;
+ 

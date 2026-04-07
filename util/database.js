@@ -11,8 +11,9 @@ export const AppDataSource = new DataSource({
     username: "root",
     password: "vivek@123456",
     database: "employees-data",
-    // synchronize: true, // Auto-creates tables (disable in production)
+    synchronize: true, // Auto-creates tables (disable in production)
     logging: false,
     entities: [departmentSchema, employeesSchema, roleSchema]
 });
 
+ 

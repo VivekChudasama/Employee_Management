@@ -1,5 +1,6 @@
 import roleSchema from '../models/roles.js';
 import { AppDataSource } from '../util/database.js';
+import employees from './employees.js';
 
 const roleRepository = AppDataSource.getRepository(roleSchema);
 
@@ -23,7 +24,7 @@ const getAddRole = (req, res, next) => {
     //     pageTitle: 'Add Role',
     //     path: '/add-role'
     // });
-    res.send({ message: 'Render add role form' }, 200);
+    res.status(200).send({ message: 'Render add role form' });
 };
 
 // Handle add role form submission
@@ -51,7 +52,7 @@ const postAddRole = (req, res, next) => {
 // Render edit role form with role data for given role ID
 const getEditRole = (req, res, next) => {
     const roleId = req.params.roleId;
-    roleRepository.findBy({ id: roleId })
+    roleRepository.findOneBy({ id: roleId })
         .then(role => {
             if (!role) {
                 return res.redirect('/roles');
@@ -73,11 +74,16 @@ const editRole = (req, res, next) => {
     const updatedSalary = req.body.salary;
     const updatedDepartmentId = req.body.department_id;
 
-    roleRepository.update({ id: roleId }, {
-        role: updatedRole,
-        salary: updatedSalary,
-        department_id: updatedDepartmentId
-    })
+    let updateData = {};
+    if (updatedRole) updateData.role = updatedRole;
+    if (updatedSalary) updateData.salary = updatedSalary;
+    if (updatedDepartmentId) updateData.department_id = updatedDepartmentId;
+
+    if (Object.keys(updateData).length === 0) {
+        return res.send({ message: 'No data to update' });
+    }
+
+    roleRepository.update({ id: roleId }, updateData)
         .then(result => {
             console.log('Role updated');
             // res.redirect('/roles');
@@ -88,9 +94,16 @@ const editRole = (req, res, next) => {
 
 // Handle delete role request
 const deleteRole = (req, res, next) => {
-    const roleId = req.params.roleId;
+    const roleId = req.body.roleId;
 
-    roleRepository.delete({ id: roleId })
+    // roleRepository.find(roleId)
+    //     .then(employees => {
+    //         if (employees.roleId != roleId) {
+    //             return res.status(400).send({ message: 'Cannot delete role as it is assigned to employees' });
+    //         }
+
+            roleRepository.delete({ id: roleId })
+        // })
 
         .then(result => {
             console.log('Role deleted');

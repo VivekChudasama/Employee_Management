@@ -17,14 +17,21 @@
                                         data.forEach(emp => {
                                             const tr = document.createElement('tr');
                                             tr.innerHTML = `
-                                                <td>${escapeHtml(emp.name)}</td>
-                                                <td>${escapeHtml(emp.email)}</td>
-                                                <td>${escapeHtml(emp.status)}</td>
+                                                <td>${emp.name || ''}</td>
+                                                <td>${emp.email || ''}</td>
+                                                <td>${emp.role ? emp.role.role : ''}</td>
+                                                <td>${emp.role && emp.role.department ? emp.role.department.departmentName : ''}</td>
+                                                <td>$${emp.role ? emp.role.salary : ''}</td>
                                                 <td>
-                                                    <a href="/employees/edit-employee/${emp.id}" class="btn">Edit</a>
-                                                    <form action="/employees/delete-employee" method="POST" style="display:inline;">
+                                                    <span class="badge ${emp.status === 'active' ? 'bg-success' : 'bg-secondary'}">
+                                                        ${emp.status || ''}
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <a href="/employees/edit-employee/${emp.id}" class="btn btn-sm btn-outline-primary">Edit</a>
+                                                    <form action="/employees/delete-employee" method="POST" class="d-inline">
                                                         <input type="hidden" value="${emp.id}" name="employeeId">
-                                                        <button class="btn danger" type="submit">Delete</button>
+                                                        <button class="btn btn-sm btn-outline-danger" type="submit">Delete</button>
                                                     </form>
                                                 </td>
                                             `;
@@ -35,15 +42,4 @@
                                 .catch(err => console.error(err));
                         }, 300);
                     });
-                }
-
-                function escapeHtml(unsafe) {
-                    if (!unsafe) return '';
-                    return unsafe
-                        .toString()
-                        .replace(/&/g, "&amp;")
-                        .replace(/</g, "&lt;")
-                        .replace(/>/g, "&gt;")
-                        .replace(/"/g, "&quot;")
-                        .replace(/'/g, "&#039;");
                 }

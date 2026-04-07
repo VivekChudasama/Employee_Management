@@ -1,30 +1,57 @@
 import employeemodel from '../models/employees.js';
 import departmentModel from '../models/department.js';
 import roleModel from '../models/roles.js';
-
 import { AppDataSource } from '../util/database.js';
+
+import { Like, Between, MoreThanOrEqual, LessThanOrEqual } from "typeorm";
+
 
 const employeeRepository = AppDataSource.getRepository(employeemodel);
 const departmentRepository = AppDataSource.getRepository(departmentModel);
 const roleRepository = AppDataSource.getRepository(roleModel);
 
-import { Like } from "typeorm";
 
 //get list of employees with search support 
 const getEmployees = async (req, res, next) => {
     try {
-        const { search, ajax } = req.query;
+        const { search, ajax, department_id, status, min_salary, max_salary } = req.query;
 
         let findOptions = {
             relations: ["role", "role.department"]
         };
 
+        let Filter = {};
+        if (status) {
+            Filter.status = status;
+        }
+
+        let roleFilter = {};
+        if (department_id) {
+            roleFilter.department_id = parseInt(department_id);
+        }
+
+        if (min_salary && max_salary) {
+            roleFilter.salary = Between(parseInt(min_salary), parseInt(max_salary));
+        } else if (min_salary) {
+            roleFilter.salary = MoreThanOrEqual(parseInt(min_salary));
+        } else if (max_salary) {
+            roleFilter.salary = LessThanOrEqual(parseInt(max_salary));
+        }
+
+        if (Object.keys(roleFilter).length > 0) {
+            Filter.role = roleFilter;
+        }
+
         if (search) {
             findOptions.where = [
-                { name: Like(`%${search}%`) },
-                { email: Like(`%${search}%`) },
-                { role: { role: Like(`%${search}%`) } }
+                { ...Filter, name: Like(`%${search}%`) },
+                { ...Filter, email: Like(`%${search}%`) },
+                { ...Filter, role: { ...roleFilter, role: Like(`%${search}%`) } }
             ];
+        } 
+        // get list of filter's like(min_salary and max_salary , rolefilter)
+        else if (Object.keys(Filter).length > 0) {
+            findOptions.where = Filter;
         }
 
         const employees = await employeeRepository.find(findOptions);
@@ -33,9 +60,12 @@ const getEmployees = async (req, res, next) => {
             return res.json(employees);
         }
 
+        const departments = await departmentRepository.find();
+
         res.render('employees/employees_list', {
             pageTitle: 'Employees',
             employees: employees,
+            departments: departments,
             path: '/employees'
         });
     } catch (err) {
@@ -43,119 +73,123 @@ const getEmployees = async (req, res, next) => {
         if (req.query.ajax) return res.status(500).json({ error: "Server error" });
         next(err);
     }
-};
+}; 
 
 // Render add employee form
-const getAddEmployees = (req, res, next) => {
-    departmentRepository.find()
-        .then(departments => {
-            res.render('employees/add_employee', {
-                pageTitle: 'Add Employee',
-                path: '/add-employee',
-                departments: departments,
-                editing: false
-            });
-            // res.status(200).json({
-            //     message: 'Render add employee form',
-            //     departments: departments
-            // });
-        })
-        .catch(err => console.log(err));
+const getAddEmployees = async (req, res, next) => {
+    try {
+        const departments = await departmentRepository.find();
+        res.render('employees/add_employee', {
+            pageTitle: 'Add Employee',
+            path: '/add-employee',
+            departments: departments,
+            editing: false
+        });
+    } catch (err) {
+        console.log(err);
+    }
 };
 
 // Handle add employee form submission
-const postAddEmployee = (req, res, next) => {
-    const { name, email, department_id, role_name, salary, joining_date, status } = req.body;
+const postAddEmployee = async (req, res, next) => {
+    try {
+        const { name, email, department_id, role_name, salary, joining_date, status } = req.body;
 
-    // First create the role
-    return roleRepository.save({
-        role: role_name,
-        salary: salary,
-        Department_id: department_id
-    })
-        .then(async newRole => {
-            // Then create the employee
-            return await employeeRepository.create({
-                name: name,
-                email: email,
-                role_id: newRole.id,
-                joining_date: joining_date || null,
-                status: status
-            });
-        })
-        .then(() => {
-            res.redirect('/employees');
-        })
-        .catch(err => console.log(err));
+        // First create the role
+        const newRole = await roleRepository.save({
+            role: role_name,
+            salary: salary,
+            department_id: department_id
+        });
+
+        // Then create the employee
+        await employeeRepository.save({
+            name: name,
+            email: email,
+            role_id: newRole.id,
+            joining_date: joining_date || new Date(),
+            status: status
+        });
+
+        res.status(201).redirect('/employees');
+    } catch (err) {
+        res.status(500).send({ message: "Error adding employee", error: err.message });
+    }
 };
 
-// Render edit employee form with employee data and list of departments for dropdown
-const getEditEmployee = (req, res, next) => {
-    const editMode = req.query.edit;
+// Render edit employee form with employee data and list of departments in dropdown
+const getEditEmployee = async (req, res, next) => {
+    const editMode = true;
     const empId = req.params.employeeId;
 
-    employeeRepository.findBy({ id: empId }, { relations: ["role"] })
-        .then(employee => {
-            if (!employee) {
-                return res.redirect('/employees');
-            }
-               res.render('employees/edit_employee', {
-                    pageTitle: 'Edit Employee',
-                    path: '/edit-employee',
-                    employee: employee,
-                    departments: fetchedDepartments,
-                    editing: editMode
-                }); 
-            // res.status(200).json({ employee: employee, message: 'Render edit employee form' });
-        })
-        .catch(err => console.log(err));
+    try {
+        const fetchedDepartments = await departmentRepository.find();
+        const employee = await employeeRepository.findOne({ where: { id: empId }, relations: ["role"] });
+
+        if (!employee) {
+            return res.redirect('/employees');
+        }
+        res.render('employees/edit_employee', {
+            pageTitle: 'Edit Employee',
+            path: '/edit-employee',
+            employee: employee,
+            departments: fetchedDepartments,
+            editing: editMode
+        });
+    } catch (err) {
+        console.log(err);
+        res.status(500).send({ message: "Error fetching employee data", error: err.message });
+    }
 };
 
 // Handle edit employee form submission
-const editEmployee = (req, res, next) => {
-    const { employeeId, name, email, department_id, role_name, salary, joining_date, status } = req.body;
+const editEmployee = async (req, res, next) => {
+    try {
+        const { employeeId, name, email, department_id, role_name, salary, joining_date, status } = req.body;
 
-    employeeRepository.findBy(employeeId, { include: [{ model: roleModel }] })
-        .then(employee => {
-            if (!employee) return res.redirect('/employees');
+        const employee = await employeeRepository.findOne({ where: { id: employeeId }, relations: ["role"] });
+        if (!employee) return res.status(404).send({ message: "Employee not found" });
 
-            employee.name = name;
-            employee.email = email;
-            employee.status = status;
-            employee.joining_date = joining_date || null;
+        employee.name = name ;
+        employee.email = email ;
+        employee.status = status ;
+        employee.joining_date = joining_date;
 
-            // Also update the role
-            employee.role.role = role_name;
-            employee.role.salary = salary;
-            employee.role.Department_id = department_id;
+        // Also update the role
+        if (employee.role) {
+            if (role_name) employee.role.role = role_name;
+            if (salary) employee.role.salary = salary;
+            if (department_id) employee.role.department_id = department_id;
+            await roleRepository.save(employee.role);
+        }
 
-            return employee.role.update().then(() => employee.update());
-        })
-        .then(() => {
-            res.redirect('/employees');
-        })
-        .catch(err => console.log(err));
+        await employeeRepository.save(employee);
+        res.redirect('/employees');
+    } catch (err) {
+        res.status(500).send({ message: "Error updating employee", error: err.message });
+    }
 };
 
 // Handle delete employee request
-const deleteEmployee = (req, res, next) => {
-    const empId = req.body.employeeId;
-    employeeRepository.findBy(empId, { include: [{ model: roleModel }] })
-        .then(employee => {
-            if (!employee) return res.redirect('/employees');
+const deleteEmployee = async (req, res, next) => {
+    try {
+        const empId = req.body.employeeId;
+        const employee = await employeeRepository.findOne({ where: { id: empId }, relations: ["role"] });
 
-            // Delete employee, then delete their role
-            const role = employee.role;
-            return employee.delete().then(() => {
-                if (role) {
-                    return role.delete();
-                }
-            });
-        })
-        .then(() => {
-            res.redirect('/employees');
-        })
-        .catch(err => console.log(err));
+        if (!employee) return res.redirect('/employees');
+
+        // Delete employee, then delete their role
+        const role = employee.role;
+        await employeeRepository.remove(employee);
+
+        if (role) {
+            await roleRepository.remove(role);
+        }
+
+        res.redirect('/employees');
+    } catch (err) {
+        res.status(500).send({ message: "Error deleting employee", error: err.message });
+    }
 };
 
 export default {

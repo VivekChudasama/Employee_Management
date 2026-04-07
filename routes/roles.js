@@ -12,8 +12,8 @@ router.get('/add-role', Controller.getAddRole);
 router.post('/add-role', Controller.postAddRole);
 
 //edit and delete role by id
-router.get('/:roleId', Controller.getEditRole);
-router.put('/:roleId', Controller.editRole);
-router.delete('/:roleId', Controller.deleteRole);
+router.get('/edit-role/:roleId', Controller.getEditRole);
+router.put('/edit-role/', Controller.editRole);
+router.delete('/delete-role/', Controller.deleteRole);
 
 export default router;
