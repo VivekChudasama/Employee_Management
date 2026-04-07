@@ -6,9 +6,11 @@
 
             <main>
                 <h1>Employees</h1>
-                <h2>Welcome to Employees page.</h2>
-                <a href="/employees/add-employee" class="btn d-flex flex-wrap justify-content-end gap-4">Add Employee</a>
-
+                <div class="d-flex flex-wrap justify-content-between align-items-center gap-4">
+                    <h2>Welcome to Employees page.</h2>
+                    <a href="/employees/add-employee" class="btn d-flex flex-wrap justify-content-end gap-4">Add
+                        Employee</a>
+                </div>
                 <div class="d-flex flex-wrap justify-content align-items-center gap-4 ">
                     <div class="search-container">
                         <input type="text" id="searchInput" placeholder="Search by Name, Email, or Role..."
@@ -17,8 +19,8 @@
                 </div>
 
                 <% if (employees.length> 0) { %>
-                    <table>
-                        <thead>
+                    <table class="table table-bordered table-striped" id="sorting">
+                        <thead class="bg-secondary">
                             <tr>
                                 <th>Name</th>
                                 <th>Email</th>
@@ -48,13 +50,17 @@
                                         $<%= emp.role.salary %>
                                     </td>
                                     <td>
-                                        <%= emp.status %>
+                                        <span
+                                            class="badge <%= emp.status === 'active' ? 'bg-success' : 'bg-secondary' %>">
+                                            <%= emp.status %>
+                                        </span>
                                     </td>
                                     <td>
-                                        <a href="/employees/edit-employee/<%= emp.id %>" class="btn">Edit</a>
+                                        <a href="/employees/edit-employee/<%= emp.id %>"
+                                            class="btn btn-primary">Edit</a>
                                         <form action="/employees/delete-employee" method="POST" style="display:inline;">
                                             <input type="hidden" value="<%= emp.id %>" name="employeeId">
-                                            <button class="btn danger" type="submit">Delete</button>
+                                            <button class="btn btn-danger" type="submit">Delete</button>
                                         </form>
                                     </td>
                                 </tr>

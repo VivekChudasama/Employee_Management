@@ -89,10 +89,7 @@ const getEditRole = (req, res, next) => {
 
 // Handle edit role form submission
 const editRole = (req, res, next) => {
-    const roleId = req.params.roleId;
-    const updatedRole = req.body.role;
-    const updatedSalary = req.body.salary;
-    const updatedDepartmentId = req.body.department_id;
+    const {roleId, updatedRole, updatedSalary, updatedDepartmentId } = req.body
 
     try {
         let updateData = {};
