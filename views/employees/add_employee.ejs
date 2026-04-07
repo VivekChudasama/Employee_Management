@@ -2,7 +2,7 @@
     </head>
 
     <body>
-        <%- include('../includes/navigation.ejs') %>
+        <%- include('../includes/navbar.ejs') %>
 
             <main>
                 <form class="product-form" action="/employees/add-employee" method="POST">
@@ -27,7 +27,14 @@
                     </div>
                     <div class="form-control">
                         <label for="role_name">Role</label>
-                        <input type="text" name="role_name" id="role_name" required>
+                        <select name="role_id" id="role_id" required>
+                            <option value="" disabled selected>Select a role</option>
+                            <% roles.forEach(rol=> { %>
+                                <option value="<%= roles.id %> ">
+                                    <%= rol.role %>
+                                </option>
+                                <% }) %>
+                        </select>
                     </div>
                     <div class="form-control">
                         <label for="salary">Salary</label>

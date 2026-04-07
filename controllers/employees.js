@@ -48,7 +48,7 @@ const getEmployees = async (req, res, next) => {
                 { ...Filter, email: Like(`%${search}%`) },
                 { ...Filter, role: { ...roleFilter, role: Like(`%${search}%`) } }
             ];
-        } 
+        }
         // get list of filter's like(min_salary and max_salary , rolefilter)
         else if (Object.keys(Filter).length > 0) {
             findOptions.where = Filter;
@@ -73,16 +73,18 @@ const getEmployees = async (req, res, next) => {
         if (req.query.ajax) return res.status(500).json({ error: "Server error" });
         next(err);
     }
-}; 
+};
 
 // Render add employee form
 const getAddEmployees = async (req, res, next) => {
     try {
         const departments = await departmentRepository.find();
+        const roles = await roleRepository.find()
         res.render('employees/add_employee', {
             pageTitle: 'Add Employee',
             path: '/add-employee',
             departments: departments,
+            roles: roles,
             editing: false
         });
     } catch (err) {
@@ -107,7 +109,7 @@ const postAddEmployee = async (req, res, next) => {
             name: name,
             email: email,
             role_id: newRole.id,
-            joining_date: joining_date || new Date(),
+            joining_date: joining_date,
             status: status
         });
 
@@ -119,11 +121,11 @@ const postAddEmployee = async (req, res, next) => {
 
 // Render edit employee form with employee data and list of departments in dropdown
 const getEditEmployee = async (req, res, next) => {
-    const editMode = true;
     const empId = req.params.employeeId;
 
     try {
         const fetchedDepartments = await departmentRepository.find();
+        const fetchedRoles = await roleRepository.find();
         const employee = await employeeRepository.findOne({ where: { id: empId }, relations: ["role"] });
 
         if (!employee) {
@@ -134,14 +136,14 @@ const getEditEmployee = async (req, res, next) => {
             path: '/edit-employee',
             employee: employee,
             departments: fetchedDepartments,
-            editing: editMode
+            roles: fetchedRoles,
+            editing: true
         });
     } catch (err) {
-        console.log(err);
         res.status(500).send({ message: "Error fetching employee data", error: err.message });
     }
 };
- 
+
 // Handle edit employee form submission
 const editEmployee = async (req, res, next) => {
     try {
@@ -150,9 +152,9 @@ const editEmployee = async (req, res, next) => {
         const employee = await employeeRepository.findOne({ where: { id: employeeId }, relations: ["role"] });
         if (!employee) return res.status(404).send({ message: "Employee not found" });
 
-        employee.name = name ;
-        employee.email = email ;
-        employee.status = status ;
+        employee.name = name;
+        employee.email = email;
+        employee.status = status;
         employee.joining_date = joining_date;
 
         // Also update the role

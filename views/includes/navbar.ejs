@@ -1,0 +1,38 @@
+<%- include('../includes/head.ejs') %>
+
+    </head>
+
+
+    <body>
+        <header class="py-2">
+            <nav class="navbar navbar-expand-lg nav-bar">
+                <div class="container nav-bar-content">
+                    <a class="navbar-brand" href="#"><img src="/images/ownAI_logo 1.png" class="nav-logo"
+                            loading="eager"></a>
+
+                    <button class="navbar-toggler " type="button" data-bs-toggle="offcanvas"
+                        data-bs-target="#mobileMenu">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+
+                    <div class="offcanvas offcanvas-end offcanvas-custom-width " tabindex="-1" id="mobileMenu">
+                        <div class="offcanvas-header">
+                            <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+                        </div>
+                        <div class="offcanvas-body py-3 ">
+                            <ul class="navbar-nav ms-auto align-items-lg-center gap-1 fs-5">
+                                <li class="nav-item ">
+                                    <a class="nav-link nav-text custom-radius-50 active" href="/employees/">Home</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link nav-text custom-radius-50" href="/employees/add-employee">Add
+                                        Employee</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+        </header>
+
+        <%- include('../includes/end.ejs') %>

@@ -1,6 +1,5 @@
 import roleSchema from '../models/roles.js';
 import { AppDataSource } from '../util/database.js';
-import employees from './employees.js';
 
 const roleRepository = AppDataSource.getRepository(roleSchema);
 
@@ -40,7 +39,7 @@ const getAddRole = (req, res, next) => {
 
 // Handle add role form submission
 const postAddRole = (req, res, next) => {
-    const role = req.body.role || req.body.role_name;
+    const role = req.body.role;
     const salary = req.body.salary;
     const department_id = req.body.department_id;
 
@@ -91,7 +90,7 @@ const getEditRole = (req, res, next) => {
 // Handle edit role form submission
 const editRole = (req, res, next) => {
     const roleId = req.params.roleId;
-    const updatedRole = req.body.role || req.body.role_name;
+    const updatedRole = req.body.role;
     const updatedSalary = req.body.salary;
     const updatedDepartmentId = req.body.department_id;
 

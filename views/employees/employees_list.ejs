@@ -2,14 +2,17 @@
     </head>
 
     <body>
-        <%- include('../includes/navigation.ejs') %>
+        <%- include('../includes/navbar.ejs') %>
 
             <main>
                 <h1>Employees</h1>
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-                    <a href="/employees/add-employee" class="btn">Add Employee</a>
+                <h2>Welcome to Employees page.</h2>
+                <a href="/employees/add-employee" class="btn d-flex flex-wrap justify-content-end gap-4">Add Employee</a>
+
+                <div class="d-flex flex-wrap justify-content align-items-center gap-4 ">
                     <div class="search-container">
-                        <input type="text" id="searchInput" placeholder="Search by Name, Email, or Role..." class="search-input">
+                        <input type="text" id="searchInput" placeholder="Search by Name, Email, or Role..."
+                            class="search-input">
                     </div>
                 </div>
 
