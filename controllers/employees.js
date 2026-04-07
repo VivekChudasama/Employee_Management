@@ -141,7 +141,7 @@ const getEditEmployee = async (req, res, next) => {
         res.status(500).send({ message: "Error fetching employee data", error: err.message });
     }
 };
-
+ 
 // Handle edit employee form submission
 const editEmployee = async (req, res, next) => {
     try {
