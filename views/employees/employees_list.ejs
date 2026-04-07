@@ -4,23 +4,26 @@
     <body>
         <%- include('../includes/navbar.ejs') %>
 
-            <main>
-                <h1>Employees</h1>
+            <div class="container">
+                <h1 class="py-lg-4">Employees Table</h1>
                 <div class="d-flex flex-wrap justify-content-between align-items-center gap-4">
-                    <h2>Welcome to Employees page.</h2>
-                    <a href="/employees/add-employee" class="btn d-flex flex-wrap justify-content-end gap-4">Add
+                    <h2 class="py-lg-3">Welcome to Employees page.</h2>
+                    <a href="/employees/add-employee"
+                        class="text-white btn d-flex flex-wrap justify-content-end gap-4 bg-primary">Add
                         Employee</a>
                 </div>
-                <div class="d-flex flex-wrap justify-content align-items-center gap-4 ">
+                <div class="d-flex flex-wrap justify-content align-items-center mb-lg-5">
                     <div class="search-container">
                         <input type="text" id="searchInput" placeholder="Search by Name, Email, or Role..."
                             class="search-input">
                     </div>
+
+
                 </div>
 
                 <% if (employees.length> 0) { %>
-                    <table class="table table-bordered table-striped" id="sorting">
-                        <thead class="bg-secondary">
+                    <table class="table table-bordered" id="sorting">
+                        <thead class="table-secondary">
                             <tr>
                                 <th>Name</th>
                                 <th>Email</th>
@@ -31,7 +34,7 @@
                                 <th>Actions</th>
                             </tr>
                         </thead>
-                        <tbody id="employeeTableBody">
+                        <tbody id="employeeTableBody ">
                             <% employees.forEach(emp=> { %>
                                 <tr>
                                     <td>
@@ -70,5 +73,6 @@
                     <% } else { %>
                         <h1>No Employees Found!</h1>
                         <% } %>
-            </main>
+
+            </div>
             <%- include('../includes/end.ejs') %>

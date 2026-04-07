@@ -61,11 +61,14 @@ const getEmployees = async (req, res, next) => {
         }
 
         const departments = await departmentRepository.find();
+        const roles = await roleRepository.find()
+
 
         res.render('employees/employees_list', {
             pageTitle: 'Employees',
             employees: employees,
             departments: departments,
+            roles: roles,
             path: '/employees'
         });
     } catch (err) {

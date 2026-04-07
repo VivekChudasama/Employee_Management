@@ -1,25 +1,25 @@
 .nav-bar .nav-bar-content .nav-logo {
-  max-height: 30px;
+  max-height: 55px;
   width: auto;
 }
 
 .nav-bar .nav-bar-content .nav-text {
-  font-size: 25px;
+  font-size: 16px;
   transition: all 0.3s ease;
   box-sizing: border-box;
   border: 1px solid transparent;
-  padding: 8px 20px ;
+  padding: 18px 65px;
   font-weight: 400;
 }
 
 .nav-bar .nav-bar-content .nav-text:hover {
-  padding: 10px 20px;
+  padding: 10px 25px;
   border-color: #fff;
   color: rgb(0, 0, 0) ;
 }
 
 .nav-bar .nav-bar-content .nav-link.active {
-  padding: 10px 20px;
+  padding: 10px 25px;
   border-color: #000000;
   color: rgb(0, 0, 0) ;
 }

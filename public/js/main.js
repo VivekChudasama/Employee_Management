@@ -1,5 +1,4 @@
 
-let table = new DataTable('#myTable');
 
 const searchInput = document.getElementById('searchInput');
 const tbody = document.getElementById('employeeTableBody');
