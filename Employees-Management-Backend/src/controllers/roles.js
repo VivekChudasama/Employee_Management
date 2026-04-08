@@ -31,7 +31,7 @@ const postAddRole = async (req, res, next) => {
         res.redirect('/roles');
     } catch (err) {
         console.log(err)
-        res.status('error in adding Role', 500)
+        res.status(500)
             .send({ message: err.message });
     }
 };
@@ -67,7 +67,7 @@ const editRole = async (req, res, next) => {
         res.send({ message: 'Role updated', role: result });
     } catch (err) {
         console.log('Error updating role:', err);
-        res.status('Role ID is required' , 500).send({ message: err.message });
+        res.status(500).send({ message: err.message });
     }
 };
 
@@ -82,9 +82,7 @@ const deleteRole = async (req, res, next) => {
         res.send({ message: 'Role deleted' });
     } catch (err) {
         console.log('Error deleting role:', err);
-        const status = err.message.includes('assigned to employees') ? 400
-            : err.message === 'Role ID is required' ? 400 : 500;
-        res.status(status).send({ message: err.message });
+        res.status(500).send({ message: err.message });
     }
 };
 

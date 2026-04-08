@@ -1,12 +1,7 @@
-import employeeModel from '../entities/employees.js';
-import departmentModel from '../entities/department.js';
-import roleModel from '../entities/roles.js';
-import { AppDataSource } from '../util/database.js';
 import { Like, Between, MoreThanOrEqual, LessThanOrEqual } from "typeorm";
-
-const employeeRepository = AppDataSource.getRepository(employeeModel);
-const departmentRepository = AppDataSource.getRepository(departmentModel);
-const roleRepository = AppDataSource.getRepository(roleModel);
+import { roleRepository } from '../repositories/rolesRepository.js';
+import { departmentRepository } from '../repositories/employeesRepository.js';
+import { employeeRepository } from '../repositories/employeesRepository.js';
 
 // Get all employees with optional search & filters
 const findAllEmployees = async ({ search, department_id, status, min_salary, max_salary }) => {
@@ -51,27 +46,27 @@ const findAllEmployees = async ({ search, department_id, status, min_salary, max
 
 // Get all departments
 const findAllDepartments = async () => {
-    return await departmentRepository.find();
+    return await departmentRepository.findDepartments();
 };
 
 // Get all roles
 const findAllRoles = async () => {
-    return await roleRepository.find();
+    return await roleRepository.findAllRoles();
 };
 
 // Find employee by ID with role relation
 const findEmployeeById = async (id) => {
-    return await employeeRepository.findOne({ where: { id }, relations: ["role"] });
+    return await employeeRepository.findOneEmployeeById({ where: { id }, relations: ["role"] });
 };
 
 // Create a new employee
-const createEmployee = async ({ name, email,  department_id , role_name, salary, joining_date, status }) => {
-    return await employeeRepository.save({
+const createEmployee = async ({ name, email, department_id, role_name, salary, joining_date, status }) => {
+    return await employeeRepository.saveEmployee({
         name,
         email,
-        department_id : parseInt(department_id),
+        department_id: parseInt(department_id),
         role_name,
-        salary : parseInt(salary),
+        salary: parseInt(salary),
         joining_date,
         status
     });
@@ -79,7 +74,7 @@ const createEmployee = async ({ name, email,  department_id , role_name, salary,
 
 // Update an existing employee
 const updateEmployee = async ({ employeeId, name, email, role_id, joining_date, status }) => {
-    const employee = await employeeRepository.findOne({ where: { id: employeeId }, relations: ["role"] });
+    const employee = await employeeRepository.findEmployeeWithEmployeeId({ where: { id: employeeId }, relations: ["role"] });
     if (!employee) return null;
 
     employee.name = name;
@@ -93,10 +88,10 @@ const updateEmployee = async ({ employeeId, name, email, role_id, joining_date, 
 
 // Delete an employee by ID (leaves role untouched)
 const deleteEmployeeById = async (id) => {
-    const employee = await employeeRepository.findOne({ where: { id }, relations: ["role"] });
+    const employee = await employeeRepository.findOneEmployeeById({ where: { id }, relations: ["role"] });
     if (!employee) return null;
 
-    return await employeeRepository.remove(employee);
+    return await employeeRepository.removeEmployeeById(employee);
 };
 
 export default {

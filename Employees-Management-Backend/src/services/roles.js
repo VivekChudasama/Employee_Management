@@ -8,11 +8,11 @@ const findAllRoles = async () => {
 
 // Find role by ID
 const findRoleById = async (id) => {
-    return await roleRepository.findOneRoleById({ id: parseInt(id) });
+    return await roleRepository.findRolesById({ id: parseInt(id) });
 };
 
 // Create a new role
-const createRole = async ({ role, salary, department_id }) => {
+const createRole = async ({ role , salary , department_id }) => {
     if (!role) {
         throw new Error('Role name is required');
     }
@@ -30,7 +30,7 @@ const updateRole = async ({ roleId, updatedRole, updatedSalary, updatedDepartmen
         throw new Error('Role ID is required');
     }
 
-    const existingRole = await roleRepository.findOneRoleById({ id: parseInt(roleId) });
+    const existingRole = await roleRepository.findRolesById({ id: parseInt(roleId) });
     if (!existingRole) return null;
 
     if (updatedRole) existingRole.role = updatedRole;
