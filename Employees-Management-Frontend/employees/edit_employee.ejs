@@ -1,0 +1,92 @@
+<%- include('../includes/head.ejs') %>
+    </head>
+
+    <body>
+        <%- include('../includes/navbar.ejs') %>
+
+            <main>
+                <form class="product-form"
+                    action="/employees/"
+                    method="POST">
+                    <input type="hidden" name="employeeId" value="<%= employee.id %>">
+                    <div class="form-control">
+                        <label for="name">Full Name</label>
+                        <input type="text" name="name" id="name" value="<%= employee.name %>" required>
+                    </div>
+                    <div class="form-control">
+                        <label for="email">Email</label>
+                        <input type="email" name="email" id="email" value="<%= employee.email %>" required>
+                    </div>
+                    <div class="form-control">
+                        <label for="department_id">Department</label>
+                        <select id="department_id">
+                            <option value="">All Departments</option>
+                            <% departments.forEach(dept=> { %>
+                                <option value="<%= dept.id %>" <%=employee.role && employee.role.department_id===dept.id ? 'selected' : '' %>><%= dept.departmentName %>
+                                </option>
+                                <% }) %>
+                        </select>
+                    </div>
+                    <div class="form-control">
+                        <label for="role_id">Role</label>
+                        <select name="role_id" id="role_id" required>
+                            <option value="" disabled>Select a role</option>
+                            <% roles.forEach(rol=> { %>
+                                <option value="<%= rol.id %>" data-department="<%= rol.department_id %>" data-salary="<%= rol.salary %>" <%=employee.role_id === rol.id ? 'selected' : '' %>>
+                                    <%= rol.role %>
+                                </option>
+                                <% }) %>
+                        </select>
+                    </div>
+                    <div class="form-control">
+                        <label for="salary_display">Salary</label>
+                        <input type="text" id="salary_display" disabled value="<%= employee.role ? '$' + employee.role.salary : '' %>">
+                    </div>
+                    <div class="form-control">
+                        <label for="joining_date">Joining Date</label>
+                        <input type="date" name="joining_date" id="joining_date" value="<%= employee.joining_date ? new Date(employee.joining_date).toISOString().split('T')[0] : '' %>" required>
+                    </div>
+                    <div class="form-control">
+                        <label for="status">Status</label>
+                        <select name="status" id="status" required>
+                            <option value="active" <%=employee.status==='active' ? 'selected' : '' %>>Active</option>
+                            <option value="inactive" <%=employee.status==='inactive' ? 'selected' : '' %>>Inactive
+                            </option>
+                        </select>
+                    </div>
+
+                    <button class="btn" type="submit">Update Employee</button>
+                </form>
+            </main>
+
+            <script>
+                // Filter roles by department
+                const deptSelect = document.getElementById('department_id');
+                const roleSelect = document.getElementById('role_id');
+                const salaryDisplay = document.getElementById('salary_display');
+                const allRoleOptions = Array.from(roleSelect.querySelectorAll('option[data-department]'));
+                const currentRoleId = '<%= employee.role_id %>';
+
+                deptSelect.addEventListener('change', function() {
+                    const selectedDept = this.value;
+                    // Reset role select
+                    roleSelect.innerHTML = '<option value="" disabled>Select a role</option>';
+                    salaryDisplay.value = '';
+
+                    allRoleOptions.forEach(opt => {
+                        if (!selectedDept || opt.dataset.department === selectedDept) {
+                            const newOpt = opt.cloneNode(true);
+                            if (newOpt.value === currentRoleId) newOpt.selected = true;
+                            roleSelect.appendChild(newOpt);
+                        }
+                    });
+                });
+
+                roleSelect.addEventListener('change', function() {
+                    const selected = this.options[this.selectedIndex];
+                    if (selected && selected.dataset.salary) {
+                        salaryDisplay.value = '$' + selected.dataset.salary;
+                    }
+                });
+            </script>
+            <%- include('../includes/end.ejs') %>

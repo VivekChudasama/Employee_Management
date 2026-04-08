@@ -1,7 +1,7 @@
 import { AppDataSource } from './util/database.js';
-import roleModel from './models/roles.js';
-import departmentModel from './models/department.js';
-import employeemodel from './models/employees.js';
+import roleModel from './entities/roles.js';
+import departmentModel from './entities/department.js';
+import employeemodel from './entities/employees.js';
 
 async function seedDatabase() {
     try {

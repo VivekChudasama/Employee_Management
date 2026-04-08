@@ -8,12 +8,12 @@ const router = express.Router();
 router.get('/', Controller.getEmployees);
 
 // //add new employee
-router.get('/add-employee', Controller.getAddEmployees);
+router.get('/add-employee', Controller.getEmployeesDepartments);
 router.post('/add-employee', Controller.postAddEmployee);
 
 //edit and delete employee by id
-router.get('/edit-employee/:employeeId', Controller.getEditEmployee);
-router.put('/edit-employee', Controller.editEmployee);
+router.get('/:employeeId', Controller.getEditEmployeeDetailById);
+router.put('/', Controller.editEmployee);
 router.delete('/delete-employee', Controller.deleteEmployee);
 
 export default router;

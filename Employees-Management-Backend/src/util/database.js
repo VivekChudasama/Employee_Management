@@ -1,8 +1,8 @@
 import("reflect-metadata");
 import { DataSource } from "typeorm";
-import departmentSchema from "../models/department.js";
-import employeesSchema from "../models/employees.js";
-import roleSchema from "../models/roles.js";
+import departmentSchema from "../entities/department.js";
+import employeesSchema from "../entities/employees.js";
+import roleSchema from "../entities/roles.js";
 
 export const AppDataSource = new DataSource({
     type: "mysql",

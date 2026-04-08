@@ -16,8 +16,8 @@
                     </div>
                     <div class="form-control">
                         <label for="department_id">Department</label>
-                        <select name="department_id" id="department_id" required>
-                            <option value="" disabled selected>Select a Department</option>
+                        <select id="department_id">
+                            <option value="" selected>All Departments</option>
                             <% departments.forEach(dept=> { %>
                                 <option value="<%= dept.id %>">
                                     <%= dept.departmentName %>
@@ -26,19 +26,23 @@
                         </select>
                     </div>
                     <div class="form-control">
-                        <label for="role_name">Role</label>
+                        <label for="role_id">Role</label>
                         <select name="role_id" id="role_id" required>
                             <option value="" disabled selected>Select a role</option>
                             <% roles.forEach(rol=> { %>
-                                <option value="<%= roles.id %> ">
+                                <option value="<%= rol.id %>" data-department="<%= rol.department_id %>" data-salary="<%= rol.salary %>">
                                     <%= rol.role %>
                                 </option>
                                 <% }) %>
                         </select>
                     </div>
                     <div class="form-control">
-                        <label for="salary">Salary</label>
-                        <input type="number" name="salary" id="salary" required>
+                        <label for="salary_display">Salary</label>
+                        <input type="text" id="salary_display" disabled placeholder="Select a role to see salary">
+                    </div>
+                    <div class="form-control">
+                        <label for="joining_date">Joining Date</label>
+                        <input type="date" name="joining_date" id="joining_date" required>
                     </div>
                     <div class="form-control">
                         <label for="status">Status</label>
@@ -51,4 +55,32 @@
                     <button class="btn" type="submit">Add Employee</button>
                 </form>
             </main>
+
+            <script>
+                // Filter roles by department
+                const deptSelect = document.getElementById('department_id');
+                const roleSelect = document.getElementById('role_id');
+                const salaryDisplay = document.getElementById('salary_display');
+                const allRoleOptions = Array.from(roleSelect.querySelectorAll('option[data-department]'));
+
+                deptSelect.addEventListener('change', function() {
+                    const selectedDept = this.value;
+                    // Reset role select
+                    roleSelect.innerHTML = '<option value="" disabled selected>Select a role</option>';
+                    salaryDisplay.value = '';
+
+                    allRoleOptions.forEach(opt => {
+                        if (!selectedDept || opt.dataset.department === selectedDept) {
+                            roleSelect.appendChild(opt.cloneNode(true));
+                        }
+                    });
+                });
+
+                roleSelect.addEventListener('change', function() {
+                    const selected = this.options[this.selectedIndex];
+                    if (selected && selected.dataset.salary) {
+                        salaryDisplay.value = '$' + selected.dataset.salary;
+                    }
+                });
+            </script>
             <%- include('../includes/end.ejs') %>
