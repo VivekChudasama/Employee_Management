@@ -1,13 +1,27 @@
 import roleSchema from '../entities/roles.js';
 import { AppDataSource } from '../util/database.js';
 
-const employeeRepository = AppDataSource.getRepository('employees').extend({
+export const employeeRepository = AppDataSource.getRepository('employees').extend({
     async findEmployeeRole() {
         return await this.find()
     }
 });
 
-const roleRepository = AppDataSource.getRepository(roleSchema).extend({
+
+// // role.repository.js
+// const { AppDataSource } = require("./data-source");
+// const { Role } = require("./entity/Role");
+
+// // Create the custom repository by extending the base one
+// export const roleRepository = AppDataSource.getRepository(Role).extend({
+//     async findOneRoleById(id) {
+//         // Use 'this' to access built-in repository methods
+//         return await this.findOneBy({ id: parseInt(id) });
+//     },
+// });
+
+
+export const roleRepository = AppDataSource.getRepository(roleSchema).extend({
     async findAllRoles() {
         return await this.find();
     },
@@ -16,7 +30,7 @@ const roleRepository = AppDataSource.getRepository(roleSchema).extend({
         return await this.findOneBy({ id: parseInt(id) })
     },
 
-    async createRole() {
+    async createRole(role , salary , department_id) {
         return await this.insert({
             role, salary, department_id
         })
@@ -37,8 +51,3 @@ const roleRepository = AppDataSource.getRepository(roleSchema).extend({
     },
 
 });
-
-export default {
-    roleRepository , 
-    employeeRepository
-};

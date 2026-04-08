@@ -31,7 +31,7 @@ const postAddRole = async (req, res, next) => {
         res.redirect('/roles');
     } catch (err) {
         console.log(err)
-        res.status('Role name is required', 500)
+        res.status('error in adding Role', 500)
             .send({ message: err.message });
     }
 };
@@ -67,8 +67,7 @@ const editRole = async (req, res, next) => {
         res.send({ message: 'Role updated', role: result });
     } catch (err) {
         console.log('Error updating role:', err);
-        const status = err.message === 'Role ID is required' ? 400 : 500;
-        res.status(status).send({ message: err.message });
+        res.status('Role ID is required' , 500).send({ message: err.message });
     }
 };
 

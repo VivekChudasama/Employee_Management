@@ -29,24 +29,24 @@ const getEmployees = async (req, res, next) => {
     }
 };
 
-// Render add employee form
-const getEmployeesDepartments = async (req, res, next) => {
-    try {
-        const departments = await employeeService.findAllDepartments();
-        // const roles = await employeeService.findAllRoles();
+// // Render add employee form
+// const getEmployeesDepartments = async (req, res, next) => {
+//     try {
+//         const departments = await employeeService.findAllDepartments();
+//         // const roles = await employeeService.findAllRoles();
 
-        // res.render('employees/add_employee', {
-        //     pageTitle: 'Add Employee',
-        //     path: '/add-employee',
-        //     departments,
-        //     editing: false
-        // });
-        res.send(departments);
-    } catch (err) {
-        console.log(err);
-        next(err);
-    }
-};
+//         // res.render('employees/add_employee', {
+//         //     pageTitle: 'Add Employee',
+//         //     path: '/add-employee',
+//         //     departments,
+//         //     editing: false
+//         // });
+//         res.send(departments);
+//     } catch (err) {
+//         console.log(err);
+//         next(err);
+//     }
+// };
 
 // Handle add employee form submission
 const postAddEmployee = async (req, res, next) => {
@@ -121,7 +121,7 @@ const deleteEmployee = async (req, res, next) => {
 
 export default {
     getEmployees,
-    getEmployeesDepartments,
+    // getEmployeesDepartments,
     postAddEmployee,
     getEditEmployeeDetailById,
     editEmployee,

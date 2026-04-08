@@ -1,5 +1,5 @@
-import roleRepository from '../repositories/rolesRepository.js';
-import employeeRepository from '../repositories/rolesRepository.js';
+import {roleRepository} from '../repositories/rolesRepository.js';
+import {employeeRepository} from '../repositories/rolesRepository.js';
 
 // Get all roles
 const findAllRoles = async () => {
