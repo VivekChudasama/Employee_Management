@@ -21,7 +21,7 @@ const getEmployees = async (req, res, next) => {
         //     roles,
         //     path: '/employees'
         // });
-        res.send(employees , departments , roles)
+        res.status(200).send(employees , departments , roles)
     } catch (err) {
         console.log(err);
         if (req.query.ajax) return res.status(500).json({ error: "Server error" });
@@ -84,7 +84,7 @@ const getEditEmployeeDetailById = async (req, res, next) => {
         //     editing: true
         // });
 
-        res.send(employee , departments , roles)
+        res.status(200).send(employee , departments , roles)
 
     } catch (err) {
         res.status(500).send({ message: "Error fetching employee data", error: err.message });
@@ -99,7 +99,7 @@ const editEmployee = async (req, res, next) => {
         const updated = await employeeService.updateEmployee({ employeeId, name, email,  department_id , role_name, salary, joining_date, status });
         if (!updated) return res.status(404).send({ message: "Employee not found" });
 
-        res.redirect('/employees');
+        res.status(204).redirect('/employees');
     } catch (err) {
         res.status(500).send({ message: "Error updating employee", error: err.message });
     }
@@ -113,7 +113,7 @@ const deleteEmployee = async (req, res, next) => {
         const deleted = await employeeService.deleteEmployeeById(empId);
         if (!deleted) return res.redirect('/employees');
 
-        res.redirect('/employees');
+        res.status(200).redirect('/employees');
     } catch (err) {
         res.status(500).send({ message: "Error deleting employee", error: err.message });
     }

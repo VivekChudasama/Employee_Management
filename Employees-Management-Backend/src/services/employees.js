@@ -83,7 +83,7 @@ const updateEmployee = async ({ employeeId, name, email, role_id, joining_date, 
     employee.status = status;
     employee.joining_date = joining_date;
 
-    return await employeeRepository.save(employee);
+    return await employeeRepository.saveEmployee(employee);
 };
 
 // Delete an employee by ID (leaves role untouched)

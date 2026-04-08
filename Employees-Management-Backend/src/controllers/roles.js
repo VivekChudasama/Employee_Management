@@ -4,7 +4,7 @@ import roleService from '../services/roles.js';
 const getRoles = async (req, res, next) => {
     try {
         const roles = await roleService.findAllRoles();
-        res.send(roles);
+        res.status(200).send(roles);
     } catch (err) {
         console.log(err)
         res.status(500).send({ message: "Error listing roles", error: err.message });
@@ -46,7 +46,7 @@ const getEditRoleById = async (req, res, next) => {
             return res.redirect('/roles');
         }
 
-        res.send(role);
+        res.status(200).send(role);
     } catch (err) {
         console.log(err)
         res.status(500).send({ message: 'Error fetching role', error: err.message });
@@ -64,7 +64,7 @@ const editRole = async (req, res, next) => {
         if (!result) return res.status(404).send({ message: 'Role not found' });
 
         console.log('Role updated successfully:', result);
-        res.send({ message: 'Role updated', role: result });
+        res.status(204).send({ message: 'Role updated', role: result });
     } catch (err) {
         console.log('Error updating role:', err);
         res.status(500).send({ message: err.message });
@@ -79,7 +79,7 @@ const deleteRole = async (req, res, next) => {
         await roleService.deleteRoleById(roleId);
 
         console.log('Role deleted');
-        res.send({ message: 'Role deleted' });
+        res.status(200).send({ message: 'Role deleted' });
     } catch (err) {
         console.log('Error deleting role:', err);
         res.status(500).send({ message: err.message });

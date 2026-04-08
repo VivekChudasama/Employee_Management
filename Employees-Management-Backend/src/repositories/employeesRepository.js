@@ -14,11 +14,11 @@ export const employeeRepository = AppDataSource.getRepository(employeeSchema).ex
         return await this.find()
     },
 
-    async findOneEmployeeById() {
+    async findOneEmployeeById(id) {
         return await this.findOne({ where: { id }, relations: ["role"] })
     },
 
-    async findEmployeeWithEmployeeId() {
+    async findEmployeeWithEmployeeId(employeeId) {
         return await this.findOne({ where: { id: employeeId }, relations: ["role"] })
     },
 
