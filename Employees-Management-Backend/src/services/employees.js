@@ -81,6 +81,7 @@ const updateEmployee = async ({ employeeId, name, email, role_id, joining_date, 
     employee.status = status;
     employee.joining_date = joining_date;
 
+    // Remove role relation during save and add updated role_id to employee.
     delete employee.role;
 
     return await employeeRepository.saveEmployee(employee);

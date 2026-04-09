@@ -48,6 +48,7 @@ const deleteRoleById = async (roleId) => {
 
     const employees = await employeeRepository.findEmployeeRole({ where: { role_id: parseInt(roleId) } });
 
+    // If there are employees assigned to this role so we cannot delete the role
     if (employees && employees.length > 0) {
         throw new Error('Cannot delete role as it is assigned to employees');
     }
