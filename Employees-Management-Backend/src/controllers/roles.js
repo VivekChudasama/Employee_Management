@@ -4,91 +4,80 @@ import roleService from '../services/roles.js';
 const getRoles = async (req, res, next) => {
     try {
         const roles = await roleService.findAllRoles();
-        res.status(200).send(roles);
+        res.status(200).json(roles);
     } catch (err) {
         console.log(err)
-        res.status(500).send({ message: "Error listing roles", error: err.message });
+        res.status(500).json({ message: "Error listing roles", error: err.message });
     }
 };
-
-// // Render add role form
-// const getAddRole = (req, res, next) => {
-//     try {
-//         res.status(200).send({ message: 'Render add role form' });
-//     } catch (err) {
-//         res.status(500).send({ message: 'Error rendering add role form', error: err.message });
-//     }
-// };
 
 // Handle add role form submission
 const postAddRole = async (req, res, next) => {
     try {
         const { role, salary, department_id } = req.body;
 
-        await roleService.createRole({ role, salary, department_id });
+        const result = await roleService.createRole({ role, salary, department_id });
 
         console.log('Role added');
-        res.redirect('/roles');
+        res.status(201).json({ message: 'Role added successfully' });
     } catch (err) {
         console.log(err)
-        res.status(500)
-            .send({ message: err.message });
+        res.status(500).json({ message: err.message });
     }
 };
 
-// Render edit role form with role data
+// Get role by ID for editing
 const getEditRoleById = async (req, res, next) => {
     try {
         const roleId = req.params.roleId;
 
         const role = await roleService.findRoleById(roleId);
         if (!role) {
-            return res.redirect('/roles');
+            return res.status(404).json({ message: 'Role not found' });
         }
 
-        res.status(200).send(role);
+        res.status(200).json(role);
     } catch (err) {
         console.log(err)
-        res.status(500).send({ message: 'Error fetching role', error: err.message });
+        res.status(500).json({ message: 'Error fetching role', error: err.message });
     }
 };
 
-// Handle edit role form submission
+// Handle edit role submission
 const editRole = async (req, res, next) => {
     try {
         console.log('Edit role request body:', req.body);
 
-        const { roleId, updatedRole, updatedSalary, updatedDepartmentId } = req.body;
+        const { id, role, salary, department_id } = req.body;
 
-        const result = await roleService.updateRole({ roleId, updatedRole, updatedSalary, updatedDepartmentId });
-        if (!result) return res.status(404).send({ message: 'Role not found' });
+        const result = await roleService.updateRole({ roleId: id, updatedRole: role, updatedSalary: salary, updatedDepartmentId: department_id });
+        if (!result) return res.status(404).json({ message: 'Role not found' });
 
         console.log('Role updated successfully:', result);
-        res.status(204).send({ message: 'Role updated', role: result });
+        res.status(200).json({ message: 'Role updated', role: result });
     } catch (err) {
         console.log('Error updating role:', err);
-        res.status(500).send({ message: err.message });
+        res.status(500).json({ message: err.message });
     }
 };
 
 // Handle delete role request
 const deleteRole = async (req, res, next) => {
     try {
-        const { roleId } = req.body;
+        const { id } = req.body;
 
-        await roleService.deleteRoleById(roleId);
+        await roleService.deleteRoleById(id);
 
         console.log('Role deleted');
-        res.status(200).send({ message: 'Role deleted' });
+        res.status(200).json({ message: 'Role deleted' });
     } catch (err) {
         console.log('Error deleting role:', err);
-        res.status(500).send({ message: err.message });
+        res.status(500).json({ message: err.message });
     }
 };
 
 export default {
     getRoles,
-    // getAddRole,
     postAddRole,
     getEditRoleById,
     editRole,

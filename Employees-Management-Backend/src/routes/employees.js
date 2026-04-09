@@ -7,8 +7,7 @@ const router = express.Router();
 // //get list of employees
 router.get('/', Controller.getEmployees);
 
-// //add new employee
-// router.get('/add-employee', Controller.getEmployeesDepartments);
+// add new employee
 router.post('/add-employee', Controller.postAddEmployee);
 
 //edit and delete employee by id

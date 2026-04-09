@@ -3,7 +3,7 @@ import { roleRepository } from '../repositories/rolesRepository.js';
 import { departmentRepository } from '../repositories/employeesRepository.js';
 import { employeeRepository } from '../repositories/employeesRepository.js';
 
-// Get all employees with optional search & filters
+// Get all employees with search & filters
 const findAllEmployees = async ({ search, department_id, status, min_salary, max_salary }) => {
     let findOptions = {
         relations: ["role", "role.department"]
@@ -56,17 +56,15 @@ const findAllRoles = async () => {
 
 // Find employee by ID with role relation
 const findEmployeeById = async (id) => {
-    return await employeeRepository.findOneEmployeeById({ where: { id }, relations: ["role"] });
+    return await employeeRepository.findOneEmployeeById(id);
 };
 
 // Create a new employee
-const createEmployee = async ({ name, email, department_id, role_name, salary, joining_date, status }) => {
+const createEmployee = async ({ name, email, role_id, joining_date, status }) => {
     return await employeeRepository.saveEmployee({
         name,
         email,
-        department_id: parseInt(department_id),
-        role_name,
-        salary: parseInt(salary),
+        role_id: parseInt(role_id),
         joining_date,
         status
     });
@@ -74,21 +72,23 @@ const createEmployee = async ({ name, email, department_id, role_name, salary, j
 
 // Update an existing employee
 const updateEmployee = async ({ employeeId, name, email, role_id, joining_date, status }) => {
-    const employee = await employeeRepository.findEmployeeWithEmployeeId({ where: { id: employeeId }, relations: ["role"] });
+    const employee = await employeeRepository.findEmployeeWithEmployeeId(employeeId);
     if (!employee) return null;
 
     employee.name = name;
     employee.email = email;
-    employee.role = { id: parseInt(role_id) };
+    employee.role_id = parseInt(role_id);
     employee.status = status;
     employee.joining_date = joining_date;
+
+    delete employee.role;
 
     return await employeeRepository.saveEmployee(employee);
 };
 
-// Delete an employee by ID (leaves role untouched)
+// Delete an employee by ID
 const deleteEmployeeById = async (id) => {
-    const employee = await employeeRepository.findOneEmployeeById({ where: { id }, relations: ["role"] });
+    const employee = await employeeRepository.findOneEmployeeById(id);
     if (!employee) return null;
 
     return await employeeRepository.removeEmployeeById(employee);
