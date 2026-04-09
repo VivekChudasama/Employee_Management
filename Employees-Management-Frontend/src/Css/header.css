@@ -1,0 +1,33 @@
+
+.nav-bar {
+  background-color: var(--secondary-dark-gray);
+}
+
+.nav-bar .nav-bar-content .nav-text {
+  font-size: 18px;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+  border: 1px solid transparent;
+  padding: 10px 25px;
+  font-weight: 400;
+}
+
+.nav-bar .nav-bar-content .nav-text:hover {
+  padding: 10px 25px;
+  border-color: var(--primary-black);
+}
+
+.nav-bar .nav-bar-content .nav-link.active {
+  padding: 10px 25px;
+  border-color: var(--primary-black);
+}
+
+.custom-radius-50 {
+  border-radius: 50px;
+}
+
+@media (max-width: 767px) {
+  .nav-bar .nav-bar-content .navbar-toggler {
+    transform: scale(0.95);
+  }
+}

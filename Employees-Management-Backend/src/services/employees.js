@@ -27,6 +27,7 @@ const findAllEmployees = async ({ search, department_id, status, min_salary, max
         roleFilter.salary = LessThanOrEqual(parseInt(max_salary));
     }
 
+    // This method which return all the roles based on the filter applied on role and department
     if (Object.keys(roleFilter).length > 0) {
         Filter.role = roleFilter;
     }
