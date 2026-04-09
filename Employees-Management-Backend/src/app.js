@@ -6,10 +6,8 @@ const PORT = 3001;
 
 // Initialize database 
 AppDataSource.initialize()
-    .then(() => {
+    .then(result => { 
         console.log('Database initialized');
-    })
-    .then(result => {
         console.log('Database synced');
         // Start server
         app.listen(PORT, () => {
