@@ -7,7 +7,4 @@ export class Constants {
         NOT_FOUND_CODE: 404,
         INTERNAL_SERVER_ERROR_CODE: 500,
     };
-
-    static EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
 }
