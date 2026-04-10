@@ -78,11 +78,6 @@ const updateEmployee = async ({ employeeId, name, email, role_id, joining_date, 
         throw new Error(ResponseMessages.employee.ERROR_EMPLOYEE_ID_REQUIRED);
     }
 
-    // Check the fields are provided and not empty
-    if (!name || !email || !role_id || !joining_date || !status) {
-        throw new Error(ResponseMessages.employee.ERROR_UPDATING_EMPLOYEE);
-    }
-
     const existingEmployee = await employeeRepository.findOneEmployeeById(employeeId);
     if (!existingEmployee) return ResponseMessages.employee.ERROR_EMPLOYEE_ID;
 

@@ -73,14 +73,20 @@ const editEmployeeDetails = async (req, res, next) => {
     try {
         const { employeeId, name, email, role_id, joining_date, status } = req.body;
 
+        const employee = await employeeService.findEmployeeById(employeeId);
+
+        if (!employee) {
+            return res.status(Constants.RESPONSE_STATUS_CODE.NOT_FOUND_CODE)
+                .json({ message: ResponseMessages.employee.ERROR_EMPLOYEE_ID });
+        }
+
         const updated = await employeeService.updateEmployee(
             { employeeId, name, email, role_id, joining_date, status }
         );
-        if (!updated) return res.status(Constants.RESPONSE_STATUS_CODE.NOT_FOUND_CODE)
-            .json({ message: ResponseMessages.employee.ERROR_EMPLOYEE_ID });
 
-        res.status(Constants.RESPONSE_STATUS_CODE.SUCCESS_CODE)
-            .json({ message: ResponseMessages.employee.EMPLOYEE_UPDATED, employee: updated });
+        if (updated) res.status(Constants.RESPONSE_STATUS_CODE.SUCCESS_CODE)
+            .json({ message: ResponseMessages.employee.EMPLOYEE_UPDATED });
+
     } catch (err) {
         res.status(Constants.RESPONSE_STATUS_CODE.INTERNAL_SERVER_ERROR_CODE)
             .json({ message: ResponseMessages.employee.ERROR_UPDATING_EMPLOYEE, error: err.message });
@@ -91,6 +97,13 @@ const editEmployeeDetails = async (req, res, next) => {
 const deleteEmployee = async (req, res, next) => {
     try {
         const empId = req.body.employeeId;
+
+        const employee = await employeeService.findEmployeeById(empId);
+
+        if (!employee) {
+            return res.status(Constants.RESPONSE_STATUS_CODE.NOT_FOUND_CODE)
+                .json({ message: ResponseMessages.employee.ERROR_EMPLOYEE_ID });
+        }
 
         const deleted = await employeeService.deleteEmployeeById(empId);
         if (!empId) return res.status(Constants.RESPONSE_STATUS_CODE.NOT_FOUND_CODE)
