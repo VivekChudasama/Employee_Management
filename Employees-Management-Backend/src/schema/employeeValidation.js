@@ -39,6 +39,10 @@ export const addEmployeeValidation = [
         .notEmpty().withMessage('Role name is required').isLength({ min: 3, max: 30 })
         .withMessage('Name is in between 3 to 30 character').trim(),
 
+    body('department').isString().withMessage('Department must be a string')
+        .notEmpty().withMessage('Department is required'),
+    
+
     body('salary').isNumeric().withMessage('Name must be a Numeric').notEmpty().withMessage('Salary is required'),
 
     body('status').isIn(['active', 'inactive']).notEmpty().withMessage('Status must be either active or inactive'),
@@ -59,6 +63,8 @@ export const updateEmployessValidation = [
 
     body('role_name').optional().isString().withMessage('Role name must be a string')
         .isLength({ min: 3, max: 30 }).withMessage('Name is in between 3 to 30 character').trim(),
+
+    body('department').optional().isString().withMessage('Department must be a string'),
 
     body('salary').optional().isNumeric().withMessage('Name must be a Numeric'),
 
