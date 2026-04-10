@@ -51,7 +51,7 @@ const getRoleDetailsById = async (req, res, next) => {
 };
 
 // Handle edit role submission
-const editRole = async (req, res, next) => {
+const editRoleDetails = async (req, res, next) => {
     try {
         const { id, role, salary, department_id } = req.body;
 
@@ -88,6 +88,6 @@ export default {
     getRoles,
     postAddRole,
     getRoleDetailsById,
-    editRole,
+    editRoleDetails,
     deleteRole
 };

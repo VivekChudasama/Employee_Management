@@ -69,7 +69,7 @@ const getEmployeeDetailById = async (req, res, next) => {
 };
 
 // Handle edit employee form submission
-const editEmployee = async (req, res, next) => {
+const editEmployeeDetails = async (req, res, next) => {
     try {
         const { employeeId, name, email, role_id, joining_date, status } = req.body;
 
@@ -110,6 +110,6 @@ export default {
     getEmployees,
     postAddEmployee,
     getEmployeeDetailById,
-    editEmployee,
+    editEmployeeDetails,
     deleteEmployee
 };
