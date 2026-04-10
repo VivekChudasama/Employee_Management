@@ -22,14 +22,13 @@ export class ResponseMessages {
         ERROR_UPDATING_ROLE: "Error updating role",
         ERROR_DELETING_ROLE: "Error deleting role",
         ERROR_ROLE_ID_REQUIRED: "Role ID is required",
+        ERROR_ROLE_NAME_REQUIRED: "Role Name is required",
         ERROR_ROLE_ID: "Role not found with the provided ID",
         ERROR_ROLE_ASSIGNED: "Cannot delete role as it is assigned to employees"
     };
 
-    static department = {
-        DEPARTMENT_CREATED: "Department created successfully",
-        DEPARTMENT_UPDATED: "Department updated successfully",
-        DEPARTMENT_DELETED: "Department deleted successfully"
-    };
+    static Route = {
+        ERROR_FOUND_ROUTE : "Route not found"
+    }
 
 }

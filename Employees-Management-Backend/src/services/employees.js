@@ -2,6 +2,7 @@ import { Like, Between, MoreThanOrEqual, LessThanOrEqual } from "typeorm";
 import { roleRepository } from '../repositories/rolesRepository.js';
 import { departmentRepository } from '../repositories/departmentRepository.js';
 import { employeeRepository } from '../repositories/employeesRepository.js';
+import { ResponseMessages } from '../config/response_messages.js'
 
 // Get all employees with search & filters
 const findAllEmployees = async ({ search, department_id, status, min_salary, max_salary }) => {
@@ -73,25 +74,41 @@ const createEmployee = async ({ name, email, role_id, joining_date, status }) =>
 
 // Update an existing employee
 const updateEmployee = async ({ employeeId, name, email, role_id, joining_date, status }) => {
-    const employee = await employeeRepository.findOneEmployeeById(employeeId);
-    if (!employee) return null;
- 
-    employee.name = name;
-    employee.email = email;
-    employee.role_id = parseInt(role_id);
-    employee.status = status;
-    employee.joining_date = joining_date;
+    if (!employeeId) {
+        throw new Error(ResponseMessages.employee.ERROR_EMPLOYEE_ID_REQUIRED);
+    }
+
+    // Check the fields are provided and not empty
+    if (!name || !email || !role_id || !joining_date || !status) {
+        throw new Error(ResponseMessages.employee.ERROR_UPDATING_EMPLOYEE);
+    }
+
+    const existingEmployee = await employeeRepository.findOneEmployeeById(employeeId);
+    if (!existingEmployee) return ResponseMessages.employee.ERROR_EMPLOYEE_ID;
+
+    existingEmployee.name = name;
+    existingEmployee.email = email;
+    existingEmployee.role_id = parseInt(role_id);
+    existingEmployee.status = status;
+    existingEmployee.joining_date = joining_date;
 
     // Remove role relation during save and add updated role_id to employee.
-    delete employee.role;
+    delete existingEmployee.role;
 
-    return await employeeRepository.saveEmployee(employee);
+    return await employeeRepository.saveEmployee(existingEmployee);
 };
 
 // Delete an employee by ID
 const deleteEmployeeById = async (id) => {
+    if (!id) {
+        throw new Error(ResponseMessages.employee.ERROR_EMPLOYEE_ID_REQUIRED);
+    }
+
     const employee = await employeeRepository.findOneEmployeeById(id);
-    if (!employee) return null;
+
+    if (!employee) {
+        throw new Error(ResponseMessages.employee.ERROR_EMPLOYEE_ID);
+    }
 
     return await employeeRepository.removeEmployeeById(employee);
 };

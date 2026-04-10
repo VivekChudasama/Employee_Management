@@ -93,11 +93,13 @@ const deleteEmployee = async (req, res, next) => {
         const empId = req.body.employeeId;
 
         const deleted = await employeeService.deleteEmployeeById(empId);
-        if (!deleted) return res.status(Constants.RESPONSE_STATUS_CODE.NOT_FOUND_CODE)
+        if (!empId) return res.status(Constants.RESPONSE_STATUS_CODE.NOT_FOUND_CODE)
             .json({ message: ResponseMessages.employee.ERROR_EMPLOYEE_ID });
+        else {
+            res.status(Constants.RESPONSE_STATUS_CODE.SUCCESS_CODE)
+                .json({ message: ResponseMessages.employee.EMPLOYEE_DELETED });
+        }
 
-        res.status(Constants.RESPONSE_STATUS_CODE.SUCCESS_CODE)
-            .json({ message: ResponseMessages.employee.EMPLOYEE_DELETED });
     } catch (err) {
         res.status(Constants.RESPONSE_STATUS_CODE.INTERNAL_SERVER_ERROR_CODE)
             .json({ message: ResponseMessages.employee.ERROR_DELETING_EMPLOYEE, error: err.message });

@@ -14,7 +14,7 @@ export const validate = (req, res, next) => {
 
 // Employee validation rules
 export const employeeValidationRules = [
-    body('name').trim().notEmpty().withMessage('Name is required'),
+    body('name').isString().trim().notEmpty().withMessage('Name is required'),
     body('email').isEmail().notEmpty().withMessage('Invalid email format'),
     body('role_id').isInt().notEmpty().withMessage('Role ID must be a valid integer'),
     body('status').isIn(['active', 'inactive']).notEmpty().withMessage('Status must be either active or inactive'),

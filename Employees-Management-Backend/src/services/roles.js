@@ -1,5 +1,6 @@
 import {roleRepository} from '../repositories/rolesRepository.js';
 import {employeeRepository} from '../repositories/employeesRepository.js';
+import { ResponseMessages } from '../config/response_messages.js'
 
 // Get all roles
 const findAllRoles = async () => {
@@ -14,7 +15,7 @@ const findRoleById = async (id) => {
 // Create a new role
 const createRole = async ({ role , salary , department_id }) => {
     if (!role) {
-        throw new Error('Role name is required');
+        throw new Error(ResponseMessages.role.ERROR_ROLE_NAME_REQUIRED);
     }
 
     return await roleRepository.createRole({
@@ -27,12 +28,12 @@ const createRole = async ({ role , salary , department_id }) => {
 // Update an existing role
 const updateRole = async ({ roleId, updatedRole, updatedSalary, updatedDepartmentId }) => {
     if (!roleId) {
-        throw new Error('Role ID is required');
+        throw new Error(ResponseMessages.role.ERROR_ROLE_ID_REQUIRED);
     }
 
-    // Check if both the fields are provided and not empty
+    // Check the fields are provided and not empty
     if (!updatedRole || !updatedSalary || !updatedDepartmentId) {
-        throw new Error('Role name, salary and department are required');
+        throw new Error(ResponseMessages.role.ERROR_UPDATING_ROLE);
     }
 
     const existingRole = await roleRepository.findRolesById(roleId);
@@ -48,19 +49,19 @@ const updateRole = async ({ roleId, updatedRole, updatedSalary, updatedDepartmen
 // Delete a role (only if not assigned to any employee)
 const deleteRoleById = async (roleId) => {
     if (!roleId) {
-        throw new Error('Role ID is required');
+        throw new Error(ResponseMessages.role.ERROR_ROLE_ID_REQUIRED);
     }
 
     const existingRole = await roleRepository.findRolesById(roleId);
     if (!existingRole) {
-        throw new Error('Role not found');
+        throw new Error(ResponseMessages.role.ERROR_ROLE_ID);
     }
 
-    const employees = await employeeRepository.findEmployeeRole({ where: { role_id: parseInt(roleId) } });
+    const employees = await employeeRepository.findEmployeeRoleById({ where: { role_id: parseInt(roleId) } });
 
     // If there are employees assigned to this role so we cannot delete the role
     if (employees && employees.length > 0) {
-        throw new Error('Cannot delete role as it is assigned to employees');
+        throw new Error(ResponseMessages.role.ERROR_ROLE_ASSIGNED);
     }
 
     return await roleRepository.deleteRole({ id: parseInt(roleId) });

@@ -59,10 +59,10 @@ const editRole = async (req, res, next) => {
             { roleId: id, updatedRole: role, updatedSalary: salary, updatedDepartmentId: department_id }
         );
         if (!result) return res.status(Constants.RESPONSE_STATUS_CODE.NOT_FOUND_CODE)
-            .json({ message: 'Role not found' });
+            .json({ message:  ResponseMessages.role.ERROR_ROLE_ID });
 
         res.status(Constants.RESPONSE_STATUS_CODE.SUCCESS_CODE)
-            .json({ message: ResponseMessages.role.ROLE_UPDATED, role: result });
+            .json({ message: ResponseMessages.role.ROLE_UPDATED });
     } catch (err) {
         res.status(Constants.RESPONSE_STATUS_CODE.INTERNAL_SERVER_ERROR_CODE)
             .json({ message: err.message });
