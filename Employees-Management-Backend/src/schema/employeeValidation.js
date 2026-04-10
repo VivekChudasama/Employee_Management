@@ -69,5 +69,6 @@ export const updateEmployessValidation = [
 
 // Employee delete validation rules
 export const deletEmployessValidation = [
-    body('id').isNumeric().withMessage('Employee ID must be a valid integer').notEmpty().withMessage('Employee ID is required')
+    body('employeeId').notEmpty().withMessage('Employee ID is required')
+        .isInt().withMessage('Employee ID must be a valid integer')
 ];
