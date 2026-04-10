@@ -1,6 +1,6 @@
 import express from 'express';
-
 import Controller from '../controllers/roles.js';
+import { roleValidationRules, validate } from '../schema/roleValidation.js';
 
 const router = express.Router();
 
@@ -8,11 +8,13 @@ const router = express.Router();
 router.get('/', Controller.getRoles);
 
 // add new role
-router.post('/add-role', Controller.postAddRole);
+router.post('/add-role', roleValidationRules, validate, Controller.postAddRole);
 
-//edit and delete role by id
-router.get('/:roleId', Controller.getEditRoleById);
-router.put('/', Controller.editRole);
+//edit role by id
+router.get('/:roleId', Controller.getRoleDetailsById);
+router.put('/', roleValidationRules, validate, Controller.editRole);
+
+//delete role
 router.delete('/delete-role/', Controller.deleteRole);
 
 export default router;

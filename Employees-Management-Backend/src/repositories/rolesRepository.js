@@ -1,13 +1,5 @@
 import roleSchema from '../entities/roles.js';
-import employeeSchema from '../entities/employees.js';
 import { AppDataSource } from '../util/database.js';
-
-// Employee repository with custom methods for for fetching employee data for role deletion
-export const employeeRepository = AppDataSource.getRepository(employeeSchema).extend({
-    async findEmployeeRole(roleId) {
-        return await this.find(roleId)
-    }
-});
 
 //// Role repository with custom methods for for fetching role data
 export const roleRepository = AppDataSource.getRepository(roleSchema).extend({

@@ -2,12 +2,12 @@
   "name": "Employee Management System",
   "version": "1.0.0",
   "description": "Employee Management System is a web application designed to streamline and automate the management of employee information within an organization. It provides a centralized platform for HR departments and managers to efficiently handle various aspects of employee management.",
-  "main": "app.js",
+  "main": "src/app.js",
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon app.js",
-    "start-server": "node app.js"
+    "start": "nodemon src/app.js",
+    "start-server": "node src/app.js"
   },
   "author": "vivek chudasama",
   "license": "ISC",
@@ -17,7 +17,9 @@
   "dependencies": {
     "body-parser": "^1.18.3",
     "cors": "^2.8.6",
+    "dotenv": "^17.4.1",
     "express": "^4.16.3",
+    "express-validator": "^7.3.2",
     "method-override": "^3.0.0",
     "mysql2": "^3.20.0",
     "reflect-metadata": "^0.2.2",

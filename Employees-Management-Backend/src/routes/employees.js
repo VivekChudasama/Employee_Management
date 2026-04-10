@@ -1,6 +1,6 @@
 import express from 'express';
-
 import Controller from '../controllers/employees.js';
+import { employeeValidationRules, validate } from '../schema/employeeValidation.js';
 
 const router = express.Router();
 
@@ -8,11 +8,13 @@ const router = express.Router();
 router.get('/', Controller.getEmployees);
 
 // add new employee
-router.post('/add-employee', Controller.postAddEmployee);
+router.post('/add-employee', employeeValidationRules, validate, Controller.postAddEmployee);
 
-//edit and delete employee by id
-router.get('/:employeeId', Controller.getEditEmployeeDetailById);
-router.put('/', Controller.editEmployee);
+//edit employee by id
+router.get('/:employeeId', Controller.getEmployeeDetailById);
+router.put('/', employeeValidationRules, validate, Controller.editEmployee);
+
+//delete employee
 router.delete('/delete-employee', Controller.deleteEmployee);
 
 export default router;

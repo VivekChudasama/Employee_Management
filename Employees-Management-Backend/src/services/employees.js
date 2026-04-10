@@ -1,6 +1,6 @@
 import { Like, Between, MoreThanOrEqual, LessThanOrEqual } from "typeorm";
 import { roleRepository } from '../repositories/rolesRepository.js';
-import { departmentRepository } from '../repositories/employeesRepository.js';
+import { departmentRepository } from '../repositories/departmentRepository.js';
 import { employeeRepository } from '../repositories/employeesRepository.js';
 
 // Get all employees with search & filters
@@ -73,9 +73,9 @@ const createEmployee = async ({ name, email, role_id, joining_date, status }) =>
 
 // Update an existing employee
 const updateEmployee = async ({ employeeId, name, email, role_id, joining_date, status }) => {
-    const employee = await employeeRepository.findEmployeeWithEmployeeId(employeeId);
+    const employee = await employeeRepository.findOneEmployeeById(employeeId);
     if (!employee) return null;
-
+ 
     employee.name = name;
     employee.email = email;
     employee.role_id = parseInt(role_id);

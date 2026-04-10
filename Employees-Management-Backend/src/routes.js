@@ -26,4 +26,4 @@ app.use('/roles', roleRoutes);
 // 404 route
 app.use(get404);
 
-export default app;
+export default app; 

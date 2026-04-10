@@ -1,12 +1,11 @@
 import app from './routes.js';
-
 import { AppDataSource } from './util/database.js';
 
-const PORT = 3001;
+const PORT = process.env.PORT;
 
 // Initialize database 
 AppDataSource.initialize()
-    .then(result => { 
+    .then(() => {
         console.log('Database initialized');
         console.log('Database synced');
         // Start server
@@ -16,4 +15,4 @@ AppDataSource.initialize()
     })
     .catch(err => {
         console.log(err);
-    });
+    });  

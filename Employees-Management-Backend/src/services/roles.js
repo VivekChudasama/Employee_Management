@@ -1,5 +1,5 @@
 import {roleRepository} from '../repositories/rolesRepository.js';
-import {employeeRepository} from '../repositories/rolesRepository.js';
+import {employeeRepository} from '../repositories/employeesRepository.js';
 
 // Get all roles
 const findAllRoles = async () => {
@@ -30,12 +30,17 @@ const updateRole = async ({ roleId, updatedRole, updatedSalary, updatedDepartmen
         throw new Error('Role ID is required');
     }
 
+    // Check if both the fields are provided and not empty
+    if (!updatedRole || !updatedSalary || !updatedDepartmentId) {
+        throw new Error('Role name, salary and department are required');
+    }
+
     const existingRole = await roleRepository.findRolesById(roleId);
     if (!existingRole) return null;
 
-    if (updatedRole) existingRole.role = updatedRole;
-    if (updatedSalary) existingRole.salary = parseInt(updatedSalary);
-    if (updatedDepartmentId) existingRole.department_id = parseInt(updatedDepartmentId);
+    existingRole.role = updatedRole;
+    existingRole.salary = parseInt(updatedSalary);
+    existingRole.department_id = parseInt(updatedDepartmentId);
 
     return await roleRepository.saveRole(existingRole);
 };
@@ -44,6 +49,11 @@ const updateRole = async ({ roleId, updatedRole, updatedSalary, updatedDepartmen
 const deleteRoleById = async (roleId) => {
     if (!roleId) {
         throw new Error('Role ID is required');
+    }
+
+    const existingRole = await roleRepository.findRolesById(roleId);
+    if (!existingRole) {
+        throw new Error('Role not found');
     }
 
     const employees = await employeeRepository.findEmployeeRole({ where: { role_id: parseInt(roleId) } });

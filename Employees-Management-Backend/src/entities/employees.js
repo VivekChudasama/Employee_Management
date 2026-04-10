@@ -1,7 +1,8 @@
 import { EntitySchema } from "typeorm";
+import { Tables } from "../config/tables.js";
 
 const employeesSchema = new EntitySchema({
-    name: "employees",
+    name: Tables.EMPLOYEES,
     columns: {
         id: {
             type: "int",
