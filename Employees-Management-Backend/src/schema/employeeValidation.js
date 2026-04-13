@@ -20,6 +20,8 @@ export const getEmployeeValidation = [
 
     query('status').optional().isIn(['active', 'inactive']).withMessage('Status must be either active or inactive'),
 
+    query('department_id').optional().isInt().withMessage('Department ID must be a valid integer'),
+
     query('min_salary').optional().isNumeric().withMessage('Minimum salary must be a numeric value'),
 
     query('max_salary').optional().isNumeric().withMessage('Maximum salary must be a numeric value'),
@@ -35,15 +37,9 @@ export const addEmployeeValidation = [
 
     body('role_id').isInt().withMessage('Role ID must be a valid integer').notEmpty().withMessage('Role_id is required'),
 
-    body('role_name').isString().withMessage('Role name must be a string')
-        .notEmpty().withMessage('Role name is required').isLength({ min: 3, max: 30 })
-        .withMessage('Name is in between 3 to 30 character').trim(),
+    body('department').isString().withMessage('Department must be a string').notEmpty().withMessage('Department is required'),
 
-    body('department').isString().withMessage('Department must be a string')
-        .notEmpty().withMessage('Department is required'),
-    
-
-    body('salary').isNumeric().withMessage('Name must be a Numeric').notEmpty().withMessage('Salary is required'),
+    body('salary').isNumeric().withMessage('Salary must be a Numeric').notEmpty().withMessage('Salary is required'),
 
     body('status').isIn(['active', 'inactive']).notEmpty().withMessage('Status must be either active or inactive'),
 
@@ -53,6 +49,9 @@ export const addEmployeeValidation = [
 
 // Employee update validation rules
 export const updateEmployessValidation = [
+    body('employeeId').notEmpty().withMessage('Employee ID is required')
+        .isInt().withMessage('Employee ID must be a valid integer'),
+
     body('name').optional().isString().withMessage('Name must be a string')
         .matches(/^[^0-9]*$/).withMessage('Name cannot contain numbers')
         .isLength({ min: 3, max: 50 }).withMessage('Name is in between 3 to 50 character').trim(),
@@ -61,12 +60,9 @@ export const updateEmployessValidation = [
 
     body('role_id').optional().isInt().withMessage('Role ID must be a valid integer'),
 
-    body('role_name').optional().isString().withMessage('Role name must be a string')
-        .isLength({ min: 3, max: 30 }).withMessage('Name is in between 3 to 30 character').trim(),
-
     body('department').optional().isString().withMessage('Department must be a string'),
 
-    body('salary').optional().isNumeric().withMessage('Name must be a Numeric'),
+    body('salary').optional().isNumeric().withMessage('Salary must be a Numeric'),
 
     body('status').optional().isIn(['active', 'inactive']).withMessage('Status must be either active or inactive'),
 

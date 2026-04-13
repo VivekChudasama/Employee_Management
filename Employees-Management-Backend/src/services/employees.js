@@ -17,15 +17,15 @@ const findAllEmployees = async ({ search, department_id, status, min_salary, max
 
     let roleFilter = {};
     if (department_id) {
-        roleFilter.department_id = parseInt(department_id);
+        roleFilter.department_id = department_id;
     }
 
     if (min_salary && max_salary) {
-        roleFilter.salary = Between(parseInt(min_salary), parseInt(max_salary));
+        roleFilter.salary = Between((min_salary), (max_salary));
     } else if (min_salary) {
-        roleFilter.salary = MoreThanOrEqual(parseInt(min_salary));
+        roleFilter.salary = MoreThanOrEqual(min_salary);
     } else if (max_salary) {
-        roleFilter.salary = LessThanOrEqual(parseInt(max_salary));
+        roleFilter.salary = LessThanOrEqual(max_salary);
     }
 
     // This method which return all the roles based on the filter applied on role and department
@@ -66,7 +66,7 @@ const createEmployee = async ({ name, email, role_id, joining_date, status }) =>
     return await employeeRepository.saveEmployee({
         name,
         email,
-        role_id: parseInt(role_id),
+        role_id,
         joining_date,
         status
     });
@@ -74,16 +74,12 @@ const createEmployee = async ({ name, email, role_id, joining_date, status }) =>
 
 // Update an existing employee
 const updateEmployee = async ({ employeeId, name, email, role_id, joining_date, status }) => {
-    if (!employeeId) {
-        throw new Error(ResponseMessages.employee.ERROR_EMPLOYEE_ID_REQUIRED);
-    }
-
     const existingEmployee = await employeeRepository.findOneEmployeeById(employeeId);
     if (!existingEmployee) return ResponseMessages.employee.ERROR_EMPLOYEE_ID;
 
     existingEmployee.name = name;
     existingEmployee.email = email;
-    existingEmployee.role_id = parseInt(role_id);
+    existingEmployee.role_id = role_id;
     existingEmployee.status = status;
     existingEmployee.joining_date = joining_date;
 
@@ -95,10 +91,6 @@ const updateEmployee = async ({ employeeId, name, email, role_id, joining_date, 
 
 // Delete an employee by ID
 const deleteEmployeeById = async (id) => {
-    if (!id) {
-        throw new Error(ResponseMessages.employee.ERROR_EMPLOYEE_ID_REQUIRED);
-    }
-
     const employee = await employeeRepository.findOneEmployeeById(id);
 
     if (!employee) {
