@@ -9,7 +9,7 @@ export class ResponseMessages {
         ERROR_UPDATING_EMPLOYEE: "Error updating employee",
         ERROR_DELETING_EMPLOYEE: "Error deleting employee",
         ERROR_EMPLOYEE_ID_REQUIRED: "Employee ID is required",
-        ERROR_EMPLOYEE_ID: "Employee not found with the provided ID",
+        ERROR_EMPLOYEE_ID: "Employee not found with the provided EMPLOYEE ID",
     };
 
     static role = {
@@ -23,7 +23,7 @@ export class ResponseMessages {
         ERROR_DELETING_ROLE: "Error deleting role",
         ERROR_ROLE_ID_REQUIRED: "Role ID is required",
         ERROR_ROLE_NAME_REQUIRED: "Role Name is required",
-        ERROR_ROLE_ID: "Role not found with the provided ID",
+        ERROR_ROLE_ID: "Role not found with the provided ROLE ID",
         ERROR_ROLE_ASSIGNED: "Cannot delete role as it is assigned to employees"
     };
 

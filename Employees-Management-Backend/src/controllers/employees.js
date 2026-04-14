@@ -65,14 +65,14 @@ const getEmployeeDetailById = async (req, res, next) => {
     }
 };
 
-// Handle edit employee form submission
+// Handle edit employee submission
 const editEmployeeDetails = async (req, res, next) => {
     try {
         const { employeeId, name, email, role_id, joining_date, status } = req.body;
 
-        const employee = await employeeService.findEmployeeById(employeeId);
+        const existingEmployee = await employeeService.findEmployeeById(employeeId);
 
-        if (!employee) {
+        if (!existingEmployee) {
             return res.status(Constants.RESPONSE_STATUS_CODE.NOT_FOUND_CODE)
                 .json({ message: ResponseMessages.employee.ERROR_EMPLOYEE_ID });
         }
@@ -81,7 +81,7 @@ const editEmployeeDetails = async (req, res, next) => {
             { employeeId, name, email, role_id, joining_date, status }
         );
 
-        if (updated) res.status(Constants.RESPONSE_STATUS_CODE.SUCCESS_CODE)
+        if (updated) return res.status(Constants.RESPONSE_STATUS_CODE.SUCCESS_CODE)
             .json({ message: ResponseMessages.employee.EMPLOYEE_UPDATED });
 
     } catch (err) {
@@ -95,9 +95,9 @@ const deleteEmployee = async (req, res, next) => {
     try {
         const empId = req.params.employeeId;
 
-        const employee = await employeeService.findEmployeeById(empId);
+        const existingEmployee = await employeeService.findEmployeeById(empId);
 
-        if (!employee) {
+        if (!existingEmployee) {
             return res.status(Constants.RESPONSE_STATUS_CODE.NOT_FOUND_CODE)
                 .json({ message: ResponseMessages.employee.ERROR_EMPLOYEE_ID });
         }

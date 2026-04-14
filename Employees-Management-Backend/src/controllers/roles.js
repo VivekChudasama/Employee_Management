@@ -51,17 +51,22 @@ const editRoleDetails = async (req, res, next) => {
     try {
         const { role_id, role, salary, department_id } = req.body;
 
+        const existingRole = await roleService.findRoleById(role_id);
+
+        if (!existingRole) {
+            return res.status(Constants.RESPONSE_STATUS_CODE.NOT_FOUND_CODE)
+                .json({ message: ResponseMessages.role.ERROR_ROLE_ID });
+        }
+
         const result = await roleService.updateRole(
             { roleId: role_id, updatedRole: role, updatedSalary: salary, updatedDepartmentId: department_id }
         );
-        if (!result) return res.status(Constants.RESPONSE_STATUS_CODE.NOT_FOUND_CODE)
-            .json({ message:  ResponseMessages.role.ERROR_ROLE_ID });
-
-        res.status(Constants.RESPONSE_STATUS_CODE.SUCCESS_CODE)
+        if (result) return res.status(Constants.RESPONSE_STATUS_CODE.SUCCESS_CODE)
             .json({ message: ResponseMessages.role.ROLE_UPDATED });
+
     } catch (err) {
         res.status(Constants.RESPONSE_STATUS_CODE.INTERNAL_SERVER_ERROR_CODE)
-            .json({ message: err.message });
+            .json({ message: ResponseMessages.role.ERROR_UPDATING_ROLE});
     }
 };
 
@@ -69,6 +74,13 @@ const editRoleDetails = async (req, res, next) => {
 const deleteRole = async (req, res, next) => {
     try {
         const  roleId  = req.params.roleId;
+
+        const existingRole = await roleService.findRoleById(roleId);
+
+        if (!existingRole) {
+            return res.status(Constants.RESPONSE_STATUS_CODE.NOT_FOUND_CODE)
+                .json({ message: ResponseMessages.role.ERROR_ROLE_ID });
+        }
 
         await roleService.deleteRoleById(roleId);
 
