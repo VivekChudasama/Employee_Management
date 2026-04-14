@@ -18,6 +18,7 @@ export class ResponseMessages {
         ROLE_CREATED: "Role created successfully",
         ROLE_UPDATED: "Role updated successfully",
         ROLE_DELETED: "Role deleted successfully",
+        ROLE_FETCHED: "Role data fetched successfully",
         ERROR_FETCHING_ROLES: "Error fetching roles list",
         ERROR_FETCHING_ROLE: "Error fetching role",
         ERROR_ADDING_ROLE: "Error adding role",

@@ -19,7 +19,7 @@ const getEmployees = async (req, res, next) => {
             .json({ message: ResponseMessages.employee.EMPLOYEES_FETCHED });
     } catch (err) {
         res.status(Constants.RESPONSE_STATUS_CODE.INTERNAL_SERVER_ERROR_CODE)
-            .json({ message: ResponseMessages.employee.ERROR_FETCHING_EMPLOYEES });
+            .json({ message: ResponseMessages.employee.ERROR_FETCHING_EMPLOYEES , error: err.message });
     }
 };
 
@@ -36,7 +36,7 @@ const postAddEmployee = async (req, res, next) => {
             .json({ message: ResponseMessages.employee.EMPLOYEE_CREATED });
     } catch (err) {
         res.status(Constants.RESPONSE_STATUS_CODE.INTERNAL_SERVER_ERROR_CODE)
-            .json({ message: ResponseMessages.employee.ERROR_ADDING_EMPLOYEE});
+            .json({ message: ResponseMessages.employee.ERROR_ADDING_EMPLOYEE , error: err.message });
     }
 };
 
@@ -45,17 +45,13 @@ const getEmployeeDetailById = async (req, res, next) => {
     try {
         const empId = req.params.employeeId;
 
-        const existingEmployee = await employeeService.findEmployeeById(empId);
-        if (!existingEmployee) {
-            return res.status(Constants.RESPONSE_STATUS_CODE.NOT_FOUND_CODE)
-                .json({ message: ResponseMessages.employee.ERROR_EMPLOYEE_ID });
-        }
+        const employee = await employeeService.findEmployeeById(empId);
 
         res.status(Constants.RESPONSE_STATUS_CODE.SUCCESS_CODE)
-            .json({ message: ResponseMessages.employee.EMPLOYEE_FETCHED, employee: existingEmployee });
+            .json({ message: ResponseMessages.employee.EMPLOYEE_FETCHED, employee });
     } catch (err) {
         res.status(Constants.RESPONSE_STATUS_CODE.INTERNAL_SERVER_ERROR_CODE)
-            .json({ message: ResponseMessages.employee.ERROR_FETCHING_EMPLOYEE});
+            .json({ message: ResponseMessages.employee.ERROR_FETCHING_EMPLOYEE , error: err.message });
     }
 };
 
@@ -66,7 +62,7 @@ const editEmployeeDetails = async (req, res, next) => {
         const { name, email, role_id, joining_date, status } = req.body;
 
         await employeeService.updateEmployee(
-            { employeeId: empId, updatedName : name, updatedEmail : email, updatedRole_id : role_id, updatedJoining_date :  joining_date, updatedStatus : status }
+            { employeeId: empId, updatedName: name, updatedEmail: email, updatedRole_id: role_id, updatedJoining_date: joining_date, updatedStatus: status }
         );
 
         res.status(Constants.RESPONSE_STATUS_CODE.SUCCESS_CODE)
@@ -74,7 +70,7 @@ const editEmployeeDetails = async (req, res, next) => {
 
     } catch (err) {
         res.status(Constants.RESPONSE_STATUS_CODE.INTERNAL_SERVER_ERROR_CODE)
-            .json({ message: ResponseMessages.employee.ERROR_UPDATING_EMPLOYEE});
+            .json({ message: ResponseMessages.employee.ERROR_UPDATING_EMPLOYEE  , error: err.message });
     }
 };
 
@@ -83,13 +79,6 @@ const deleteEmployee = async (req, res, next) => {
     try {
         const empId = req.params.employeeId;
 
-        const existingEmployee = await employeeService.findEmployeeById(empId);
-
-        if (!existingEmployee) {
-            return res.status(Constants.RESPONSE_STATUS_CODE.NOT_FOUND_CODE)
-                .json({ message: ResponseMessages.employee.ERROR_EMPLOYEE_ID });
-        }
-
         await employeeService.deleteEmployeeById(empId);
 
         res.status(Constants.RESPONSE_STATUS_CODE.SUCCESS_CODE)
@@ -97,7 +86,7 @@ const deleteEmployee = async (req, res, next) => {
 
     } catch (err) {
         res.status(Constants.RESPONSE_STATUS_CODE.INTERNAL_SERVER_ERROR_CODE)
-            .json({ message: ResponseMessages.employee.ERROR_DELETING_EMPLOYEE});
+            .json({ message: ResponseMessages.employee.ERROR_DELETING_EMPLOYEE , error: err.message });
     }
 };
 

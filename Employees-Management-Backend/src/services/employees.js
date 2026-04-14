@@ -1,5 +1,6 @@
 import { Like, Between, MoreThanOrEqual, LessThanOrEqual } from "typeorm";
 import { employeeRepository } from '../repositories/employeesRepository.js';
+import { Constants } from "../config/constants.js";
 import { ResponseMessages } from '../config/response_messages.js'
 
 // Get all employees with search & filters
@@ -46,6 +47,11 @@ const findAllEmployees = async ({ search, department_id, status, min_salary, max
 
 // Find employee by ID with role relation
 const findEmployeeById = async (id) => {
+    const existingEmployee = await employeeRepository.findOneEmployeeById(id);
+    if (!existingEmployee) {
+        throw new Error(ResponseMessages.employee.ERROR_EMPLOYEE_ID);
+    }
+
     return await employeeRepository.findOneEmployeeById(id);
 };
 
@@ -63,7 +69,9 @@ const createEmployee = async ({ name, email, role_id, joining_date, status }) =>
 // Update an existing employee
 const updateEmployee = async ({ employeeId, updatedName, updatedEmail, updatedRole_id, updatedStatus, updatedJoining_date }) => {
     const existingEmployee = await employeeRepository.findOneEmployeeById(employeeId);
-    if (!existingEmployee) return ResponseMessages.employee.ERROR_EMPLOYEE_ID;
+    if (!existingEmployee) {
+        throw new Error(ResponseMessages.employee.ERROR_EMPLOYEE_ID );
+    };
 
     existingEmployee.name = updatedName;
     existingEmployee.email = updatedEmail;
@@ -78,14 +86,14 @@ const updateEmployee = async ({ employeeId, updatedName, updatedEmail, updatedRo
 };
 
 // Delete an employee by ID
-const deleteEmployeeById = async (id) => {
-    const employee = await employeeRepository.findOneEmployeeById(id);
+const deleteEmployeeById = async (employeeId) => {
+    const existingEmployee = await employeeRepository.findOneEmployeeById(employeeId);
 
-    if (!employee) {
+    if (!existingEmployee) {
         throw new Error(ResponseMessages.employee.ERROR_EMPLOYEE_ID);
     }
 
-    return await employeeRepository.removeEmployeeById(employee);
+    return await employeeRepository.removeEmployeeById(existingEmployee);
 };
 
 export default {
