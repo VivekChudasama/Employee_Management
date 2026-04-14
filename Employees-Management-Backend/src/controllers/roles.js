@@ -13,13 +13,13 @@ const getRoles = async (req, res, next) => {
             .json({ message: ResponseMessages.role.ERROR_FETCHING_ROLES, error: err.message });
     }
 };
-
+ 
 // Handle add role form submission
 const postAddRole = async (req, res, next) => {
     try {
         const { role, salary, department_id } = req.body;
 
-        const result = await roleService.createRole({ role, salary, department_id });
+         await roleService.createRole({ role, salary, department_id });
 
         console.log('Role added');
         res.status(Constants.RESPONSE_STATUS_CODE.CREATED_SUCCESS_CODE)

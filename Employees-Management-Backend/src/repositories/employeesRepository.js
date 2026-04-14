@@ -1,5 +1,4 @@
 import { AppDataSource } from '../util/database.js';
-
 import employeeSchema from '../entities/employees.js';
 
 // Employee repository with custom methods for for fetching employee data
@@ -13,7 +12,7 @@ export const employeeRepository = AppDataSource.getRepository(employeeSchema).ex
     },
 
     async findOneEmployeeById(id) {
-        return await this.findOne({ where: { id: parseInt(id) }, relations: ["role", "role.department"] })
+        return await this.findOne({ where: { id: id }, relations: ["role", "role.department"] })
     },
 
     async saveEmployee(employeeData) {

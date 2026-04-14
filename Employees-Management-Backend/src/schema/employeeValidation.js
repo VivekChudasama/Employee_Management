@@ -1,4 +1,3 @@
-import { response } from 'express';
 import { body, query, validationResult } from 'express-validator';
 
 // Middleware to handle validation results
@@ -37,8 +36,6 @@ export const addEmployeeValidation = [
 
     body('role_id').isInt().withMessage('Role ID must be a valid integer').notEmpty().withMessage('Role_id is required'),
 
-    body('department').isString().withMessage('Department must be a string').notEmpty().withMessage('Department is required'),
-
     body('salary').isNumeric().withMessage('Salary must be a Numeric').notEmpty().withMessage('Salary is required'),
 
     body('status').isIn(['active', 'inactive']).notEmpty().withMessage('Status must be either active or inactive'),
@@ -59,8 +56,6 @@ export const updateEmployessValidation = [
     body('email').optional().isEmail().withMessage('Invalid email format').trim(),
 
     body('role_id').optional().isInt().withMessage('Role ID must be a valid integer'),
-
-    body('department').optional().isString().withMessage('Department must be a string'),
 
     body('salary').optional().isNumeric().withMessage('Salary must be a Numeric'),
 

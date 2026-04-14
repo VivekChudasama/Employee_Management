@@ -18,7 +18,7 @@ const getEmployees = async (req, res, next) => {
         const departments = await employeeService.findAllDepartments();
         const roles = await employeeService.findAllRoles();
 
-        res.status(Constants.RESPONSE_STATUS_CODE.SUCCESS_CODE).json({ employees, departments, roles });
+        res.status(Constants.RESPONSE_STATUS_CODE.SUCCESS_CODE).json(ResponseMessages.employee.FETCHING_EMPLOYEES);
     } catch (err) {
         console.log(err);
         if (req.query.ajax)
@@ -33,7 +33,7 @@ const postAddEmployee = async (req, res, next) => {
     try {
         const { name, email, role_id, joining_date, status } = req.body;
 
-        const employee = await employeeService.createEmployee(
+        await employeeService.createEmployee(
             { name, email, role_id, joining_date, status }
         );
 
@@ -105,7 +105,7 @@ const deleteEmployee = async (req, res, next) => {
                 .json({ message: ResponseMessages.employee.ERROR_EMPLOYEE_ID });
         }
 
-        const deleted = await employeeService.deleteEmployeeById(empId);
+        await employeeService.deleteEmployeeById(empId);
         if (!empId) return res.status(Constants.RESPONSE_STATUS_CODE.NOT_FOUND_CODE)
             .json({ message: ResponseMessages.employee.ERROR_EMPLOYEE_ID });
         else {

@@ -9,7 +9,7 @@ export const roleRepository = AppDataSource.getRepository(roleSchema).extend({
 
     async findRolesById(id) {
         return await this.findOne({ 
-            where: { id: parseInt(id) },
+            where: { id: id },
             relations: ["department"] 
         });
     },
