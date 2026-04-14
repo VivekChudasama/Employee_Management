@@ -5,11 +5,11 @@ import { Constants } from '../config/constants.js'
 // Get list of all roles
 const getRoles = async (req, res, next) => {
     try {
-        const roles = await roleService.findAllRoles();
-        res.status(Constants.RESPONSE_STATUS_CODE.SUCCESS_CODE).json(roles);
+        await roleService.findAllRoles();
+        res.status(Constants.RESPONSE_STATUS_CODE.SUCCESS_CODE).json({ message: ResponseMessages.role.ROLES_FETCHED });
     } catch (err) {
         res.status(Constants.RESPONSE_STATUS_CODE.INTERNAL_SERVER_ERROR_CODE)
-            .json({ message: ResponseMessages.role.ERROR_FETCHING_ROLES , error: err.message });
+            .json({ message: ResponseMessages.role.ERROR_FETCHING_ROLES, error: err.message });
     }
 };
 
@@ -24,7 +24,7 @@ const postAddRole = async (req, res, next) => {
             .json({ message: ResponseMessages.role.ROLE_CREATED });
     } catch (err) {
         res.status(Constants.RESPONSE_STATUS_CODE.INTERNAL_SERVER_ERROR_CODE)
-            .json({ message: ResponseMessages.role.ERROR_ADDING_ROLE , error: err.message });
+            .json({ message: ResponseMessages.role.ERROR_ADDING_ROLE, error: err.message });
     }
 };
 
@@ -33,12 +33,12 @@ const getRoleDetailsById = async (req, res, next) => {
     try {
         const roleId = req.params.roleId;
 
-        const role = await roleService.findRoleById(roleId);
+        await roleService.findRoleById(roleId);
 
-        res.status(Constants.RESPONSE_STATUS_CODE.SUCCESS_CODE).json({message : ResponseMessages.role.ROLE_FETCHED , role});
+        res.status(Constants.RESPONSE_STATUS_CODE.SUCCESS_CODE).json({ message: ResponseMessages.role.ROLE_FETCHED });
     } catch (err) {
         res.status(Constants.RESPONSE_STATUS_CODE.INTERNAL_SERVER_ERROR_CODE)
-            .json({ message: ResponseMessages.role.ERROR_FETCHING_ROLE , error: err.message });
+            .json({ message: ResponseMessages.role.ERROR_FETCHING_ROLE, error: err.message });
     }
 };
 
@@ -57,7 +57,7 @@ const editRoleDetails = async (req, res, next) => {
 
     } catch (err) {
         res.status(Constants.RESPONSE_STATUS_CODE.INTERNAL_SERVER_ERROR_CODE)
-            .json({ message: ResponseMessages.role.ERROR_UPDATING_ROLE , error: err.message });
+            .json({ message: ResponseMessages.role.ERROR_UPDATING_ROLE, error: err.message });
     }
 };
 
@@ -72,7 +72,7 @@ const deleteRole = async (req, res, next) => {
             .json({ message: ResponseMessages.role.ROLE_DELETED });
     } catch (err) {
         res.status(Constants.RESPONSE_STATUS_CODE.INTERNAL_SERVER_ERROR_CODE)
-            .json({ message: ResponseMessages.role.ERROR_DELETING_ROLE , error: err.message });
+            .json({ message: ResponseMessages.role.ERROR_DELETING_ROLE, error: err.message });
     }
 };
 

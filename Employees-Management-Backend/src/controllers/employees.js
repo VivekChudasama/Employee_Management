@@ -45,10 +45,10 @@ const getEmployeeDetailById = async (req, res, next) => {
     try {
         const empId = req.params.employeeId;
 
-        const employee = await employeeService.findEmployeeById(empId);
+        await employeeService.findEmployeeById(empId);
 
         res.status(Constants.RESPONSE_STATUS_CODE.SUCCESS_CODE)
-            .json({ message: ResponseMessages.employee.EMPLOYEE_FETCHED, employee });
+            .json({ message: ResponseMessages.employee.EMPLOYEE_FETCHED });
     } catch (err) {
         res.status(Constants.RESPONSE_STATUS_CODE.INTERNAL_SERVER_ERROR_CODE)
             .json({ message: ResponseMessages.employee.ERROR_FETCHING_EMPLOYEE , error: err.message });
