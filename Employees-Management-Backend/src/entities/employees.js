@@ -38,7 +38,7 @@ const employeesSchema = new EntitySchema({
             target: "roles",
             inverseSide: "employees",
             joinColumn: { name: "role_id" },
-            onDelete: "CASCADE"
+            onDelete: "RESTRICT"
         }
     }
 });

@@ -1,7 +1,7 @@
 import app from './routes.js';
 import { AppDataSource } from './util/database.js';
 
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 3001;
 
 // Initialize database 
 AppDataSource.initialize()

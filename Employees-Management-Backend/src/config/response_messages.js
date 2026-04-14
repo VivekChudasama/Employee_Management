@@ -3,7 +3,6 @@ export class ResponseMessages {
         EMPLOYEE_CREATED: "Employee created successfully",
         EMPLOYEE_UPDATED: "Employee updated successfully",
         EMPLOYEE_DELETED: "Employee deleted successfully",
-        FETCHING_EMPLOYEES: "Employees fetched successfully",
         ERROR_FETCHING_EMPLOYEES: "Error fetching employees list",
         ERROR_FETCHING_EMPLOYEE: "Error fetching employee data",
         ERROR_ADDING_EMPLOYEE: "Error adding employee",
@@ -31,4 +30,5 @@ export class ResponseMessages {
     static Route = {
         ERROR_FOUND_ROUTE : "Route not found"
     }
+
 }

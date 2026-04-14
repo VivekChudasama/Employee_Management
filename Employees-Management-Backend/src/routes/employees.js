@@ -1,6 +1,6 @@
 import express from 'express';
 import Controller from '../controllers/employees.js';
-import {getEmployeeValidation, addEmployeeValidation, updateEmployessValidation, deletEmployessValidation ,  validate } from '../schema/employeeValidation.js';
+import {getEmployeeByIdValidation, getEmployeeValidation, addEmployeeValidation, updateEmployessValidation, deletEmployessValidation ,  validate } from '../schema/employeeValidation.js';
 
 const router = express.Router();
 
@@ -10,12 +10,12 @@ router.get('/', getEmployeeValidation, validate , Controller.getEmployees);
 // add new employee
 router.post('/add-employee', addEmployeeValidation, validate, Controller.postAddEmployee);
 
-//edit/update employee
-router.get('/:employeeId', Controller.getEmployeeDetailById);
+//edit/update employee details
+router.get('/:employeeId', getEmployeeByIdValidation, validate, Controller.getEmployeeDetailById);
 router.put('/', updateEmployessValidation, validate, Controller.editEmployeeDetails);
 
-//delete employee
-router.delete('/delete-employee', deletEmployessValidation , validate, Controller.deleteEmployee);
+//delete employee by id
+router.delete('/:employeeId', deletEmployessValidation , validate, Controller.deleteEmployee);
 
 export default router;
  

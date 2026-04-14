@@ -16,8 +16,8 @@ const findRoleById = async (id) => {
 const createRole = async ({ role , salary , department_id }) => {
     return await roleRepository.createRole({
         role,
-        salary: salary,
-        department_id: department_id
+        salary,
+        department_id
     });
 };
 
@@ -32,7 +32,7 @@ const updateRole = async ({ roleId, updatedRole, updatedSalary, updatedDepartmen
 
     return await roleRepository.saveRole(existingRole);
 };
-
+ 
 // Delete a role (only if not assigned to any employee)
 const deleteRoleById = async (roleId) => {
     const existingRole = await roleRepository.findRolesById(roleId);
@@ -40,10 +40,10 @@ const deleteRoleById = async (roleId) => {
         throw new Error(ResponseMessages.role.ERROR_ROLE_ID);
     }
 
-    const employees = await employeeRepository.findEmployeeRoleById({ where: { role_id: roleId } });
+    const employeesCount = await employeeRepository.countEmployeesByRoleId(roleId);
 
     // If there are employees assigned to this role so we cannot delete the role
-    if (employees && employees.length > 0) {
+    if (employeesCount > 0) {
         throw new Error(ResponseMessages.role.ERROR_ROLE_ASSIGNED);
     }
 

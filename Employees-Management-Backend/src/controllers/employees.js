@@ -18,13 +18,11 @@ const getEmployees = async (req, res, next) => {
         const departments = await employeeService.findAllDepartments();
         const roles = await employeeService.findAllRoles();
 
-        res.status(Constants.RESPONSE_STATUS_CODE.SUCCESS_CODE).json(ResponseMessages.employee.FETCHING_EMPLOYEES);
+        res.status(Constants.RESPONSE_STATUS_CODE.SUCCESS_CODE).json({ employees, departments, roles });
     } catch (err) {
-        console.log(err);
-        if (req.query.ajax)
-            return res.status(Constants.RESPONSE_STATUS_CODE.INTERNAL_SERVER_ERROR_CODE)
-                .json({ error: ResponseMessages.employee.ERROR_FETCHING_EMPLOYEES });
-        next(err);
+        if (ajax || err)
+            res.status(Constants.RESPONSE_STATUS_CODE.INTERNAL_SERVER_ERROR_CODE)
+                .json({ message: ResponseMessages.employee.ERROR_FETCHING_EMPLOYEES });
     }
 };
 
@@ -40,7 +38,6 @@ const postAddEmployee = async (req, res, next) => {
         res.status(Constants.RESPONSE_STATUS_CODE.CREATED_SUCCESS_CODE)
             .json({ message: ResponseMessages.employee.EMPLOYEE_CREATED });
     } catch (err) {
-        console.log(err)
         res.status(Constants.RESPONSE_STATUS_CODE.INTERNAL_SERVER_ERROR_CODE)
             .json({ message: ResponseMessages.employee.ERROR_ADDING_EMPLOYEE, error: err.message });
     }
@@ -96,7 +93,7 @@ const editEmployeeDetails = async (req, res, next) => {
 // Handle delete employee request
 const deleteEmployee = async (req, res, next) => {
     try {
-        const empId = req.body.employeeId;
+        const empId = req.params.employeeId;
 
         const employee = await employeeService.findEmployeeById(empId);
 
@@ -106,12 +103,9 @@ const deleteEmployee = async (req, res, next) => {
         }
 
         await employeeService.deleteEmployeeById(empId);
-        if (!empId) return res.status(Constants.RESPONSE_STATUS_CODE.NOT_FOUND_CODE)
-            .json({ message: ResponseMessages.employee.ERROR_EMPLOYEE_ID });
-        else {
-            res.status(Constants.RESPONSE_STATUS_CODE.SUCCESS_CODE)
-                .json({ message: ResponseMessages.employee.EMPLOYEE_DELETED });
-        }
+
+        res.status(Constants.RESPONSE_STATUS_CODE.SUCCESS_CODE)
+            .json({ message: ResponseMessages.employee.EMPLOYEE_DELETED });
 
     } catch (err) {
         res.status(Constants.RESPONSE_STATUS_CODE.INTERNAL_SERVER_ERROR_CODE)
