@@ -36,7 +36,7 @@ const postAddEmployee = async (req, res, next) => {
             .json({ message: ResponseMessages.employee.EMPLOYEE_CREATED });
     } catch (err) {
         res.status(Constants.RESPONSE_STATUS_CODE.INTERNAL_SERVER_ERROR_CODE)
-            .json({ message: ResponseMessages.employee.ERROR_ADDING_EMPLOYEE, error: err.message });
+            .json({ message: ResponseMessages.employee.ERROR_ADDING_EMPLOYEE});
     }
 };
 
@@ -55,7 +55,7 @@ const getEmployeeDetailById = async (req, res, next) => {
             .json({ message: ResponseMessages.employee.EMPLOYEE_FETCHED, employee: existingEmployee });
     } catch (err) {
         res.status(Constants.RESPONSE_STATUS_CODE.INTERNAL_SERVER_ERROR_CODE)
-            .json({ message: ResponseMessages.employee.ERROR_FETCHING_EMPLOYEE, error: err.message });
+            .json({ message: ResponseMessages.employee.ERROR_FETCHING_EMPLOYEE});
     }
 };
 
@@ -65,23 +65,16 @@ const editEmployeeDetails = async (req, res, next) => {
         const empId = req.params.employeeId;
         const { name, email, role_id, joining_date, status } = req.body;
 
-        const existingEmployee = await employeeService.findEmployeeById(empId);
-
-        if (!existingEmployee) {
-            return res.status(Constants.RESPONSE_STATUS_CODE.NOT_FOUND_CODE)
-                .json({ message: ResponseMessages.employee.ERROR_EMPLOYEE_ID });
-        }
-
-        const updated = await employeeService.updateEmployee(
+        await employeeService.updateEmployee(
             { employeeId: empId, updatedName : name, updatedEmail : email, updatedRole_id : role_id, updatedJoining_date :  joining_date, updatedStatus : status }
         );
 
-        if (updated) return res.status(Constants.RESPONSE_STATUS_CODE.SUCCESS_CODE)
+        res.status(Constants.RESPONSE_STATUS_CODE.SUCCESS_CODE)
             .json({ message: ResponseMessages.employee.EMPLOYEE_UPDATED });
 
     } catch (err) {
         res.status(Constants.RESPONSE_STATUS_CODE.INTERNAL_SERVER_ERROR_CODE)
-            .json({ message: ResponseMessages.employee.ERROR_UPDATING_EMPLOYEE, error: err.message });
+            .json({ message: ResponseMessages.employee.ERROR_UPDATING_EMPLOYEE});
     }
 };
 
@@ -104,7 +97,7 @@ const deleteEmployee = async (req, res, next) => {
 
     } catch (err) {
         res.status(Constants.RESPONSE_STATUS_CODE.INTERNAL_SERVER_ERROR_CODE)
-            .json({ message: ResponseMessages.employee.ERROR_DELETING_EMPLOYEE, error: err.message });
+            .json({ message: ResponseMessages.employee.ERROR_DELETING_EMPLOYEE});
     }
 };
 

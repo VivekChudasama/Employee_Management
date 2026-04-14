@@ -10,7 +10,7 @@ router.get('/', getEmployeeValidation, validate , Controller.getEmployees);
 // add new employee
 router.post('/add-employee', addEmployeeValidation, validate, Controller.postAddEmployee);
 
-//edit/update employee details
+//edit/update employee details by id
 router.get('/:employeeId', getEmployeeByIdValidation, validate, Controller.getEmployeeDetailById);
 router.put('/:employeeId', updateEmployessValidation, validate, Controller.editEmployeeDetails);
 

@@ -1,6 +1,4 @@
 import { Like, Between, MoreThanOrEqual, LessThanOrEqual } from "typeorm";
-import { roleRepository } from '../repositories/rolesRepository.js';
-import { departmentRepository } from '../repositories/departmentRepository.js';
 import { employeeRepository } from '../repositories/employeesRepository.js';
 import { ResponseMessages } from '../config/response_messages.js'
 
@@ -44,16 +42,6 @@ const findAllEmployees = async ({ search, department_id, status, min_salary, max
     }
 
     return await employeeRepository.find(findOptions);
-};
-
-// Get all departments
-const findAllDepartments = async () => {
-    return await departmentRepository.findDepartments();
-};
-
-// Get all roles
-const findAllRoles = async () => {
-    return await roleRepository.findAllRoles();
 };
 
 // Find employee by ID with role relation
@@ -102,8 +90,6 @@ const deleteEmployeeById = async (id) => {
 
 export default {
     findAllEmployees,
-    findAllDepartments,
-    findAllRoles,
     findEmployeeById,
     createEmployee,
     updateEmployee,

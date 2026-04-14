@@ -10,7 +10,7 @@ router.get('/', Controller.getRoles);
 // add new role
 router.post('/add-role', addRoleValidation, validate, Controller.postAddRole);
 
-//edit/update role details
+//edit/update role details by id
 router.get('/:roleId', getRoleByIdValidation, validate, Controller.getRoleDetailsById);
 router.put('/:roleId', updateRoleValidation, validate, Controller.editRoleDetails);
 
