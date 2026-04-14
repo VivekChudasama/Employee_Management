@@ -12,7 +12,7 @@ router.post('/add-employee', addEmployeeValidation, validate, Controller.postAdd
 
 //edit/update employee details
 router.get('/:employeeId', getEmployeeByIdValidation, validate, Controller.getEmployeeDetailById);
-router.put('/', updateEmployessValidation, validate, Controller.editEmployeeDetails);
+router.put('/:employeeId', updateEmployessValidation, validate, Controller.editEmployeeDetails);
 
 //delete employee by id
 router.delete('/:employeeId', deletEmployessValidation , validate, Controller.deleteEmployee);

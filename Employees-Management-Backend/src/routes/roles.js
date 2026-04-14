@@ -12,7 +12,7 @@ router.post('/add-role', addRoleValidation, validate, Controller.postAddRole);
 
 //edit/update role details
 router.get('/:roleId', getRoleByIdValidation, validate, Controller.getRoleDetailsById);
-router.put('/', updateRoleValidation, validate, Controller.editRoleDetails);
+router.put('/:roleId', updateRoleValidation, validate, Controller.editRoleDetails);
 
 //delete role by id
 router.delete('/:roleId', deleteRoleValidation , validate ,  Controller.deleteRole);

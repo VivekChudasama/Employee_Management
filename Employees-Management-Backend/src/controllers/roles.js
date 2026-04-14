@@ -49,9 +49,10 @@ const getRoleDetailsById = async (req, res, next) => {
 // Handle edit role submission
 const editRoleDetails = async (req, res, next) => {
     try {
-        const { role_id, role, salary, department_id } = req.body;
+        const roleId = req.params.roleId;
+        const { role, salary, department_id } = req.body;
 
-        const existingRole = await roleService.findRoleById(role_id);
+        const existingRole = await roleService.findRoleById(roleId);
 
         if (!existingRole) {
             return res.status(Constants.RESPONSE_STATUS_CODE.NOT_FOUND_CODE)
@@ -59,7 +60,7 @@ const editRoleDetails = async (req, res, next) => {
         }
 
         const result = await roleService.updateRole(
-            { roleId: role_id, updatedRole: role, updatedSalary: salary, updatedDepartmentId: department_id }
+            { roleId, updatedRole: role, updatedSalary: salary, updatedDepartmentId: department_id }
         );
         if (result) return res.status(Constants.RESPONSE_STATUS_CODE.SUCCESS_CODE)
             .json({ message: ResponseMessages.role.ROLE_UPDATED });

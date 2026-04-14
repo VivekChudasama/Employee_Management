@@ -3,6 +3,8 @@ export class ResponseMessages {
         EMPLOYEE_CREATED: "Employee created successfully",
         EMPLOYEE_UPDATED: "Employee updated successfully",
         EMPLOYEE_DELETED: "Employee deleted successfully",
+        EMPLOYEE_FETCHED: "Employee data fetched successfully",
+        EMPLOYEES_FETCHED: "Employees list fetched successfully",
         ERROR_FETCHING_EMPLOYEES: "Error fetching employees list",
         ERROR_FETCHING_EMPLOYEE: "Error fetching employee data",
         ERROR_ADDING_EMPLOYEE: "Error adding employee",

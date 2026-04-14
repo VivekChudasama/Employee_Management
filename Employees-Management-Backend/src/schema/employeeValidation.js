@@ -49,8 +49,11 @@ export const addEmployeeValidation = [
 
 // Employee update validation rules
 export const updateEmployessValidation = [
-    body('employeeId').notEmpty().withMessage('Employee ID is required')
+    param('employeeId').notEmpty().withMessage('Employee ID is required')
         .isInt().withMessage('Employee ID must be a valid integer'),
+
+    body('employeeId').not().exists().withMessage('Employee ID must not be provided in request body'),
+    body('employee_id').not().exists().withMessage('Employee ID must not be provided in request body'),
 
     body('name').optional().isString().withMessage('Name must be a string')
         .matches(/^[^0-9]*$/).withMessage('Name cannot contain numbers')

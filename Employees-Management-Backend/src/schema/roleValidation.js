@@ -29,7 +29,7 @@ export const addRoleValidation = [
 
 // Update Role validation rules
 export const updateRoleValidation = [
-    body('role_id').isInt().withMessage('Role ID must be a valid integer').notEmpty().withMessage('Role ID is required'),
+    param('roleId').isInt().withMessage('Role ID must be a valid integer').notEmpty().withMessage('Role ID is required'),
 
     body('role').optional().isString().withMessage('Role must be a string')
         .isLength({ min: 3, max: 30 }).withMessage('Name is in between 3 to 30 character').trim(),

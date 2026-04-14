@@ -15,14 +15,11 @@ const getEmployees = async (req, res, next) => {
             return res.json(employees);
         }
 
-        const departments = await employeeService.findAllDepartments();
-        const roles = await employeeService.findAllRoles();
-
-        res.status(Constants.RESPONSE_STATUS_CODE.SUCCESS_CODE).json({ employees, departments, roles });
+        res.status(Constants.RESPONSE_STATUS_CODE.SUCCESS_CODE)
+            .json({ message: ResponseMessages.employee.EMPLOYEES_FETCHED });
     } catch (err) {
-        if (ajax || err)
-            res.status(Constants.RESPONSE_STATUS_CODE.INTERNAL_SERVER_ERROR_CODE)
-                .json({ message: ResponseMessages.employee.ERROR_FETCHING_EMPLOYEES });
+        res.status(Constants.RESPONSE_STATUS_CODE.INTERNAL_SERVER_ERROR_CODE)
+            .json({ message: ResponseMessages.employee.ERROR_FETCHING_EMPLOYEES });
     }
 };
 
@@ -48,17 +45,14 @@ const getEmployeeDetailById = async (req, res, next) => {
     try {
         const empId = req.params.employeeId;
 
-        const employee = await employeeService.findEmployeeById(empId);
-        if (!employee) {
+        const existingEmployee = await employeeService.findEmployeeById(empId);
+        if (!existingEmployee) {
             return res.status(Constants.RESPONSE_STATUS_CODE.NOT_FOUND_CODE)
                 .json({ message: ResponseMessages.employee.ERROR_EMPLOYEE_ID });
         }
 
-        const departments = await employeeService.findAllDepartments();
-        const roles = await employeeService.findAllRoles();
-
         res.status(Constants.RESPONSE_STATUS_CODE.SUCCESS_CODE)
-            .json({ employee, departments, roles });
+            .json({ message: ResponseMessages.employee.EMPLOYEE_FETCHED, employee: existingEmployee });
     } catch (err) {
         res.status(Constants.RESPONSE_STATUS_CODE.INTERNAL_SERVER_ERROR_CODE)
             .json({ message: ResponseMessages.employee.ERROR_FETCHING_EMPLOYEE, error: err.message });
@@ -68,9 +62,10 @@ const getEmployeeDetailById = async (req, res, next) => {
 // Handle edit employee submission
 const editEmployeeDetails = async (req, res, next) => {
     try {
-        const { employeeId, name, email, role_id, joining_date, status } = req.body;
+        const empId = req.params.employeeId;
+        const { name, email, role_id, joining_date, status } = req.body;
 
-        const existingEmployee = await employeeService.findEmployeeById(employeeId);
+        const existingEmployee = await employeeService.findEmployeeById(empId);
 
         if (!existingEmployee) {
             return res.status(Constants.RESPONSE_STATUS_CODE.NOT_FOUND_CODE)
@@ -78,7 +73,7 @@ const editEmployeeDetails = async (req, res, next) => {
         }
 
         const updated = await employeeService.updateEmployee(
-            { employeeId, name, email, role_id, joining_date, status }
+            { employeeId: empId, updatedName : name, updatedEmail : email, updatedRole_id : role_id, updatedJoining_date :  joining_date, updatedStatus : status }
         );
 
         if (updated) return res.status(Constants.RESPONSE_STATUS_CODE.SUCCESS_CODE)

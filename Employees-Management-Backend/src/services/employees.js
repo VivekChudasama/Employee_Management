@@ -73,15 +73,15 @@ const createEmployee = async ({ name, email, role_id, joining_date, status }) =>
 };
 
 // Update an existing employee
-const updateEmployee = async ({ employeeId, name, email, role_id, joining_date, status }) => {
+const updateEmployee = async ({ employeeId, updatedName, updatedEmail, updatedRole_id, updatedStatus, updatedJoining_date }) => {
     const existingEmployee = await employeeRepository.findOneEmployeeById(employeeId);
     if (!existingEmployee) return ResponseMessages.employee.ERROR_EMPLOYEE_ID;
 
-    existingEmployee.name = name;
-    existingEmployee.email = email;
-    existingEmployee.role_id = role_id;
-    existingEmployee.status = status;
-    existingEmployee.joining_date = joining_date;
+    existingEmployee.name = updatedName;
+    existingEmployee.email = updatedEmail;
+    existingEmployee.role_id = updatedRole_id;
+    existingEmployee.status = updatedStatus;
+    existingEmployee.joining_date = updatedJoining_date;
 
     // Remove role relation during save and add updated role_id to employee.
     delete existingEmployee.role;
