@@ -33,7 +33,7 @@
                     <div class="offcanvas-body py-3">
                         <ul class="navbar-nav ms-auto align-items-lg-center gap-1 fs-5">
                             <li class="nav-item ">
-                                <a class="nav-link nav-text text-white custom-radius-50 active"
+                                <a class="nav-link nav-text text-white custom-radius-50"
                                     href="./employees_list.html">Home</a>
                             </li>
                             <li class="nav-item">
@@ -59,64 +59,76 @@
             <div class="form-wrap">
                 <form class="product-form" id="editEmployeeForm">
                     <input type="hidden" name="employeeId" id="employeeId">
-                    <div class="mb-3">
-                        <label for="name" class="form-label">Full Name</label>
-                        <input type="text" name="name" id="name" class="form-control" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="email" class="form-label">Email</label>
-                        <input type="email" name="email" id="email" class="form-control" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="department_id" class="form-label">Department</label>
-                        <select id="department_id" class="form-select">
-                            <option value="">All Departments</option>
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Employee Role</label>
-                        <div class="dropdown" id="roleDropdownContainer">
-                            <button
-                                class="btn btn-outline-secondary dropdown-toggle w-100 text-start d-flex justify-content-between align-items-center"
-                                type="button" id="roleDropdownBtn" data-bs-toggle="dropdown">
-                                Select a role
-                            </button>
-                            <ul class="dropdown-menu w-100" id="roleDropdownMenu">
-                                <!-- Roles with delete buttons will be here -->
-                            </ul>
+                    <div class="row">
+                        <div class="mb-3 col-6">
+                            <label for="name" class="form-label">Full Name</label>
+                            <input type="text" name="name" id="name" class="form-control" required>
                         </div>
-                        <!-- Hidden input to store role_id for form submission -->
-                        <input type="hidden" name="role_id" id="role_id" required>
+                        <div class="mb-3 col-6">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" name="email" id="email" class="form-control" required>
+                        </div>
                     </div>
 
-                    <!-- Quick Add Role Section -->
-                    <div class="card mb-3 bg-light border-0">
-                        <div class="card-body p-2">
-                            <div class="input-group input-group-sm">
-                                <input type="text" id="newRoleName" class="form-control" placeholder="New Role Name">
-                                <input type="number" id="newRoleSalary" class="form-control" style="width: 80px;"
-                                    placeholder="Salary">
-                                <button type="button" class="btn btn-primary" id="saveRoleBtn">Add Role</button>
+                    <div class="row">
+                        <div class="mb-3 col-6">
+                            <label for="department_id" class="form-label">Department</label>
+                            <select id="department_id" class="form-select">
+                                <option value="">All Departments</option>
+                            </select>
+                        </div>
+                        <div class="mb-3 col-6">
+                            <label class="form-label">Employee Role</label>
+                            <div class="dropdown" id="roleDropdownContainer">
+                                <button
+                                    class="btn btn-outline-secondary dropdown-toggle w-100 text-start d-flex justify-content-between align-items-center"
+                                    type="button" id="roleDropdownBtn" data-bs-toggle="dropdown">
+                                    Select a role
+                                </button>
+                                <ul class="dropdown-menu w-100" id="roleDropdownMenu">
+                                    <!-- Roles with delete buttons will be here -->
+                                </ul>
+                            </div>
+                            <!-- Hidden input to store role_id for form submission -->
+                            <input type="hidden" name="role_id" id="role_id" required>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <!-- Quick Add Role Section -->
+                        <div class="card mb-3 bg-light border-0 col-6">
+                            <div class="card-body p-2">
+                                <div class="input-group input-group-sm">
+                                    <input type="text" id="newRoleName" class="form-control"
+                                        placeholder="New Role Name">
+                                    <input type="number" id="newRoleSalary" class="form-control" style="width: 80px;"
+                                        placeholder="Salary">
+                                    <button type="button" class="btn btn-primary" id="saveRoleBtn">Add Role</button>
+                                </div>
                             </div>
                         </div>
+
+                        <div class="mb-3 col-6">
+                            <label for="salary_display" class="form-label">Current Role Salary</label>
+                            <input type="text" id="salary_display" class="form-control" disabled
+                                placeholder="Select a role above">
+                        </div>
                     </div>
 
-                    <div class="mb-3">
-                        <label for="salary_display" class="form-label">Current Role Salary</label>
-                        <input type="text" id="salary_display" class="form-control" disabled
-                            placeholder="Select a role above">
+                    <div class="row">
+                        <div class="mb-3 col-6">
+                            <label for="joining_date" class="form-label">Joining Date</label>
+                            <input type="date" name="joining_date" id="joining_date" class="form-control" required>
+                        </div>
+                        <div class="mb-3 col-6">
+                            <label for="status" class="form-label">Status</label>
+                            <select name="status" id="status" class="form-select" required>
+                                <option value="active">Active</option>
+                                <option value="inactive">Inactive</option>
+                            </select>
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        <label for="joining_date" class="form-label">Joining Date</label>
-                        <input type="date" name="joining_date" id="joining_date" class="form-control" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="status" class="form-label">Status</label>
-                        <select name="status" id="status" class="form-select" required>
-                            <option value="active">Active</option>
-                            <option value="inactive">Inactive</option>
-                        </select>
-                    </div>
+
 
                     <button class="btn btn-primary" type="submit">Update Employee</button>
                 </form>

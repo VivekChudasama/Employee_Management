@@ -92,23 +92,24 @@
 
             </div>
 
-            <div class="table-responsive">
-                <table class="table table-bordered" id="sorting">
-                    <thead class="table-secondary table-header-color">
-                        <tr class="table-header-color">
-                            <th>Name</th>
+            <div class="table-responsive custom-table-wrapper">
+                <table class="table table-hover align-middle table-borderless" id="sorting">
+                    <thead class="table-header-color">
+                        <tr>
+                            <th>ID</th>
+                            <th class="ps-4">Name</th>
                             <th>Email</th>
                             <th>Role</th>
                             <th>Department</th>
                             <th>Salary</th>
                             <th>Status</th>
-                            <th>Actions</th>
+                            <th class="text-center pe-4">Actions</th>
                         </tr>
                     </thead>
                     <tbody id="employeeTableBody">
                     </tbody>
                 </table>
-                <h1 id="noEmployeesMessage">No Employees Found!</h1>
+                <h3 id="noEmployeesMessage" class="text-center text-muted py-5">No Employees Found!</h3>
             </div>
         </div>
 

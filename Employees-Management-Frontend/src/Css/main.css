@@ -19,7 +19,6 @@ body {
 
 .custom-radius-50 {
     border-radius: 50px;
-    ;
 }
 
 #noEmployeesMessage {
@@ -34,9 +33,51 @@ body {
     width: 100%;
 }
 
+/* Premium Table Styling */
+.custom-table-wrapper {
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+    overflow-x: scroll;
+    border-radius: 16px;
+    background: var(--secondary-white);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
 .table-header-color {
-    background-color: var(--primary-blue) !important;
-    color: var(--secondary-white);
+    background: linear-gradient(90deg, #222831, #393E46) !important;
+}
+
+#sorting {
+    margin-bottom: 0;
+}
+
+#sorting thead th {
+    font-weight: var(--font-weight-normal);
+    letter-spacing: 0.5px;
+    background: var(--secondary-white);
+    padding: 16px 20px;
+    border: none;
+    background-color: transparent !important;
+}
+
+#sorting tbody td {
+    padding: 18px 20px;
+    color: var(--secondary-grey);
+    font-weight: var(--font-weight-normal);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+    transition: background-color 0.2s ease;
+}
+
+#sorting tbody tr:hover td {
+    background-color: rgba(0, 173, 181, 0.04) !important;
+}
+
+#sorting tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.min-max-inputs {
+    width: auto !important;
+    flex-wrap: nowrap !important;
 }
 
 .min-max-inputs .min-input,

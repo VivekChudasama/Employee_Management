@@ -1,33 +1,70 @@
-
 .nav-bar {
-  background-color: var(--secondary-dark-gray);
+  background-color: rgba(34, 40, 49, 0.98) !important;
+  -webkit-backdrop-filter: blur(12px); 
+  backdrop-filter: blur(12px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  position: sticky;
+  top: 0;
+  z-index: 1020;
+}
+
+.nav-bar .navbar-brand {
+  transition: transform 0.3s ease;
+}
+
+.nav-bar .navbar-brand:hover {
+  transform: scale(1.02);
 }
 
 .nav-bar .nav-bar-content .nav-text {
-  font-size: 18px;
-  transition: all 0.3s ease;
+  font-size: 16px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   box-sizing: border-box;
   border: 1px solid transparent;
-  padding: 10px 25px;
-  font-weight: 400;
+  padding: 8px 22px;
+  font-weight: 500;
+  margin: 0 4px;
+  white-space: nowrap;
+  display: inline-block;
+  vertical-align: middle;
 }
 
 .nav-bar .nav-bar-content .nav-text:hover {
-  padding: 10px 25px;
-  border-color: var(--primary-black);
+  background-color: rgba(255, 255, 255, 0.15);
+    background: var(--secondary-white);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
+/* Previously border-color was targeting an undefined var(--primary-black) */
 .nav-bar .nav-bar-content .nav-link.active {
-  padding: 10px 25px;
-  border-color: var(--primary-black);
+  background-color: var(--primary-blue);
+    background: var(--secondary-white);
+  box-shadow: 0 4px 12px rgba(0, 173, 181, 0.4);
+  border: none;
 }
 
 .custom-radius-50 {
   border-radius: 50px;
 }
 
-@media (max-width: 767px) {
+@media (max-width: 991px) {
   .nav-bar .nav-bar-content .navbar-toggler {
     transform: scale(0.95);
+    border-color: rgba(255, 255, 255, 0.3) !important;
+  }
+  .nav-bar .nav-bar-content .navbar-toggler:focus {
+    box-shadow: 0 0 0 3px rgba(0, 173, 181, 0.3);
+  }
+  .nav-bar .nav-bar-content .nav-text {
+    width: 100%;
+    margin-bottom: 8px;
+    display: block;
+    border-radius: 8px;
+    padding: 12px 20px;
+  }
+  .nav-bar .nav-bar-content .nav-link.active {
+    box-shadow: none;
   }
 }

@@ -46,19 +46,20 @@ const renderEmployees = (employees) => {
     employees.forEach(emp => {
         const tr = document.createElement('tr');
         tr.innerHTML = `
-            <td>${emp.name}</td>
+            <td>${emp.id}</td>
+            <td class="ps-4 text-dark fw-bold">${emp.name}</td>
             <td>${emp.email}</td>
             <td>${emp.role?.role || 'N/A'}</td>
             <td>${emp.role?.department?.departmentName || 'N/A'}</td>
             <td>$${emp.role?.salary || '0'}</td>
             <td>
-                <span class="badge ${emp.status === 'active' ? 'bg-success' : 'bg-secondary'}">
+                <span class="badge rounded-pill px-3 py-2 fw-normal ${emp.status === 'active' ? 'bg-success text-white' : 'bg-secondary bg-opacity-25 text-secondary'}">
                     ${emp.status}
                 </span>
             </td>
-            <td>
-                <a href="edit_employee.html?id=${emp.id}" class="btn btn-primary btn-sm">Edit</a>
-                <button class="btn btn-danger btn-sm delete-btn" data-id="${emp.id}">Delete</button>
+            <td class="text-center pe-4">
+                <a href="edit_employee.html?id=${emp.id}" class="btn btn-primary btn-sm rounded-pill px-3 shadow-sm me-2">Edit</a>
+                <button class="btn btn-outline-danger btn-sm rounded-pill px-3 shadow-sm delete-btn" data-id="${emp.id}">Delete</button>
             </td>
         `;
         employeesList.appendChild(tr);
@@ -74,10 +75,9 @@ const renderEmployees = (employees) => {
 
 const deleteEmployee = async (id) => {
     try {
-        const res = await fetch(`${API_BASE}/delete-employee`, {
+        const res = await fetch(`${API_BASE}/${id}`, {
             method: 'DELETE',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ employeeId: id })
+            headers: { 'Content-Type': 'application/json' }
         });
 
         if (res.ok) fetchEmployees(document.getElementById('searchInput').value);
