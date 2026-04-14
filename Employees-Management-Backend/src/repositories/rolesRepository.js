@@ -14,10 +14,6 @@ export const roleRepository = AppDataSource.getRepository(roleSchema).extend({
         });
     },
 
-    async createRole(roleData) {
-        return await this.insert(roleData);
-    },
-
     async saveRole(role) {
         return await this.save(role);
     },

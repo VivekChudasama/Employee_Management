@@ -18,7 +18,7 @@ const findRoleById = async (id) => {
 
 // Create a new role
 const createRole = async ({ role, salary, department_id }) => {
-    return await roleRepository.createRole({
+    return await roleRepository.saveRole({
         role,
         salary,
         department_id

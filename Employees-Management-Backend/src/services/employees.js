@@ -1,6 +1,5 @@
 import { Like, Between, MoreThanOrEqual, LessThanOrEqual } from "typeorm";
 import { employeeRepository } from '../repositories/employeesRepository.js';
-import { Constants } from "../config/constants.js";
 import { ResponseMessages } from '../config/response_messages.js'
 
 // Get all employees with search & filters
