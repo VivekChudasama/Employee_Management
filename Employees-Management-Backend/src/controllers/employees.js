@@ -5,7 +5,7 @@ import { Constants } from '../config/constants.js'
 // Get list of employees with search support
 const getEmployees = async (req, res, next) => {
     try {
-        const { search, ajax, department_id, status, min_salary, max_salary } = req.query;
+        const { ajax, search, department_id, status, min_salary, max_salary } = req.query;
 
         const employees = await employeeService.findAllEmployees(
             { search, department_id, status, min_salary, max_salary }
