@@ -1,7 +1,5 @@
 .nav-bar {
-  background-color: rgba(34, 40, 49, 0.98) !important;
-  -webkit-backdrop-filter: blur(12px); 
-  backdrop-filter: blur(12px);
+  background-color: rgba(34, 40, 49, 1) !important;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   position: sticky;
@@ -32,15 +30,13 @@
 
 .nav-bar .nav-bar-content .nav-text:hover {
   background-color: rgba(255, 255, 255, 0.15);
-    background: var(--secondary-white);
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
 /* Previously border-color was targeting an undefined var(--primary-black) */
 .nav-bar .nav-bar-content .nav-link.active {
-  background-color: var(--primary-blue);
-    background: var(--secondary-white);
+  background-color: var(--primary-blue) !important;
   box-shadow: 0 4px 12px rgba(0, 173, 181, 0.4);
   border: none;
 }
@@ -59,12 +55,27 @@
   }
   .nav-bar .nav-bar-content .nav-text {
     width: 100%;
-    margin-bottom: 8px;
+    margin-bottom: 12px;
     display: block;
     border-radius: 8px;
     padding: 12px 20px;
+    text-align: center;
   }
   .nav-bar .nav-bar-content .nav-link.active {
     box-shadow: none;
+  }
+  .offcanvas-custom-width {
+    width: 250px !important;
+  }
+  .nav-bar .offcanvas-body {
+    display: flex !important;
+    flex-direction: column;
+  }
+  .nav-bar .offcanvas-body .navbar-nav {
+    margin: 0 !important;
+    width: 100%;
+  }
+  .nav-bar .offcanvas-body > div:last-child {
+    display: none;
   }
 }

@@ -57,6 +57,7 @@ body {
     padding: 16px 20px;
     border: none;
     background-color: transparent !important;
+    color: var(--secondary-white) !important;
 }
 
 #sorting tbody td {
@@ -98,3 +99,23 @@ body {
     transition: box-shadow 0.2s;
 }
 
+@media (max-width: 767px) {
+    .search-container {
+        width: 100%;
+    }
+    .department-dropdown, .status-dropdown, .department-dropdown-button, .status-dropdown-button {
+        width: 100%;
+        text-align: left;
+    }
+    .min-max-inputs {
+        width: 100% !important;
+    }
+    .min-max-inputs .min-input,
+    .min-max-inputs .max-input {
+        width: 50%;
+    }
+    .filter-section-wrapper {
+        flex-direction: column;
+        align-items: stretch !important;
+    }
+}

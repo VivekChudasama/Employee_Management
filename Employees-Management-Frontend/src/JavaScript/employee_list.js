@@ -2,9 +2,10 @@ const API_BASE = 'http://localhost:3001/employees';
 
 const fetchEmployees = async (search = '') => {
     try {
-        const res = await fetch(`${API_BASE}?ajax=true&search=${encodeURIComponent(search)}`);
+        const res = await fetch(`${API_BASE}?search=${encodeURIComponent(search)}`);
         if (!res.ok) throw new Error('Failed to fetch');
-        const data = await res.json();
+        const jsonResponse = await res.json();
+        const data = jsonResponse.data || [];
         renderEmployees(data);
         getStatus(data);
     } catch (err) {
@@ -12,20 +13,20 @@ const fetchEmployees = async (search = '') => {
     }
 };
 
-const getStatus = async (employeeStatus) => {
+const getStatus = (employeeStatus) => {
     const empStatus = document.getElementById('getEmpStatus');
+    if (!empStatus || !employeeStatus) return;
 
-    await employeeStatus.forEach(emp => {
+    empStatus.innerHTML = '';
+
+    const statuses = [...new Set(employeeStatus.map(emp => emp.status))];
+
+    statuses.forEach(status => {
         const li = document.createElement('li');
-        li.innerHTML = `
-        <li>${emp.status}</li>
-        `
-    })
-
-    empStatus.appendChild(li);
+        li.innerHTML = `<a class="dropdown-item" href="#">${status}</a>`;
+        empStatus.appendChild(li);
+    });
 }
-
-getStatus()
 
 const renderEmployees = (employees) => {
     const employeesList = document.getElementById('employeeTableBody');

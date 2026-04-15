@@ -57,9 +57,9 @@ const findEmployeeById = async (id) => {
 
 // Create a new employee
 const createEmployee = async ({ name, email, role_id, joining_date, status }) => {
-    const isEmailExists = await employeeRepository.findEmployeeByEmail(email);
+    const emailExist = await employeeRepository.findEmployeeByEmail(email);
     //if email already exists for other employee or not
-    if (isEmailExists) {
+    if (emailExist) {
         throw new Error(ResponseMessages.employee.ERROR_EMPLOYEES_EMAIL_EXISTS);
     }
     return await employeeRepository.saveEmployee({
@@ -74,13 +74,13 @@ const createEmployee = async ({ name, email, role_id, joining_date, status }) =>
 // Update an existing employee
 const updateEmployee = async ({ employeeId, updatedName, updatedEmail, updatedRole_id, updatedStatus, updatedJoining_date }) => {
     const existingEmployee = await employeeRepository.findOneEmployeeById(employeeId);
-    const isEmailExists = await employeeRepository.findEmployeeByEmail(updatedEmail);
+    const emailExist = await employeeRepository.findEmployeeByEmail(updatedEmail);
 
     //check if employee exists and if email already exists for other employee
     if (!existingEmployee) {
         throw new Error(ResponseMessages.employee.ERROR_EMPLOYEE_ID);
     }
-    else if (isEmailExists) {
+    else if (emailExist) {
         throw new Error(ResponseMessages.employee.ERROR_EMPLOYEES_EMAIL_EXISTS);
     }
 

@@ -46,7 +46,7 @@ export const addEmployeeValidation = [
         .notEmpty().withMessage('joining_date is required').isAfter('2026-01-01').withMessage('Joining date must be after January 1, 2026')
 ];
 
-// Employee update validation rules                                                                                                                                                                                 
+// update Employee validation rules                                                                                                                                                                                 
 export const updateEmployessValidation = [
     param('employeeId').notEmpty().withMessage('Employee ID is required')
         .isInt().withMessage('Employee ID must be a valid integer'),
