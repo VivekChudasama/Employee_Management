@@ -1,5 +1,5 @@
 import express from 'express';
-import Controller from '../controllers/employees.js';
+import Controller from '../controllers/employeesController.js';
 import {getEmployeeByIdValidation, getEmployeeValidation, addEmployeeValidation, updateEmployessValidation, deletEmployessValidation ,  validate } from '../schema/employeeValidation.js';
 
 const router = express.Router();
@@ -10,8 +10,10 @@ router.get('/', getEmployeeValidation, validate , Controller.getEmployees);
 // add new employee
 router.post('/add-employee', addEmployeeValidation, validate, Controller.postAddEmployee);
 
-//edit/update employee details by id
+//get employee details by id
 router.get('/:employeeId', getEmployeeByIdValidation, validate, Controller.getEmployeeDetailById);
+
+//edit employee details by id
 router.put('/:employeeId', updateEmployessValidation, validate, Controller.editEmployeeDetails);
 
 //delete employee by id

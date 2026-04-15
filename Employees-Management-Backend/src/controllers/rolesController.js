@@ -1,4 +1,4 @@
-import roleService from '../services/roles.js';
+import roleService from '../services/rolesService.js';
 import { ResponseMessages } from '../config/response_messages.js'
 import { Constants } from '../config/constants.js'
 

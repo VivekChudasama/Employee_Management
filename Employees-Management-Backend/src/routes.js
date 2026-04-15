@@ -3,10 +3,10 @@ import bodyParser from 'body-parser';
 import methodOverride from 'method-override';
 import cors from 'cors';
 
-import get404 from './services/error.js';
+import get404 from './services/errorService.js';
 
-import employeeRoutes from './routes/employees.js';
-import roleRoutes from './routes/roles.js';
+import employeeRoutes from './routes/employeesRoutes.js';
+import roleRoutes from './routes/rolesRoutes.js';
 
 const app = express();
 

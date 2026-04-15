@@ -1,4 +1,4 @@
-import employeeService from '../services/employees.js';
+import employeeService from '../services/employeesService.js';
 import { ResponseMessages } from '../config/response_messages.js'
 import { Constants } from '../config/constants.js'
 
