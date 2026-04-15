@@ -24,7 +24,8 @@ export const addRoleValidation = [
     body('salary').isNumeric().withMessage('Salary must be a numeric value').isFloat({ min: 0 }).
         withMessage('Salary cannot be negative').notEmpty().withMessage('Salary is required'),
 
-    body('department_id').isInt().withMessage('Department ID must be a valid integer').notEmpty().withMessage('department_id is required')
+    body('department_id').isInt().withMessage('Department ID must be a valid integer')
+        .notEmpty().withMessage('department_id is required')
 ];
 
 // Update Role validation rules
@@ -34,7 +35,8 @@ export const updateRoleValidation = [
     body('role').optional().isString().withMessage('Role must be a string')
         .isLength({ min: 3, max: 30 }).withMessage('Name is in between 3 to 30 character').trim(),
 
-    body('salary').optional().isNumeric().withMessage('Salary must be a numeric value').isFloat({ min: 0 }).withMessage('Salary cannot be negative'),
+    body('salary').optional().isNumeric().withMessage('Salary must be a numeric value')
+        .isFloat({ min: 0 }).withMessage('Salary cannot be negative'),
 
     body('department_id').optional().isInt().withMessage('Department ID must be a valid integer')
 ];
