@@ -51,11 +51,14 @@ const findEmployeeById = async (id) => {
         throw new Error(ResponseMessages.employee.ERROR_EMPLOYEE_ID);
     }
 
-    return await employeeRepository.findOneEmployeeById(id);
+    return existingEmployee;
 };
 
 // Create a new employee
 const createEmployee = async ({ name, email, role_id, joining_date, status }) => {
+    if (await employeeRepository.findEmployeeByEmail(email)) {
+        throw new Error(ResponseMessages.employee.ERROR_EMPLOYEES_EMAIL_EXISTS);
+    }
     return await employeeRepository.saveEmployee({
         name,
         email,

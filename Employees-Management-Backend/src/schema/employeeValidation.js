@@ -19,8 +19,7 @@ export const getEmployeeByIdValidation = [
 
 //Get Employee validation rules for query parameters
 export const getEmployeeValidation = [
-    query('search').optional().isString().withMessage('Search must be a string')
-        .matches(/^[^0-9]*$/).withMessage('Search cannot contain numbers').trim(),
+    query('search').optional().isString().withMessage('Search must be a string').trim(),
 
     query('status').optional().isIn(['active', 'inactive']).withMessage('Status must be either active or inactive'),
 
@@ -51,8 +50,6 @@ export const addEmployeeValidation = [
 export const updateEmployessValidation = [
     param('employeeId').notEmpty().withMessage('Employee ID is required')
         .isInt().withMessage('Employee ID must be a valid integer'),
-
-    body('employeeId').not().exists().withMessage('Employee ID must not be provided in request body'),
 
     body('name').optional().isString().withMessage('Name must be a string')
         .matches(/^[^0-9]*$/).withMessage('Name cannot contain numbers')

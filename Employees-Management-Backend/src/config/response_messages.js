@@ -12,6 +12,7 @@ export class ResponseMessages {
         ERROR_DELETING_EMPLOYEE: "Error deleting employee",
         ERROR_EMPLOYEE_ID_REQUIRED: "Employee ID is required",
         ERROR_EMPLOYEE_ID: "Employee not found with the provided EMPLOYEE ID",
+        ERROR_EMPLOYEES_EMAIL_EXISTS: "Email address you have entered is already in use",
     };
 
     static role = {
@@ -20,6 +21,7 @@ export class ResponseMessages {
         ROLE_DELETED: "Role deleted successfully",
         ROLE_FETCHED: "Role data fetched successfully",
         ROLES_FETCHED: "Roles list fetched successfully",
+        ERROR_ROLE_EXISTS: "The role name you have entered already exists.",
         ERROR_FETCHING_ROLES: "Error fetching roles list",
         ERROR_FETCHING_ROLE: "Error fetching role",
         ERROR_ADDING_ROLE: "Error adding role",
@@ -28,11 +30,11 @@ export class ResponseMessages {
         ERROR_ROLE_ID_REQUIRED: "Role ID is required",
         ERROR_ROLE_NAME_REQUIRED: "Role Name is required",
         ERROR_ROLE_ID: "Role not found with the provided ROLE ID",
-        ERROR_ROLE_ASSIGNED: "Cannot delete role as it is assigned to employees"
+        ERROR_ROLE_ASSIGNED: "Role deletion failed. Employees with this role exist in the organisation."
     };
 
     static Route = {
-        ERROR_FOUND_ROUTE : "Route not found"
+        ERROR_FOUND_ROUTE: "Route not found"
     }
 
 }

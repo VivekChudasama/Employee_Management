@@ -11,7 +11,8 @@ const roleSchema = new EntitySchema({
         },
         role: {
             type: "varchar",
-            name: "role"
+            name: "role",
+            unique: true
         },
         salary: {
             type: "int",

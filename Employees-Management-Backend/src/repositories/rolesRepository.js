@@ -9,9 +9,13 @@ export const roleRepository = AppDataSource.getRepository(roleSchema).extend({
 
     async findRolesById(id) {
         return await this.findOne({ 
-            where: { id: parseInt(id) },
+            where: { id: id },
             relations: ["department"] 
         });
+    },
+
+    async findRoleIsExistByName(role) {
+        return await this.findOne({ where: { role : role } });
     },
 
     async saveRole(role) {

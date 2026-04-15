@@ -15,8 +15,9 @@ const employeesSchema = new EntitySchema({
         },
         email: {
             type: "varchar",
-            name: "email"
-        },
+            name: "email",
+            unique: true
+        }, 
         role_id: {
             type: "int",
             name: "role_id"

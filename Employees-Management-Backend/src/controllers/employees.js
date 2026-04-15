@@ -5,18 +5,14 @@ import { Constants } from '../config/constants.js'
 // Get list of employees with search support
 const getEmployees = async (req, res, next) => {
     try {
-        const { ajax, search, department_id, status, min_salary, max_salary } = req.query;
+        const { search, department_id, status, min_salary, max_salary } = req.query;
 
         const employees = await employeeService.findAllEmployees(
             { search, department_id, status, min_salary, max_salary }
         );
 
-        if (ajax) {
-            return res.json(employees);
-        }
-
         res.status(Constants.RESPONSE_STATUS_CODE.SUCCESS_CODE)
-            .json({ message: ResponseMessages.employee.EMPLOYEES_FETCHED });
+            .json({ message: ResponseMessages.employee.EMPLOYEES_FETCHED, data: employees });
     } catch (err) {
         res.status(Constants.RESPONSE_STATUS_CODE.INTERNAL_SERVER_ERROR_CODE)
             .json({ message: ResponseMessages.employee.ERROR_FETCHING_EMPLOYEES , error: err.message });
@@ -45,10 +41,10 @@ const getEmployeeDetailById = async (req, res, next) => {
     try {
         const empId = req.params.employeeId;
 
-        await employeeService.findEmployeeById(empId);
+        const employee = await employeeService.findEmployeeById(empId);
 
         res.status(Constants.RESPONSE_STATUS_CODE.SUCCESS_CODE)
-            .json({ message: ResponseMessages.employee.EMPLOYEE_FETCHED });
+            .json({ message: ResponseMessages.employee.EMPLOYEE_FETCHED, data: employee });
     } catch (err) {
         res.status(Constants.RESPONSE_STATUS_CODE.INTERNAL_SERVER_ERROR_CODE)
             .json({ message: ResponseMessages.employee.ERROR_FETCHING_EMPLOYEE , error: err.message });

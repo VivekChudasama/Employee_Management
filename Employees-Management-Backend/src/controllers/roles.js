@@ -5,8 +5,8 @@ import { Constants } from '../config/constants.js'
 // Get list of all roles
 const getRoles = async (req, res, next) => {
     try {
-        await roleService.findAllRoles();
-        res.status(Constants.RESPONSE_STATUS_CODE.SUCCESS_CODE).json({ message: ResponseMessages.role.ROLES_FETCHED });
+        const roles = await roleService.findAllRoles();
+        res.status(Constants.RESPONSE_STATUS_CODE.SUCCESS_CODE).json({ message: ResponseMessages.role.ROLES_FETCHED, data: roles });
     } catch (err) {
         res.status(Constants.RESPONSE_STATUS_CODE.INTERNAL_SERVER_ERROR_CODE)
             .json({ message: ResponseMessages.role.ERROR_FETCHING_ROLES, error: err.message });
@@ -33,9 +33,9 @@ const getRoleDetailsById = async (req, res, next) => {
     try {
         const roleId = req.params.roleId;
 
-        await roleService.findRoleById(roleId);
+        const role = await roleService.findRoleById(roleId);
 
-        res.status(Constants.RESPONSE_STATUS_CODE.SUCCESS_CODE).json({ message: ResponseMessages.role.ROLE_FETCHED });
+        res.status(Constants.RESPONSE_STATUS_CODE.SUCCESS_CODE).json({ message: ResponseMessages.role.ROLE_FETCHED, data: role });
     } catch (err) {
         res.status(Constants.RESPONSE_STATUS_CODE.INTERNAL_SERVER_ERROR_CODE)
             .json({ message: ResponseMessages.role.ERROR_FETCHING_ROLE, error: err.message });
