@@ -29,6 +29,10 @@ export const employeeRepository = AppDataSource.getRepository(employeeSchema).ex
         return await this.save(employeeData)
     },
 
+    async updateEmployee(employeeId, updateData) {
+        return await this.update(employeeId, updateData)
+    },
+
     //delete employee by id
     async removeEmployeeById(employeeId) {
         return await this.remove(employeeId)

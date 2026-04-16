@@ -29,7 +29,7 @@ const createRole = async ({ role, salary, department_id }) => {
         department_id
     });
 };
- 
+
 // Update an existing role
 const updateRole = async (roleId, updateData) => {
     const existingRole = await roleRepository.findRolesById(roleId);
@@ -49,23 +49,22 @@ const updateRole = async (roleId, updateData) => {
     //Prevent changing the primary key from the request body
     delete updateData.id;
 
-    // Merges the request body with the existing role record
-    roleRepository.merge(existingRole, updateData);
-
-    return await roleRepository.saveRole(existingRole);
+    return await roleRepository.updateRole(existingRole , updateData);
 };
 
 // Delete a role (only if not assigned to any employee)
 const deleteRoleById = async (roleId) => {
     const existingRole = await roleRepository.findRolesById(roleId);
 
-    const employeesCount = await employeeRepository.countEmployeesByRoleId(roleId);
 
     if (!existingRole) {
         throw new Error(ResponseMessages.role.ERROR_ROLE_ID);
     }
+
+    const employeesCount = await employeeRepository.countEmployeesByRoleId(roleId);
+
     // If there are employees assigned to this role so we cannot delete the role
-    else if (employeesCount > 0) {
+    if (employeesCount > 0) {
         throw new Error(ResponseMessages.role.ERROR_ROLE_ASSIGNED);
     }
 

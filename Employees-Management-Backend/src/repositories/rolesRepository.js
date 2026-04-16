@@ -31,6 +31,10 @@ export const roleRepository = AppDataSource.getRepository(roleSchema).extend({
         return await this.save(role);
     },
 
+    async updateRole(roleId, updateData) {
+        return await this.update(roleId, updateData);
+    },
+
     //delete role by id
     async deleteRole(roleId) {
         return await this.delete(roleId);

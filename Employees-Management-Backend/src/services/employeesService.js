@@ -97,17 +97,13 @@ const updateEmployee = async (employeeId, updateData) => {
         }
     }
 
-
     // Prevent changing the primary key from the request body
     delete updateData.id;
-
-    // Merges the request body with the existing employee data to create an updated employee object
-    employeeRepository.merge(existingEmployee, updateData);
 
     // delete role relation and update it separately to avoid issues with TypeORM's relation handling during update.
     delete existingEmployee.role;
 
-    return await employeeRepository.saveEmployee(existingEmployee);
+    return await employeeRepository.updateEmployee(existingEmployee , updateData);
 };
 
 // Delete an employee by ID
