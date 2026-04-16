@@ -22,41 +22,8 @@
     border-radius: 2px;
 }
 
-/* From Uiverse.io by Jedi-hongbin */ 
-.back-button {
- display: flex;
- height: 3em;
- width: 100px;
- align-items: center;
- justify-content: center;
- background-color: #eeeeee4b;
- border-radius: 3px;
- letter-spacing: 1px;
- transition: all 0.2s linear;
- cursor: pointer;
- border: none;
- background: #fff;
-}
-
-.back-button  > svg {
- margin-right: 5px;
- margin-left: 5px;
- font-size: 20px;
- transition: all 0.4s ease-in;
-}
-
-.back-button:hover > svg {
- font-size: 1.2em;
- transform: translateX(-5px);
-}
-
-.back-button:hover {
- box-shadow: 9px 9px 33px #d1d1d1, -9px -9px 33px #ffffff;
- transform: translateY(-2px);
-}
-
 .form-wrap {
-    background: #ffffff;
+    background: var(--primary-white);
     border-radius: 20px;
     padding: 2.5rem;
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
@@ -69,16 +36,16 @@
     transform: translateY(-2px);
 }
 
-.form-wrap .product-form {
+.form-wrap .employee-form {
     display: flex;
     flex-direction: column;
 }
 
-.form-wrap .product-form .row {
+.form-wrap .employee-form .row {
     margin-bottom: 1.25rem;
 }
 
-.form-wrap .product-form .form-label {
+.form-wrap .employee-form .form-label {
     font-weight: var(--font-weight-bold);
     color: var(--secondary-dark-gray);
     margin-bottom: 8px;
@@ -87,9 +54,9 @@
     font-family: var(--font);
 }
 
-.form-wrap .product-form .form-control,
-.form-wrap .product-form .form-select,
-.form-wrap .product-form .btn-outline-secondary {
+.form-wrap .employee-form .form-control,
+.form-wrap .employee-form .form-select,
+.form-wrap .employee-form .btn-outline-secondary {
     border-radius: 10px;
     border: 2px solid #e9ecef;
     padding: 12px 18px;
@@ -99,24 +66,24 @@
     color: var(--secondary-dark-gray);
 }
 
-.form-wrap .product-form .form-control:focus,
-.form-wrap .product-form .form-select:focus,
-.form-wrap .product-form .btn-outline-secondary:focus,
-.form-wrap .product-form .btn-outline-secondary[aria-expanded="true"] {
+.form-wrap .employee-form .form-control:focus,
+.form-wrap .employee-form .form-select:focus,
+.form-wrap .employee-form .btn-outline-secondary:focus,
+.form-wrap .employee-form .btn-outline-secondary[aria-expanded="true"] {
     border-color: var(--primary-blue);
     box-shadow: 0 0 0 4px rgba(0, 173, 181, 0.15);
     outline: none;
-    background-color: #fff;
+    background-color: var(--primary-white);
 }
 
-.form-wrap .product-form .form-control:disabled {
+.form-wrap .employee-form .form-control:disabled {
     background-color: #f1f3f5;
     color: #6c757d;
     border-color: #e9ecef;
 }
 
 /* Quick Add Role Section */
-.form-wrap .product-form .card {
+.form-wrap .employee-form .card {
     background-color: rgba(0, 173, 181, 0.03) !important;
     border-radius: 12px;
     border: 2px dashed rgba(0, 173, 181, 0.3) !important;
@@ -124,29 +91,82 @@
     height: 100%;
 }
 
-.form-wrap .product-form .card:hover {
+.form-wrap .employee-form .card:hover {
     background-color: rgba(0, 173, 181, 0.06) !important;
     border-color: rgba(0, 173, 181, 0.6) !important;
 }
 
-.form-wrap .product-form .card .card-body {
+.form-wrap .employee-form .card .card-body {
     display: flex;
     align-items: center;
 }
 
-.form-wrap .product-form .input-group-sm .form-control {
+.form-wrap .employee-form .input-group-sm .form-control {
     border-radius: 8px 0 0 8px;
     padding: 10px 14px;
     border-width: 1px;
 }
 
-.form-wrap .product-form .input-group-sm #newRoleSalary {
+.form-wrap .employee-form .input-group-sm #newRoleSalary {
     border-radius: 0;
     border-left: none;
     border-right: none;
 }
 
-.form-wrap .product-form .input-group-sm .btn-primary {
+/* From Uiverse.io by andrew-demchenk0 */
+.add-role-button {
+    position: relative;
+    width: 150px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    border: none;
+    background-color: var(--primary-blue);
+}
+
+.add-role-button,
+.button_icon,
+.button_text {
+    transition: all 0.3s;
+}
+
+.add-role-button .button_text {
+    transform: translateX(22px);
+    color: var(--primary-white);
+    font-weight: var(--font-weight-bold);
+}
+
+.add-role-button .button_icon {
+    position: absolute;
+    transform: translateX(109px);
+    height: 100%;
+    width: 39px;
+    background-color: var(--primary-white);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.add-role-button .svg {
+    width: 20px;
+    fill: var(--primary-blue);
+}
+
+.add-role-button:hover .button_text {
+    color: transparent;
+}
+
+.add-role-button:hover .button_icon {
+    width: 148px;
+    transform: translateX(0);
+}
+
+.add-role-button:active {
+    transform: translate(3px, 3px);
+    box-shadow: 0px 0px var(--primary-blue);
+}
+
+.form-wrap .employee-form .input-group-sm .btn-primary {
     border-radius: 0 8px 8px 0;
     padding: 10px 20px;
     background-color: var(--primary-blue);
@@ -155,17 +175,17 @@
     transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
-.form-wrap .product-form .input-group-sm .btn-primary:hover {
+.form-wrap .employee-form .input-group-sm .btn-primary:hover {
     background-color: #00939b;
     border-color: #00939b;
 }
 
-.form-wrap .product-form .input-group-sm .btn-primary:active {
+.form-wrap .employee-form .input-group-sm .btn-primary:active {
     transform: scale(0.98);
 }
 
 /* Main primary button styling */
-.form-wrap .product-form > .btn-primary {
+.form-wrap .employee-form>.btn-primary {
     background: var(--linear-gradient);
     border: none;
     border-radius: 50px;
@@ -181,26 +201,26 @@
     color: var(--secondary-white);
 }
 
-.form-wrap .product-form > .btn-primary:hover {
+.form-wrap .employee-form>.btn-primary:hover {
     transform: translateY(-3px);
     box-shadow: 0 8px 25px rgba(1, 71, 255, 0.35);
 }
 
-.form-wrap .product-form > .btn-primary:active {
+.form-wrap .employee-form>.btn-primary:active {
     transform: translateY(0);
     box-shadow: 0 4px 15px rgba(1, 71, 255, 0.25);
 }
 
 /* Dropdown Menu Enhancements */
-.form-wrap .product-form .dropdown-menu {
+.form-wrap .employee-form .dropdown-menu {
     border-radius: 12px;
-    border: 1px solid rgba(0,0,0,0.08);
-    box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
     padding: 8px 0;
     margin-top: 5px;
 }
 
-.form-wrap .product-form .dropdown-item {
+.form-wrap .employee-form .dropdown-item {
     padding: 12px 20px;
     font-weight: 500;
     color: var(--secondary-grey);
@@ -210,14 +230,14 @@
     align-items: center;
 }
 
-.form-wrap .product-form .dropdown-item:hover {
+.form-wrap .employee-form .dropdown-item:hover {
     background-color: rgba(0, 173, 181, 0.08);
     color: var(--primary-blue);
     padding-left: 25px;
 }
 
 /* Role Dropdown Button styling */
-.form-wrap .product-form #roleDropdownBtn {
+.form-wrap .employee-form #roleDropdownBtn {
     background-color: #fdfdfd;
 }
 
@@ -226,17 +246,17 @@
     .form-wrap {
         padding: 1.5rem;
     }
-    
-    .form-wrap .product-form .row {
+
+    .form-wrap .employee-form .row {
         flex-direction: column;
     }
-    
-    .form-wrap .product-form .col-6 {
+
+    .form-wrap .employee-form .col-6 {
         width: 100%;
         margin-bottom: 1rem;
     }
-    
-    .form-wrap .product-form > .btn-primary {
+
+    .form-wrap .employee-form>.btn-primary {
         width: 100%;
         min-width: auto;
     }

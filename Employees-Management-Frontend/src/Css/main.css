@@ -2,6 +2,7 @@
 
 :root {
     --primary-blue: #00ADB5;
+    --primary-white: #FFFFFF;
     --secondary-grey: #393E46;
     --secondary-dark-gray: #222831;
     --secondary-white: #EEEEEE;
@@ -76,6 +77,90 @@ body {
     border-bottom: none;
 }
 
+#sort {
+	margin: 10% 50%;
+	transition: all 700ms ease-in-out;
+}
+
+button {
+	background: none;
+	border: none;
+}
+
+button:focus {
+	outline: none;
+}
+
+#stroke1,
+#stroke2,
+#stroke3 {
+	cursor: pointer;
+	background-color: white;
+	margin-top: 8px;
+	height: 4px;
+	transition: all 60ms ease-in-out;
+}
+
+#stroke1 {
+	width: 12px;
+	transition-delay: .1s;
+}
+
+#stroke2 {
+	width: 20px;
+	transition-delay: .2s;
+}
+
+#stroke3 {
+	width: 30px;
+	transition-delay: .3s;
+}
+
+#tap-circle {
+	border-radius: 100%;
+	background-color: rgba(255, 255, 255, 0.1);
+	opacity: 0;
+	transition: all 2s ease-in-out;
+}
+
+.resize1 {
+	transform: scaleX(2.5);
+	transform-origin: left;
+}
+
+.opacity {
+	opacity: 0;
+}
+
+.resize2 {
+	transform: scaleX(0.25);
+	transform-origin: left;
+}
+
+.bounce {
+	transform: scaleX(.8);
+	transform-origin: left;
+}
+
+.click-animation {
+	animation: animation 0.5s forwards ease-in-out;
+}
+
+@keyframes animation {
+	0% {
+		opacity: 0;
+		transform: scale(1);
+	}
+	80% {
+		opacity: 1;
+	}
+	100% {
+		opacity: 0;
+		transform: scale(1.8);
+	}
+}
+
+
 .min-max-inputs {
     width: auto !important;
     flex-wrap: nowrap !important;
@@ -99,23 +184,24 @@ body {
     transition: box-shadow 0.2s;
 }
 
-@media (max-width: 767px) {
+@media (max-width: 376px) {
     .search-container {
         width: 100%;
     }
-    .department-dropdown, .status-dropdown, .department-dropdown-button, .status-dropdown-button {
+
+    .department-dropdown .department-dropdown-button
+    {
         width: 100%;
         text-align: left;
     }
-    .min-max-inputs {
-        width: 100% !important;
+    .status-dropdown .status-dropdown-button 
+    {
+        width: 100%;
+        text-align: left;
     }
+
     .min-max-inputs .min-input,
     .min-max-inputs .max-input {
         width: 50%;
-    }
-    .filter-section-wrapper {
-        flex-direction: column;
-        align-items: stretch !important;
     }
 }

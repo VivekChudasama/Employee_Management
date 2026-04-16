@@ -1,5 +1,3 @@
-import { METHODS } from "node:http";
-
 const BASE_API = 'http://localhost:3001/employees/add-employee/';
 
 const addEmployeeForm = document.getElementById('addEmployeeForm');
@@ -10,7 +8,7 @@ addEmployeeForm.addEventListener('submit', async (e) => {
     const employeeData = Object.fromEntries(formData.entries());
     try {
         const res = await fetch(BASE_API, {
-            method: METHODS.PUT,
+            method: PUT,
             headers: {
                 'Content-Type': 'application/json'
             },  

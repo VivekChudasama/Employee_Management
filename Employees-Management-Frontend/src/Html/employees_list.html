@@ -50,70 +50,76 @@
                 </div>
             </div>
         </nav>
-        </header>
+    </header>
 
-        <div class="container mt-4">
-            <div class="d-flex flex-wrap justify-content-between align-items-center">
-                <h2 class="py-3">Welcome to Employees details page.</h2>
-                <a href="add_employee.html" class="text-white btn d-flex flex-wrap justify-content-end bg-primary">Add
-                    Employee</a>
+    <div class="container mt-4">
+        <div class="d-flex flex-wrap justify-content-between align-items-center">
+            <h2 class="py-3">Welcome to Employees details page.</h2>
+            <a href="add_employee.html" class="text-white btn d-flex flex-wrap justify-content-end bg-primary">Add
+                Employee</a>
+        </div>
+        <div class="filter-section-wrapper d-flex flex-wrap justify-content-start gap-2 align-items-center mb-5 mt-4 ">
+            <div class="search-container">
+                <input type="text" id="searchInput" placeholder="Search by Name, Email, and Role" class="search-input">
             </div>
-            <div class="filter-section-wrapper d-flex flex-wrap justify-content-start gap-2 align-items-center mb-5 mt-4 ">
-                <div class="search-container">
-                    <input type="text" id="searchInput" placeholder="Search by Name, Email, and Role"
-                        class="search-input">
-                </div>
-                <div class="dropdown department-dropdown">
-                    <button class="btn  dropdown-toggle department-dropdown-button" type="button"
-                        data-bs-toggle="dropdown" aria-expanded="false">
-                        Department
-                    </button>
-                    <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="#">Action</a></li>
-                        <li><a class="dropdown-item" href="#">Another action</a></li>
-                        <li><a class="dropdown-item" href="#">Something else here</a></li>
-                    </ul>
-                </div>
-
-                <div class="dropdown status-dropdown">
-                    <button class="btn  dropdown-toggle status-dropdown-button" type="button" data-bs-toggle="dropdown"
-                        aria-expanded="false">
-                        status
-                    </button>
-                    <ul class="dropdown-menu" id="getEmpStatus">
-                    </ul>
-                </div>
-
-                <div class="input-group min-max-inputs">
-                    <input type="text" id="minInput" placeholder="Min" class=" min-input">
-                    <input type="text" id="maxInput" placeholder="Max" class="max-input">
-                </div>
-
+            <div class="dropdown department-dropdown">
+                <button class="btn  dropdown-toggle department-dropdown-button" type="button" data-bs-toggle="dropdown"
+                    aria-expanded="false">
+                    Department
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="#">Action</a></li>
+                    <li><a class="dropdown-item" href="#">Another action</a></li>
+                    <li><a class="dropdown-item" href="#">Something else here</a></li>
+                </ul>
             </div>
 
-            <div class="table-responsive custom-table-wrapper">
-                <table class="table table-hover align-middle table-borderless" id="sorting">
-                    <thead class="table-header-color">
-                        <tr>
-                            <th>ID</th>
-                            <th class="ps-4">Name</th>
-                            <th>Email</th>
-                            <th>Role</th>
-                            <th>Department</th>
-                            <th>Salary</th>
-                            <th>Status</th>
-                            <th class="text-center pe-4">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="employeeTableBody">
-                    </tbody>
-                </table>
-                <h3 id="noEmployeesMessage" class="text-center text-muted py-5">No Employees Found!</h3>
+            <div class="dropdown status-dropdown">
+                <button class="btn  dropdown-toggle status-dropdown-button" type="button" data-bs-toggle="dropdown"
+                    aria-expanded="false">
+                    status
+                </button>
+                <ul class="dropdown-menu" id="getEmpStatus">
+                </ul>
             </div>
+
+            <div class="input-group min-max-inputs">
+                <input type="text" id="minInput" placeholder="Min" class=" min-input">
+                <input type="text" id="maxInput" placeholder="Max" class="max-input">
+            </div>
+
         </div>
 
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-        <script src="../JavaScript/employee_list.js"></script>
+        <div class="table-responsive custom-table-wrapper">
+            <table class="table table-hover align-middle table-borderless" id="sorting">
+                <thead class="table-header-color">
+                    <tr>
+                        <th>Emp_I</th>
+                        <th class="ps-4">Name</th>
+                        <th>Email</th>
+                        <th>Department</th>
+                        <th>Role</th>
+                        <th onclick="sortTable(0)" class="d-flex flex-wrap justify-content-start">Salary
+                                <button id="sort" onclick="animation()">
+                                    <div id="stroke1"></div>
+                                    <div id="stroke2"></div>
+                                    <div id="stroke3"></div>
+                                    <div id="tap-circle"></div>
+                                </button>
+                            </th>
+                        <th>Status</th>
+                        <th class="text-center pe-4">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="employeeTableBody">
+                </tbody>
+            </table>
+            <h3 id="noEmployeesMessage" class="text-center text-muted py-5">No Employees Found!</h3>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../JavaScript/employee_list.js"></script>
 </body>
 
 </html>
