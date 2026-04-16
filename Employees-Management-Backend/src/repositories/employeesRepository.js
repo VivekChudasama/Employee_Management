@@ -5,8 +5,8 @@ import employeeSchema from '../entities/employees.js';
 // Employee repository with custom methods for for fetching employee data
 export const employeeRepository = AppDataSource.getRepository(employeeSchema).extend({
     // Get all employees details
-    async findEmployees() {
-        return await this.find()
+    async findEmployees(empployeeFilter) {
+        return await this.find(empployeeFilter);
     },
 
     //count employees based on role id for checking if any employee is assigned to the role which we want to delete

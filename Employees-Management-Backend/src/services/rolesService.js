@@ -17,17 +17,13 @@ const findRoleById = async (id) => {
 };
 
 // Create a new role
-const createRole = async ({ role, salary, department_id }) => {
-    const isRoleExists = await roleRepository.findRoleIsExistByName(role);
+const createRole = async (roleData) => {
+    const isRoleExists = await roleRepository.findRoleIsExistByName(roleData.role);
     if (isRoleExists) {
         throw new Error(ResponseMessages.role.ERROR_ROLE_EXISTS);
     }
 
-    return await roleRepository.saveRole({
-        role,
-        salary,
-        department_id
-    });
+    return await roleRepository.saveRole(roleData);
 };
 
 // Update an existing role

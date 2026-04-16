@@ -42,7 +42,7 @@ const findAllEmployees = async ({ search, department_id, status, min_salary, max
         findOptions.where = Filter;
     }
 
-    return await employeeRepository.find(findOptions);
+    return await employeeRepository.findEmployees(findOptions);
 };
 
 // Find employee by ID with role relation
@@ -57,19 +57,22 @@ const findEmployeeById = async (id) => {
 };
 
 // Create a new employee
-const createEmployee = async ({ name, email, role_id, joining_date, status }) => {
-    const emailExist = await employeeRepository.findEmployeeByEmail(email);
-    //if email already exists for other employee or not
+const createEmployee = async (employeeData) => {
+    const emailExist = await employeeRepository.findEmployeeByEmail(employeeData.email);
+    // if email already exists for another employee
     if (emailExist) {
         throw new Error(ResponseMessages.employee.ERROR_EMPLOYEES_EMAIL_EXISTS);
     }
-    return await employeeRepository.saveEmployee({
-        name,
-        email,
-        role_id,
-        joining_date,
-        status
-    });
+
+    // verify role exists before saving
+    if (employeeData.role_id) {
+        const roleExist = await roleRepository.findRolesById(employeeData.role_id);
+        if (!roleExist) {
+            throw new Error(ResponseMessages.role.ERROR_ROLE_ID);
+        }
+    }
+
+    return await employeeRepository.saveEmployee(employeeData);
 };
 
 // Update an existing employee
