@@ -1,6 +1,6 @@
 /* Premium Hierarchical CSS for Employee Edit Form */
 
-.container h1.mb-4 {
+.container .form-title {
     color: var(--secondary-dark-gray);
     font-weight: 800;
     text-align: center;
@@ -10,7 +10,7 @@
     font-family: var(--font);
 }
 
-.container h1.mb-4::after {
+.container .form-title::after {
     content: '';
     position: absolute;
     bottom: 0;
@@ -18,8 +18,41 @@
     transform: translateX(-50%);
     width: 80px;
     height: 4px;
-    background: var(--linear-gradient, var(--primary-blue));
+    background: var(--secondary-grey);
     border-radius: 2px;
+}
+
+/* From Uiverse.io by Jedi-hongbin */ 
+.back-button {
+ display: flex;
+ height: 3em;
+ width: 100px;
+ align-items: center;
+ justify-content: center;
+ background-color: #eeeeee4b;
+ border-radius: 3px;
+ letter-spacing: 1px;
+ transition: all 0.2s linear;
+ cursor: pointer;
+ border: none;
+ background: #fff;
+}
+
+.back-button  > svg {
+ margin-right: 5px;
+ margin-left: 5px;
+ font-size: 20px;
+ transition: all 0.4s ease-in;
+}
+
+.back-button:hover > svg {
+ font-size: 1.2em;
+ transform: translateX(-5px);
+}
+
+.back-button:hover {
+ box-shadow: 9px 9px 33px #d1d1d1, -9px -9px 33px #ffffff;
+ transform: translateY(-2px);
 }
 
 .form-wrap {
@@ -145,7 +178,7 @@
     align-self: center;
     min-width: 250px;
     margin-top: 20px;
-    color: #fff;
+    color: var(--secondary-white);
 }
 
 .form-wrap .product-form > .btn-primary:hover {

@@ -1,8 +1,8 @@
-const API_BASE = 'http://localhost:3001/employees';
+const BASE_API = 'http://localhost:3001/employees';
 
 const fetchEmployees = async (search = '') => {
     try {
-        const res = await fetch(`${API_BASE}?search=${encodeURIComponent(search)}`);
+        const res = await fetch(`${BASE_API}?search=${encodeURIComponent(search)}`);
         if (!res.ok) throw new Error('Failed to fetch');
         const jsonResponse = await res.json();
         const data = jsonResponse.data || [];
@@ -76,7 +76,7 @@ const renderEmployees = (employees) => {
 
 const deleteEmployee = async (id) => {
     try {
-        const res = await fetch(`${API_BASE}/${id}`, {
+        const res = await fetch(`${BASE_API}/${id}`, {
             method: 'DELETE',
             headers: { 'Content-Type': 'application/json' }
         });
