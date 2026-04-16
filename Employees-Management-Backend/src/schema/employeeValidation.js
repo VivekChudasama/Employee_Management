@@ -32,8 +32,6 @@ export const getEmployeeByIdValidation = [
     param('employeeId').isInt().withMessage('Employee ID must be a valid integer').notEmpty().withMessage('Employee ID is required')
 ];
 
-
-
 // Add Employee validation rules
 export const addEmployeeValidation = [
     body('name').trim().notEmpty().withMessage('Name is required')
@@ -59,7 +57,6 @@ export const addEmployeeValidation = [
         .bail()
         .isISO8601().withMessage('Joining date must be a valid ISO8601 date')
         .isAfter('2026-01-01').withMessage('Joining date cannot be before year 2026')
-
 ];
 
 // update Employee validation rules                                                                                                                                                                                 
