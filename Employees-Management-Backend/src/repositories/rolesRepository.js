@@ -16,7 +16,12 @@ export const roleRepository = AppDataSource.getRepository(roleSchema).extend({
         });
     },
 
-    // Method to check if a role with the same name already exists for checking role name uniqueness
+    // Method to check if a role with the same name already exists in a specific department
+    async findRoleByNameAndDepartment(role, departmentId) {
+        return await this.findOne({ where: { role: role, department_id: departmentId } });
+    },
+
+    // Method to check if a role with the same name already exists globally
     async findRoleIsExistByName(role) {
         return await this.findOne({ where: { role : role } });
     },

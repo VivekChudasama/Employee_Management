@@ -46,11 +46,9 @@ const getRoleDetailsById = async (req, res, next) => {
 const editRoleDetails = async (req, res, next) => {
     try {
         const roleId = req.params.roleId;
-        const { role, salary, department_id } = req.body;
+        const updateData = req.body;
 
-        await roleService.updateRole(
-            { roleId, updatedRole: role, updatedSalary: salary, updatedDepartmentId: department_id }
-        );
+        await roleService.updateRole(roleId, updateData);
 
         res.status(Constants.RESPONSE_STATUS_CODE.SUCCESS_CODE)
             .json({ message: ResponseMessages.role.ROLE_UPDATED });

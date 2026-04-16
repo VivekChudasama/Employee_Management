@@ -1,6 +1,7 @@
 import { Like, Between, MoreThanOrEqual, LessThanOrEqual } from "typeorm";
 import { employeeRepository } from '../repositories/employeesRepository.js';
 import { ResponseMessages } from '../config/response_messages.js'
+import { roleRepository } from "../repositories/rolesRepository.js";
 
 // Get all employees with search & filters
 const findAllEmployees = async ({ search, department_id, status, min_salary, max_salary }) => {
@@ -72,25 +73,38 @@ const createEmployee = async ({ name, email, role_id, joining_date, status }) =>
 };
 
 // Update an existing employee
-const updateEmployee = async ({ employeeId, updatedName, updatedEmail, updatedRole_id, updatedStatus, updatedJoining_date }) => {
+const updateEmployee = async (employeeId, updateData) => {
     const existingEmployee = await employeeRepository.findOneEmployeeById(employeeId);
-    const emailExist = await employeeRepository.findEmployeeByEmail(updatedEmail);
 
-    //check if employee exists and if email already exists for other employee
+    //check if employee exists
     if (!existingEmployee) {
         throw new Error(ResponseMessages.employee.ERROR_EMPLOYEE_ID);
     }
-    else if (emailExist) {
-        throw new Error(ResponseMessages.employee.ERROR_EMPLOYEES_EMAIL_EXISTS);
+
+    if (updateData.role_id) {
+        const roleExist = await roleRepository.findRolesById(updateData.role_id);
+        //check if role exists for the given role id
+        if (!roleExist) {
+            throw new Error(ResponseMessages.role.ERROR_ROLE_ID);
+        }
     }
 
-    existingEmployee.name = updatedName;
-    existingEmployee.email = updatedEmail;
-    existingEmployee.role_id = updatedRole_id;
-    existingEmployee.status = updatedStatus;
-    existingEmployee.joining_date = updatedJoining_date;
+    //check if email already exists for other employee
+    if (updateData.email && updateData.email !== existingEmployee.email) {
+        const emailExist = await employeeRepository.findEmployeeByEmail(updateData.email);
+        if (emailExist && emailExist.id !== existingEmployee.id) {
+            throw new Error(ResponseMessages.employee.ERROR_EMPLOYEES_EMAIL_EXISTS);
+        }
+    }
 
-    // Remove role relation during save and add updated role_id to employee.
+
+    // Prevent changing the primary key from the request body
+    delete updateData.id;
+
+    // Merges the request body with the existing employee data to create an updated employee object
+    employeeRepository.merge(existingEmployee, updateData);
+
+    // delete role relation and update it separately to avoid issues with TypeORM's relation handling during update.
     delete existingEmployee.role;
 
     return await employeeRepository.saveEmployee(existingEmployee);
@@ -99,7 +113,7 @@ const updateEmployee = async ({ employeeId, updatedName, updatedEmail, updatedRo
 // Delete an employee by ID
 const deleteEmployeeById = async (employeeId) => {
     const existingEmployee = await employeeRepository.findOneEmployeeById(employeeId);
-    
+
     //check if employee exists
     if (!existingEmployee) {
         throw new Error(ResponseMessages.employee.ERROR_EMPLOYEE_ID);

@@ -5,11 +5,9 @@ import { Constants } from '../config/constants.js'
 // Get list of employees with search support
 const getEmployees = async (req, res, next) => {
     try {
-        const { search, department_id, status, min_salary, max_salary } = req.query;
+        const queryParams = req.query;
 
-        const employees = await employeeService.findAllEmployees(
-            { search, department_id, status, min_salary, max_salary }
-        );
+        const employees = await employeeService.findAllEmployees(queryParams);
 
         res.status(Constants.RESPONSE_STATUS_CODE.SUCCESS_CODE)
             .json({ message: ResponseMessages.employee.EMPLOYEES_FETCHED, data: employees });
@@ -22,11 +20,9 @@ const getEmployees = async (req, res, next) => {
 // Handle add employee form submission
 const postAddEmployee = async (req, res, next) => {
     try {
-        const { name, email, role_id, joining_date, status } = req.body;
+        const employeeData = req.body;
 
-        await employeeService.createEmployee(
-            { name, email, role_id, joining_date, status }
-        );
+        await employeeService.createEmployee(employeeData);
 
         res.status(Constants.RESPONSE_STATUS_CODE.CREATED_SUCCESS_CODE)
             .json({ message: ResponseMessages.employee.EMPLOYEE_CREATED });
@@ -55,11 +51,9 @@ const getEmployeeDetailById = async (req, res, next) => {
 const editEmployeeDetails = async (req, res, next) => {
     try {
         const empId = req.params.employeeId;
-        const { name, email, role_id, joining_date, status } = req.body;
+        const updateData = req.body;
 
-        await employeeService.updateEmployee(
-            { employeeId: empId, updatedName: name, updatedEmail: email, updatedRole_id: role_id, updatedJoining_date: joining_date, updatedStatus: status }
-        );
+        await employeeService.updateEmployee(empId, updateData);
 
         res.status(Constants.RESPONSE_STATUS_CODE.SUCCESS_CODE)
             .json({ message: ResponseMessages.employee.EMPLOYEE_UPDATED });

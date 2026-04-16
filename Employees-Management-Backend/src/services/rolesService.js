@@ -29,22 +29,28 @@ const createRole = async ({ role, salary, department_id }) => {
         department_id
     });
 };
-
+ 
 // Update an existing role
-const updateRole = async ({ roleId, updatedRole, updatedSalary, updatedDepartmentId }) => {
+const updateRole = async (roleId, updateData) => {
     const existingRole = await roleRepository.findRolesById(roleId);
-    const isRoleExists = await roleRepository.findRoleIsExistByName(updatedRole);
 
     if (!existingRole) {
         throw new Error(ResponseMessages.role.ERROR_ROLE_ID);
     }
-    else if (isRoleExists) {
-        throw new Error(ResponseMessages.role.ERROR_ROLE_EXISTS);
+
+    // Check if a role with the same name already exists (excluding the current role)
+    if (updateData.role && updateData.role !== existingRole.role) {
+        const isRoleExists = await roleRepository.findRoleIsExistByName(updateData.role);
+        if (isRoleExists && isRoleExists.id !== existingRole.id) {
+            throw new Error(ResponseMessages.role.ERROR_ROLE_EXISTS);
+        }
     }
 
-    existingRole.role = updatedRole;
-    existingRole.salary = updatedSalary;
-    existingRole.department_id = updatedDepartmentId;
+    //Prevent changing the primary key from the request body
+    delete updateData.id;
+
+    // Merges the request body with the existing role record
+    roleRepository.merge(existingRole, updateData);
 
     return await roleRepository.saveRole(existingRole);
 };
