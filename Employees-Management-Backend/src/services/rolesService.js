@@ -56,7 +56,6 @@ const updateRole = async (roleId, updateData) => {
 const deleteRoleById = async (roleId) => {
     const existingRole = await roleRepository.findRolesById(roleId);
 
-
     if (!existingRole) {
         throw new Error(ResponseMessages.role.ERROR_ROLE_ID);
     }

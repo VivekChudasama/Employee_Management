@@ -81,6 +81,7 @@ const updateEmployee = async (employeeId, updateData) => {
         throw new Error(ResponseMessages.employee.ERROR_EMPLOYEE_ID);
     }
 
+    // If role_id is being updated.
     if (updateData.role_id) {
         const roleExist = await roleRepository.findRolesById(updateData.role_id);
         //check if role exists for the given role id

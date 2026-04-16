@@ -29,6 +29,7 @@ export const employeeRepository = AppDataSource.getRepository(employeeSchema).ex
         return await this.save(employeeData)
     },
 
+    //update employee details in database
     async updateEmployee(employeeId, updateData) {
         return await this.update(employeeId, updateData)
     },

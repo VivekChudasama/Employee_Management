@@ -12,6 +12,8 @@ export const validate = (req, res, next) => {
     next();
 };
 
+
+// Get Role by ID validation rules
 export const getRoleByIdValidation = [
     param('roleId').isInt().withMessage('Role ID must be a valid integer').notEmpty().withMessage('Role ID is required')
 ];

@@ -13,10 +13,6 @@ export const validate = (req, res, next) => {
     next();
 };
 
-export const getEmployeeByIdValidation = [
-    param('employeeId').isInt().withMessage('Employee ID must be a valid integer').notEmpty().withMessage('Employee ID is required')
-];
-
 //Get Employee validation rules for query parameters
 export const getEmployeeValidation = [
     query('search').optional().isString().withMessage('Search must be a string').trim(),
@@ -25,15 +21,23 @@ export const getEmployeeValidation = [
 
     query('department_id').optional().isInt().withMessage('Department ID must be a valid integer'),
 
-    query('min_salary').optional().isNumeric().withMessage('Minimum salary must be a numeric value').isFloat({ min: 0 }).withMessage('Minimum salary cannot be negative'),
+    query('min_salary').optional().isNumeric().withMessage('Minimum salary must be a numeric value')
+    .isFloat({ min: 0 }).withMessage('Minimum salary cannot be negative'),
 
     query('max_salary').optional().isNumeric().withMessage('Maximum salary must be a numeric value'),
 ];
 
+// Get Employee by ID validation rules
+export const getEmployeeByIdValidation = [
+    param('employeeId').isInt().withMessage('Employee ID must be a valid integer').notEmpty().withMessage('Employee ID is required')
+];
+
+
+
 // Add Employee validation rules
 export const addEmployeeValidation = [
     body('name').trim().notEmpty().withMessage('Name is required')
-        .bail()
+        .bail()     
         .isLength({ min: 3, max: 50 }).withMessage('Name must be between 3 and 50 characters')
         .matches(/^[a-zA-Z\s.]+$/).withMessage('Name can only contain letters, spaces, and dots'),
 
@@ -53,14 +57,8 @@ export const addEmployeeValidation = [
     body('joining_date').trim().notEmpty().withMessage('Joining date is required')
         .bail()
         .isISO8601().withMessage('Joining date must be a valid ISO8601 date')
-        .custom((value) => {
-            const date = new Date(value);
-            const minDate = new Date('2020-01-01');
-            if (date < minDate) {
-                throw new Error('Joining date cannot be before year 2020');
-            }
-            return true;
-        })
+        .isAfter('2026-01-01').withMessage('Joining date cannot be before year 2026')
+            
 ];
 
 // update Employee validation rules                                                                                                                                                                                 
@@ -82,14 +80,7 @@ export const updateEmployessValidation = [
 
     body('joining_date').optional().trim().notEmpty().withMessage('Joining date cannot be empty').bail()
         .isISO8601().withMessage('Joining date must be a valid ISO8601 date')
-        .custom((value) => {
-            const date = new Date(value);
-            const minDate = new Date('2020-01-01');
-            if (date < minDate) {
-                throw new Error('Joining date cannot be before year 2020');
-            }
-            return true;
-        })
+        .isAfter('2026-01-01').withMessage('Joining date cannot be before year 2026')
 ];
 
 // Employee delete validation rules
