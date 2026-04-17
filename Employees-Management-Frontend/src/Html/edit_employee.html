@@ -58,7 +58,8 @@
 
         <a href="../Html/employees_list.html">
             <button class="back-btn border-0 mb-5 position-relative" type="button">
-                <div class="icon-box position-absolute top-0 start-0 d-flex align-items-center justify-content-center m-1 ">
+                <div
+                    class="icon-box position-absolute top-0 start-0 d-flex align-items-center justify-content-center m-1 ">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" height="25" width="25">
                         <path d="M224 480h640a32 32 0 1 1 0 64H224a32 32 0 0 1 0-64z" fill="#000" />
                         <path
@@ -76,14 +77,16 @@
                 <div class="row">
                     <div class="mb-3 col-6">
                         <label for="name" class="form-label">Full Name</label>
-                        <input type="text" name="name" id="name" class="form-control" required>
+                        <input type="text" name="name" id="name" class="form-control" minlength="3" maxlength="50"
+                          pattern="^[a-zA-Z\s.]+$"  required>
                         <div class="invalid-feedback">
                             Enter Employee name
                         </div>
                     </div>
                     <div class="mb-3 col-6">
                         <label for="email" class="form-label">Email</label>
-                        <input type="email" name="email" id="email" class="form-control" required>
+                        <input type="email" name="email" id="email" class="form-control" maxlength="254" pattern="^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$
+" required>
                         <div class="invalid-feedback">
                             Enter Employee Email
                         </div>
@@ -125,15 +128,17 @@
                     <div class="card mb-3 bg-light border-0 col-6">
                         <div class="card-body d-flex align-items-center p-2">
                             <div class="input-group input-group-sm">
-                                <input type="text" id="newRoleName" class="form-control" placeholder="Role Name">
-                                <input type="number" id="newRoleSalary" class="form-control" style="width: 80px;"
-                                    placeholder="Salary">
-                                <button class="add-role-button d-flex align-items-center border-0 position-relative" type="button" id="saveRoleBtn">
+                                <input type="text" id="newRoleName" class="form-control" placeholder="Role Name" minlength="3" maxlength="50" pattern="/^[a-zA-Z\s.]+$/" required>
+                                <input type="number" id="newRoleSalary" class="form-control" min="0"
+                                    style="width: 80px;" placeholder="Salary">
+                                <button class="add-role-button d-flex align-items-center border-0 position-relative"
+                                    type="button" id="saveRoleBtn">
                                     <span class="button_text text-white">Add Role</span>
-                                    <span class="button_icon position-absolute d-flex align-items-center justify-content-center"><svg class="svg" fill="none" height="24"
-                                            stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                                            stroke-width="2" viewBox="0 0 24 24" width="24"
-                                            xmlns="http://www.w3.org/2000/svg">
+                                    <span
+                                        class="button_icon position-absolute d-flex align-items-center justify-content-center"><svg
+                                            class="svg" fill="none" height="24" stroke="currentColor"
+                                            stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
                                             <line x1="12" x2="12" y1="5" y2="19"></line>
                                             <line x1="5" x2="19" y1="12" y2="12"></line>
                                         </svg></span>
@@ -176,7 +181,8 @@
                 <div class="row">
                     <div class="mb-3 col-6">
                         <label for="joining_date" class="form-label">Joining Date</label>
-                        <input type="date" name="joining_date" id="joining_date" class="form-control" required>
+                        <input type="date" name="joining_date" id="joining_date" class="form-control" min="2026-01-01"
+                            required>
                         <div class="invalid-feedback">
                             Enter Employee Joining date
                         </div>

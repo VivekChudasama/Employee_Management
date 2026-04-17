@@ -96,11 +96,19 @@
                         <th>Email</th>
                         <th>Department</th>
                         <th>Role</th>
-                        <th onclick="sortTable(5)" class="cursor-pointer">
+                        <th onclick="sortTable(0)" class="cursor-pointer">
                             <div class="d-flex align-items-center gap-2">
                                 Salary
                                 <span id="sortIcon" class="sort-icon-container">
                                     <i id="sortIconI" class="bi bi-arrow-down-up"></i>
+                                </span>
+                            </div>
+                        </th>
+                        <th onclick="sortTable(1)">
+                            <div class="d-flex align-items-center gap-2">
+                                Joining Date
+                                <span id="sortDateIcon" class="sort-icon-container">
+                                    <i id="sortDateIconI" class="bi bi-arrow-down-up"></i>
                                 </span>
                             </div>
                         </th>

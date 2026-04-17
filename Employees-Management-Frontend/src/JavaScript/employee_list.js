@@ -40,7 +40,7 @@ const getDepartment = (employeeDepartment) => {
         if (!empDepartments || !employeeDepartment) return;
 
         empDepartments.innerHTML = '';
-        
+
         const departments = [...new Set(employeeDepartment.map(emp => emp.role?.department?.departmentName || 'N/A'))];
 
         departments.forEach(department => {
@@ -73,6 +73,9 @@ const renderEmployees = (employees) => {
 
     employees.forEach(emp => {
         const tr = document.createElement('tr');
+        const date = new Date(emp.joining_date);
+        const formattedDate = date.toLocaleDateString('en-CA');
+
         tr.innerHTML = `
             <td>${emp.id}</td>
             <td class="ps-4 text-dark fw-bold">${emp.name}</td>
@@ -80,6 +83,7 @@ const renderEmployees = (employees) => {
             <td>${emp.role?.department?.departmentName || 'N/A'}</td>
             <td>${emp.role?.role || 'N/A'}</td>
             <td>$${emp.role?.salary || '0'}</td>
+            <td>${formattedDate}</td>
             <td>
                 <span class="badge rounded-pill px-3 py-2 fw-normal ${emp.status === 'active' ? 'bg-success text-white' : 'bg-secondary text-white'}">
                     ${emp.status}

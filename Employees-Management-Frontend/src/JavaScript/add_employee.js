@@ -1,28 +1,50 @@
-const BASE_API = 'http://localhost:3001/employees/add-employee/';
+const setupAddEmployeeForm = () => {
+    const form = document.getElementById('addEmployeeForm');
+    if (!form) return;
 
-const addEmployeeForm = document.getElementById('addEmployeeForm');
+    form.addEventListener('submit', async e => {
+        e.preventDefault();
 
-addEmployeeForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const formData = new FormData(addEmployeeForm);
-    const employeeData = Object.fromEntries(formData.entries());
-    try {
-        const res = await fetch(BASE_API, {
-            method: PUT,
-            headers: {
-                'Content-Type': 'application/json'
-            },  
-            body: JSON.stringify(employeeData)
-        });
-        if (res.ok) {
-            alert('Employee added successfully');
-            addEmployeeForm.reset();
-        } else {
-            const errorData = await res.json();
-            alert('Error adding employee: ' + errorData.message);
+        if (!form.checkValidity()) { form.classList.add('was-validated'); return; }
+
+        const roleId = document.getElementById('role_id')?.value;
+        if (!roleId) { showToast('Please select an employee role.', 'warning'); return; }
+
+        const employeeData = Object.fromEntries(new FormData(form).entries());
+        employeeData.role_id = Number(employeeData.role_id);
+
+        try {
+            const res = await fetch(`${BASE_EMPLOYEES_API}/add-employee`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(employeeData)
+            });
+            const data = await res.json();
+
+            if (res.ok) {
+                showToast('Employee added successfully!', 'success');
+                form.reset();
+                form.classList.remove('was-validated');
+                resetRolePicker();
+                setTimeout(() => { window.location.href = './employees_list.html'; }, 1500);
+            } else {
+                showToast(data.message || 'Failed to add employee.', 'danger');
+            }
+        } catch (err) {
+            console.error('Add Employee Error:', err);
+            showToast('An error occurred while adding the employee.', 'danger');
         }
-    } catch (err) {
-        console.error('Add Employee Error:', err);
-        alert('An error occurred while adding the employee.');
-    }
-});
+    });
+};
+
+// ── Init ───────────────────────────────────────
+const init = async () => {
+    await fetchRoles();
+    populateDepartments();
+    populateRoles();
+    setupDepartmentFilter();
+    setupAddRole();
+    setupAddEmployeeForm();
+};
+
+init();
