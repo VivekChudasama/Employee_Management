@@ -10,7 +10,7 @@
     --font-weight-normal: 400;
     --font-weight-bold: 700;
     --border-radius: 50px;
-    --linear-gradient: linear-gradient(49deg, rgba(1, 71, 255, 1) 0%, rgba(6, 32, 117, 1) 92%);
+    --linear-gradient: linear-gradient(49deg, var(--secondary-dark-gray) 0%, var(--secondary-grey) 92%);
 }
 
 body {
@@ -44,7 +44,7 @@ body {
 }
 
 .table-header-color {
-    background: linear-gradient(90deg, #222831, #393E46) !important;
+    background: linear-gradient(90deg, var(--secondary-dark-gray), var(--secondary-grey)) !important;
 }
 
 #sorting {
@@ -54,11 +54,15 @@ body {
 #sorting thead th {
     font-weight: var(--font-weight-normal);
     letter-spacing: 0.5px;
-    background: var(--secondary-white);
     padding: 16px 20px;
     border: none;
     background-color: transparent !important;
     color: var(--secondary-white) !important;
+    transition: background-color 0.2s ease;
+}
+
+#sorting thead th:hover {
+    background-color: rgba(0, 0, 0, 0.08) !important;
 }
 
 #sorting tbody td {
@@ -70,94 +74,46 @@ body {
 }
 
 #sorting tbody tr:hover td {
-    background-color: rgba(0, 173, 181, 0.04) !important;
+    background-color: rgba(0, 0, 0, 0.02) !important;
 }
 
 #sorting tbody tr:last-child td {
     border-bottom: none;
 }
 
-#sort {
-	margin: 10% 50%;
-	transition: all 700ms ease-in-out;
+/* Sort Icon */
+.cursor-pointer {
+    cursor: pointer;
 }
 
-button {
-	background: none;
-	border: none;
+.sort-icon-container {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.15);
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    color: var(--secondary-white);
+    font-size: 13px;
 }
 
-button:focus {
-	outline: none;
+#sorting thead th:hover .sort-icon-container {
+    background: var(--primary-blue);
+    color: var(--primary-white);
+    transform: translateY(-1px);
 }
 
-#stroke1,
-#stroke2,
-#stroke3 {
-	cursor: pointer;
-	background-color: white;
-	margin-top: 8px;
-	height: 4px;
-	transition: all 60ms ease-in-out;
+.sort-icon-container.asc,
+.sort-icon-container.desc {
+    background: var(--primary-blue);
+    color: var(--primary-white);
+    box-shadow: 0 0 0 2px var(--secondary-white);
 }
 
-#stroke1 {
-	width: 12px;
-	transition-delay: .1s;
-}
-
-#stroke2 {
-	width: 20px;
-	transition-delay: .2s;
-}
-
-#stroke3 {
-	width: 30px;
-	transition-delay: .3s;
-}
-
-#tap-circle {
-	border-radius: 100%;
-	background-color: rgba(255, 255, 255, 0.1);
-	opacity: 0;
-	transition: all 2s ease-in-out;
-}
-
-.resize1 {
-	transform: scaleX(2.5);
-	transform-origin: left;
-}
-
-.opacity {
-	opacity: 0;
-}
-
-.resize2 {
-	transform: scaleX(0.25);
-	transform-origin: left;
-}
-
-.bounce {
-	transform: scaleX(.8);
-	transform-origin: left;
-}
-
-.click-animation {
-	animation: animation 0.5s forwards ease-in-out;
-}
-
-@keyframes animation {
-	0% {
-		opacity: 0;
-		transform: scale(1);
-	}
-	80% {
-		opacity: 1;
-	}
-	100% {
-		opacity: 0;
-		transform: scale(1.8);
-	}
+.sort-icon-container i {
+    transition: transform 0.25s ease;
 }
 
 
@@ -184,18 +140,24 @@ button:focus {
     transition: box-shadow 0.2s;
 }
 
+.search-input:focus,
+.min-input:focus,
+.max-input:focus {
+    border-color: var(--primary-blue);
+    box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.08);
+}
+
 @media (max-width: 376px) {
     .search-container {
         width: 100%;
     }
 
-    .department-dropdown .department-dropdown-button
-    {
+    .department-dropdown .department-dropdown-button {
         width: 100%;
         text-align: left;
     }
-    .status-dropdown .status-dropdown-button 
-    {
+
+    .status-dropdown .status-dropdown-button {
         width: 100%;
         text-align: left;
     }

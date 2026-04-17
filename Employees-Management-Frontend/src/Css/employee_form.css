@@ -1,13 +1,7 @@
-/* Premium Hierarchical CSS for Employee Edit Form */
-
 .container .form-title {
     color: var(--secondary-dark-gray);
     font-weight: 800;
-    text-align: center;
-    position: relative;
     padding-bottom: 15px;
-    margin-top: 20px;
-    font-family: var(--font);
 }
 
 .container .form-title::after {
@@ -20,6 +14,36 @@
     height: 4px;
     background: var(--secondary-grey);
     border-radius: 2px;
+}
+
+.back-btn {
+  background: var(--primary-white);
+  width: 192px; 
+  height: 56px; 
+  border-radius: 16px; 
+  font-size: 20px;
+}
+
+.icon-box {
+  background: var(--primary-blue); 
+  height: 48px;
+  width: 25%;
+  border-radius: 12px;
+  transition: width 0.5s;
+  z-index: 1;
+}
+
+.back-btn:hover .icon-box {
+  width: 184px; 
+}
+
+.btn-text {
+  z-index: 2;
+  margin-left: 8px; /* translate-x-2 */
+}
+
+.btn-text:hover{
+    display: none;
 }
 
 .form-wrap {
@@ -36,11 +60,6 @@
     transform: translateY(-2px);
 }
 
-.form-wrap .employee-form {
-    display: flex;
-    flex-direction: column;
-}
-
 .form-wrap .employee-form .row {
     margin-bottom: 1.25rem;
 }
@@ -51,54 +70,48 @@
     margin-bottom: 8px;
     font-size: 0.95rem;
     letter-spacing: 0.3px;
-    font-family: var(--font);
 }
 
 .form-wrap .employee-form .form-control,
 .form-wrap .employee-form .form-select,
 .form-wrap .employee-form .btn-outline-secondary {
     border-radius: 10px;
-    border: 2px solid #e9ecef;
+    border: 2px solid var(--secondary-white);
     padding: 12px 18px;
     font-size: 1rem;
     transition: all 0.3s ease;
-    background-color: #fdfdfd;
+    background-color: var(--primary-white);
     color: var(--secondary-dark-gray);
 }
 
 .form-wrap .employee-form .form-control:focus,
 .form-wrap .employee-form .form-select:focus,
 .form-wrap .employee-form .btn-outline-secondary:focus,
-.form-wrap .employee-form .btn-outline-secondary[aria-expanded="true"] {
+.form-wrap .employee-form .btn-outline-secondary{
     border-color: var(--primary-blue);
-    box-shadow: 0 0 0 4px rgba(0, 173, 181, 0.15);
+    box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.08);
     outline: none;
     background-color: var(--primary-white);
 }
 
 .form-wrap .employee-form .form-control:disabled {
-    background-color: #f1f3f5;
-    color: #6c757d;
-    border-color: #e9ecef;
+    background-color: var(--secondary-white);
+    color: var(--secondary-grey);
+    border-color: var(--secondary-white);
 }
 
 /* Quick Add Role Section */
 .form-wrap .employee-form .card {
-    background-color: rgba(0, 173, 181, 0.03) !important;
+    background-color: var(--primary-white) !important;
     border-radius: 12px;
-    border: 2px dashed rgba(0, 173, 181, 0.3) !important;
+    border: 2px dashed var(--secondary-grey) !important;
     transition: background-color 0.3s ease, border-color 0.3s ease;
     height: 100%;
 }
 
 .form-wrap .employee-form .card:hover {
-    background-color: rgba(0, 173, 181, 0.06) !important;
-    border-color: rgba(0, 173, 181, 0.6) !important;
-}
-
-.form-wrap .employee-form .card .card-body {
-    display: flex;
-    align-items: center;
+    background-color: var(--secondary-white) !important;
+    border-color: var(--primary-blue) !important;
 }
 
 .form-wrap .employee-form .input-group-sm .form-control {
@@ -113,14 +126,9 @@
     border-right: none;
 }
 
-/* From Uiverse.io by andrew-demchenk0 */
 .add-role-button {
-    position: relative;
     width: 150px;
     cursor: pointer;
-    display: flex;
-    align-items: center;
-    border: none;
     background-color: var(--primary-blue);
 }
 
@@ -132,19 +140,14 @@
 
 .add-role-button .button_text {
     transform: translateX(22px);
-    color: var(--primary-white);
     font-weight: var(--font-weight-bold);
 }
 
 .add-role-button .button_icon {
-    position: absolute;
     transform: translateX(109px);
     height: 100%;
     width: 39px;
     background-color: var(--primary-white);
-    display: flex;
-    align-items: center;
-    justify-content: center;
 }
 
 .add-role-button .svg {
@@ -176,8 +179,8 @@
 }
 
 .form-wrap .employee-form .input-group-sm .btn-primary:hover {
-    background-color: #00939b;
-    border-color: #00939b;
+    background-color: var(--secondary-grey);
+    border-color: var(--secondary-grey);
 }
 
 .form-wrap .employee-form .input-group-sm .btn-primary:active {
@@ -186,7 +189,7 @@
 
 /* Main primary button styling */
 .form-wrap .employee-form>.btn-primary {
-    background: var(--linear-gradient);
+    background: linear-gradient(49deg, var(--secondary-dark-gray) 0%, var(--secondary-grey) 92%);
     border: none;
     border-radius: 50px;
     padding: 14px 30px;
@@ -203,12 +206,12 @@
 
 .form-wrap .employee-form>.btn-primary:hover {
     transform: translateY(-3px);
-    box-shadow: 0 8px 25px rgba(1, 71, 255, 0.35);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
 }
 
 .form-wrap .employee-form>.btn-primary:active {
     transform: translateY(0);
-    box-shadow: 0 4px 15px rgba(1, 71, 255, 0.25);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
 }
 
 /* Dropdown Menu Enhancements */
@@ -222,7 +225,6 @@
 
 .form-wrap .employee-form .dropdown-item {
     padding: 12px 20px;
-    font-weight: 500;
     color: var(--secondary-grey);
     transition: all 0.2s ease;
     display: flex;
@@ -231,15 +233,66 @@
 }
 
 .form-wrap .employee-form .dropdown-item:hover {
-    background-color: rgba(0, 173, 181, 0.08);
+    background-color: var(--secondary-white);
     color: var(--primary-blue);
     padding-left: 25px;
 }
 
 /* Role Dropdown Button styling */
 .form-wrap .employee-form #roleDropdownBtn {
-    background-color: #fdfdfd;
+    background-color: var(--primary-white);
 }
+
+
+/* submit .button */
+
+.submit-btn {
+  font-size: 20px;
+  background: var(--primary-blue);
+  padding: 0.7em 1em;
+  padding-left: 0.9em;
+  border-radius: 16px;
+  overflow: hidden;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+.submit-btn span {
+  margin-left: 0.3em;
+  transition: all 0.3s ease-in-out;
+}
+
+.submit-btn svg {
+  transform-origin: center center;
+  transition: transform 0.3s ease-in-out;
+}
+
+.submit-btn:hover .svg-wrapper {
+  animation: fly-1 0.6s ease-in-out infinite alternate;
+}
+
+.submit-btn:hover svg {
+  transform: translateX(1.2em) rotate(45deg) scale(1.1);
+}
+
+.submit-btn:hover span {
+  transform: translateX(5em);
+}
+
+.submit-btn:active {
+  transform: scale(0.95);
+}
+
+@keyframes fly-1 {
+  from {
+    transform: translateY(0.1em);
+  }
+
+  to {
+    transform: translateY(-0.1em);
+  }
+}
+
 
 /* Responsive adjustments */
 @media (max-width: 768px) {

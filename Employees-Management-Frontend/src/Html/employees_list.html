@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Employees List</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="../Css/header.css">
     <link rel="stylesheet" href="../Css/main.css">
 </head>
@@ -15,7 +16,7 @@
         <nav class="navbar navbar-expand-lg nav-bar navbar-dark">
             <div class="container nav-bar-content d-flex align-items-lg-center">
                 <a class="navbar-brand" href="#">
-                    <p class="mt-2 text-white fw-bold">
+                    <p class="mt-2 text-white">
                         Employees-Management
                     </p>
                 </a>
@@ -67,11 +68,7 @@
                     aria-expanded="false">
                     Department
                 </button>
-                <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="#">Action</a></li>
-                    <li><a class="dropdown-item" href="#">Another action</a></li>
-                    <li><a class="dropdown-item" href="#">Something else here</a></li>
-                </ul>
+                <ul class="dropdown-menu" id="getEmpDepartment"></ul>
             </div>
 
             <div class="dropdown status-dropdown">
@@ -94,19 +91,19 @@
             <table class="table table-hover align-middle table-borderless" id="sorting">
                 <thead class="table-header-color">
                     <tr>
-                        <th>Emp_I</th>
+                        <th>Emp_Id</th>
                         <th class="ps-4">Name</th>
                         <th>Email</th>
                         <th>Department</th>
                         <th>Role</th>
-                        <th onclick="sortTable(0)" class="d-flex flex-wrap justify-content-start">Salary
-                                <button id="sort" onclick="animation()">
-                                    <div id="stroke1"></div>
-                                    <div id="stroke2"></div>
-                                    <div id="stroke3"></div>
-                                    <div id="tap-circle"></div>
-                                </button>
-                            </th>
+                        <th onclick="sortTable(5)" class="cursor-pointer">
+                            <div class="d-flex align-items-center gap-2">
+                                Salary
+                                <span id="sortIcon" class="sort-icon-container">
+                                    <i id="sortIconI" class="bi bi-arrow-down-up"></i>
+                                </span>
+                            </div>
+                        </th>
                         <th>Status</th>
                         <th class="text-center pe-4">Actions</th>
                     </tr>
