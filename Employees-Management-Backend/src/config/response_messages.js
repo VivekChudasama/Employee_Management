@@ -37,4 +37,8 @@ export class ResponseMessages {
         ERROR_FOUND_ROUTE: "Route not found"
     }
 
+    static department = {
+        ERROR_DEPARTMENT_ID: "Department not found with the provided Department ID"
+    }
+
 }

@@ -1,5 +1,6 @@
 import { roleRepository } from '../repositories/rolesRepository.js';
 import { employeeRepository } from '../repositories/employeesRepository.js';
+import { departmentRepository } from '../repositories/departmentRepository.js';
 import { ResponseMessages } from '../config/response_messages.js'
 
 // Get all roles
@@ -23,6 +24,12 @@ const createRole = async (roleData) => {
         throw new Error(ResponseMessages.role.ERROR_ROLE_EXISTS);
     }
 
+    // Verify department exists before saving
+    const deptExist = await departmentRepository.findDepartmentById(roleData.department_id);
+    if (!deptExist) {
+        throw new Error(ResponseMessages.department.ERROR_DEPARTMENT_ID);
+    }
+
     return await roleRepository.saveRole(roleData);
 };
 
@@ -39,6 +46,14 @@ const updateRole = async (roleId, updateData) => {
         const isRoleExists = await roleRepository.findRoleIsExistByName(updateData.role);
         if (isRoleExists && isRoleExists.id !== existingRole.id) {
             throw new Error(ResponseMessages.role.ERROR_ROLE_EXISTS);
+        }
+    }
+
+    // Verify department exists if department_id is being updated
+    if (updateData.department_id && updateData.department_id !== existingRole.department_id) {
+        const deptExist = await departmentRepository.findDepartmentById(updateData.department_id);
+        if (!deptExist) {
+            throw new Error(ResponseMessages.department.ERROR_DEPARTMENT_ID);
         }
     }
 

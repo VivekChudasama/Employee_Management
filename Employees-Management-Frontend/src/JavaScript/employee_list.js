@@ -162,17 +162,16 @@ function sortTable(n) {
     }
 }
 
-function animation() {        document.getElementById("stroke1").classList.toggle("resize1");								
-											document.getElementById("stroke2").classList.toggle("bounce");
-        document.getElementById("stroke3").classList.toggle("resize2");
-    }
+function animation() {
+    document.getElementById("stroke1").classList.toggle("resize1");
+    document.getElementById("stroke2").classList.toggle("bounce");
+    document.getElementById("stroke3").classList.toggle("resize2");
+}
 
-    //with help from https://codepen.io/chriscoyier/pen/EyRroJ
-
-    var element = document.getElementById("sort");
-    element.addEventListener("click", function(event) {
-      event.preventDefault();
-      document.getElementById("tap-circle").classList.remove("click-animation");
-      void element.offsetWidth;
-      document.getElementById("tap-circle").classList.add("click-animation");
-    }, false);
+var element = document.getElementById("sort");
+element.addEventListener("click", function (event) {
+    event.preventDefault();
+    document.getElementById("tap-circle").classList.remove("click-animation");
+    void element.offsetWidth;
+    document.getElementById("tap-circle").classList.add("click-animation");
+}, false);
