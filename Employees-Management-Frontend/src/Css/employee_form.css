@@ -69,12 +69,6 @@
     transform: translateY(-2px);
 }
 
-/* --- Form row spacing --- */
-
-.form .form-body .employee-form .form-row {
-    margin-bottom: 20px;
-}
-
 /* --- Labels --- */
 
 .form .form-body .employee-form .form-label {
