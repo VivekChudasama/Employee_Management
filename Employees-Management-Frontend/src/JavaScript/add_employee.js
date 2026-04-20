@@ -5,21 +5,25 @@ const setupAddEmployeeForm = () => {
     form.addEventListener('submit', async e => {
         e.preventDefault();
 
-        if (!form.checkValidity()) { form.classList.add('was-validated'); return; }
+        // ── Bootstrap validates all visible required fields ──
+        const bootstrapOk = form.checkValidity();
+        form.classList.add('was-validated');
 
-        const roleId = document.getElementById('role_id')?.value;
-        if (!roleId) { showToast('Please select an employee role.', 'warning'); return; }
+        const roleError = RULES.role_id(document.getElementById('role_id')?.value);
+        if (roleError) showToast(roleError, 'warning');
 
-        const employeeData = Object.fromEntries(new FormData(form).entries());
-        employeeData.role_id = Number(employeeData.role_id);
+        if (!bootstrapOk || roleError) return;
+
+        const data = Object.fromEntries(new FormData(form));
+        data.role_id = Number(data.role_id);
 
         try {
             const res = await fetch(`${BASE_EMPLOYEES_API}/add-employee`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(employeeData)
+                body: JSON.stringify(data)
             });
-            const data = await res.json();
+            const json = await res.json();
 
             if (res.ok) {
                 showToast('Employee added successfully!', 'success');
@@ -28,21 +32,21 @@ const setupAddEmployeeForm = () => {
                 resetRolePicker();
                 setTimeout(() => { window.location.href = './employees_list.html'; }, 1500);
             } else {
-                showToast(data.message || 'Failed to add employee.', 'danger');
+                handleBackendErrors(json);
             }
-        } catch (err) {
-            console.error('Add Employee Error:', err);
-            showToast('An error occurred while adding the employee.', 'danger');
+        } catch {
+            showToast('Could not connect to the server. Please try again.', 'danger');
         }
     });
 };
 
-// ── Init ───────────────────────────────────────
+// ── Init ────────────────────────────────────────────────────
 const init = async () => {
     await fetchRoles();
     populateDepartments();
     populateRoles();
     setupDepartmentFilter();
+    setupRoleDropdown();
     setupAddRole();
     setupAddEmployeeForm();
 };
