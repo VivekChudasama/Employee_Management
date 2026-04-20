@@ -1,0 +1,93 @@
+/* 
+   NAVBAR
+ */
+.nav-bar {
+    background-color: var(--secondary-dark-gray) !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+    border-bottom: 1px solid var(--secondary-grey);
+    z-index: 1020;
+}
+
+.nav-bar .nav-bar-content .navbar-brand {
+    transition: transform 0.3s ease;
+}
+
+.nav-bar .nav-bar-content .navbar-brand:hover {
+    transform: scale(1.02);
+}
+
+.nav-bar .nav-bar-content .nav-item .nav-text {
+    font-size: 16px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-sizing: border-box;
+    border: 1px solid transparent;
+    padding: 8px 22px;
+    font-weight: 500;
+    margin: 0 4px;
+}
+
+.nav-bar .nav-bar-content .nav-item .nav-text:hover {
+    background-color: var(--secondary-grey);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.nav-bar .nav-bar-content .nav-item .nav-link.active {
+    background-color: var(--primary-blue) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    border: none;
+}
+
+/* 
+   RESPONSIVE  (max 991px)
+    */
+@media (max-width: 991px) {
+    .nav-bar .nav-bar-content .navbar-toggler {
+        transform: scale(0.95);
+        border-color: var(--secondary-grey) !important;
+    }
+
+    .nav-bar .nav-bar-content .navbar-toggler:focus {
+        box-shadow: 0 0 0 3px var(--primary-blue);
+    }
+
+    .nav-bar .nav-bar-content .nav-item .nav-text {
+        width: 210px;
+        margin-bottom: 12px;
+        display: block;
+        border-radius: 8px;
+        padding: 12px 20px;
+        text-align: center;
+    }
+
+    .nav-bar .nav-bar-content .nav-item .nav-link.active {
+        box-shadow: none;
+    }
+
+    .offcanvas-custom-width {
+        width: 250px !important;
+    }
+
+    .nav-bar .offcanvas-body {
+        display: flex !important;
+        flex-direction: column;
+    }
+
+    .nav-bar .offcanvas-body .navbar-nav {
+        margin: 0 !important;
+        width: 210px;
+    }
+
+    /* Profile picture hidden in mobile  */
+    .nav-bar .nav-profile-wrap {
+        display: none;
+    }
+}
+
+
+@media (max-width: 320px) {
+    .nav-bar .nav-bar-content .navbar-brand {
+        font-size: 18px;
+    }
+
+}

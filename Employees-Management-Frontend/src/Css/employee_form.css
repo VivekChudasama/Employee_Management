@@ -1,10 +1,13 @@
-.container .form-title {
+/* 
+   PAGE TITLE
+ */
+.form .form-title {
     color: var(--secondary-dark-gray);
     font-weight: 800;
     padding-bottom: 15px;
 }
 
-.container .form-title::after {
+.form .form-title::after {
     content: '';
     position: absolute;
     bottom: 0;
@@ -16,160 +19,174 @@
     border-radius: 2px;
 }
 
-.back-btn {
-  background: var(--primary-white);
-  width: 192px; 
-  height: 56px; 
-  border-radius: 16px; 
-  font-size: 20px;
+/* 
+   BACK BUTTON
+ */
+.form .back-btn {
+    background: var(--primary-white);
+    width: 192px;
+    height: 56px;
+    border-radius: 16px;
+    font-size: 20px;
 }
 
-.icon-box {
-  background: var(--primary-blue); 
-  height: 48px;
-  width: 25%;
-  border-radius: 12px;
-  transition: width 0.5s;
-  z-index: 1;
+.form .back-btn .back-icon-box {
+    background: var(--primary-blue);
+    height: 48px;
+    width: 48px;
+    border-radius: 12px;
+    transition: width 0.5s;
+    z-index: 1;
 }
 
-.back-btn:hover .icon-box {
-  width: 184px; 
+.form .back-btn:hover .back-icon-box {
+    width: 184px;
 }
 
-.btn-text {
-  z-index: 2;
-  margin-left: 8px; /* translate-x-2 */
+.form .back-btn .back-label {
+    z-index: 2;
+    margin-left: 8px;
 }
 
-.btn-text:hover{
+.form .back-btn .back-label:hover {
     display: none;
 }
 
-.form-wrap {
+/* 
+   FORM CARD WRAPPER
+ */
+.form .form-body {
     background: var(--primary-white);
     border-radius: 20px;
-    padding: 2.5rem;
+    padding: 40px;
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
     border: 1px solid rgba(0, 0, 0, 0.03);
-    margin-bottom: 2rem;
+    margin-bottom: 32px;
     transition: transform 0.3s ease;
 }
 
-.form-wrap:hover {
+.form .form-body:hover {
     transform: translateY(-2px);
 }
 
-.form-wrap .employee-form .row {
-    margin-bottom: 1.25rem;
+/* --- Form row spacing --- */
+
+.form .form-body .employee-form .form-row {
+    margin-bottom: 20px;
 }
 
-.form-wrap .employee-form .form-label {
+/* --- Labels --- */
+
+.form .form-body .employee-form .form-label {
     font-weight: var(--font-weight-bold);
     color: var(--secondary-dark-gray);
     margin-bottom: 8px;
-    font-size: 0.95rem;
-    letter-spacing: 0.3px;
+    font-size: 15px;
+    letter-spacing: 0px;
 }
 
-.form-wrap .employee-form .form-control,
-.form-wrap .employee-form .form-select,
-.form-wrap .employee-form .btn-outline-secondary {
+/* --- Inputs, selects, outline button --- */
+.form .form-body .employee-form .form-control,
+.form .form-body .employee-form .form-select,
+.form .form-body .employee-form .outline-input-btn {
     border-radius: 10px;
     border: 2px solid var(--secondary-white);
     padding: 12px 18px;
-    font-size: 1rem;
+    font-size: 16px;
     transition: all 0.3s ease;
     background-color: var(--primary-white);
     color: var(--secondary-dark-gray);
 }
 
-.form-wrap .employee-form .form-control:focus,
-.form-wrap .employee-form .form-select:focus,
-.form-wrap .employee-form .btn-outline-secondary:focus,
-.form-wrap .employee-form .btn-outline-secondary{
+.form .form-body .employee-form .form-control:focus,
+.form .form-body .employee-form .form-select:focus,
+.form .form-body .employee-form .outline-input-btn:focus,
+.form .form-body .employee-form .outline-input-btn {
     border-color: var(--primary-blue);
     box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.08);
     outline: none;
     background-color: var(--primary-white);
 }
 
-.form-wrap .employee-form .form-control:disabled {
+.form .form-body .employee-form .form-control:disabled {
     background-color: var(--secondary-white);
     color: var(--secondary-grey);
     border-color: var(--secondary-white);
 }
 
-/* Quick Add Role Section */
-.form-wrap .employee-form .card {
+/* ============================================================
+   QUICK ADD ROLE CARD
+   ============================================================ */
+.form .form-body .employee-form .role-card {
     background-color: var(--primary-white) !important;
     border-radius: 12px;
     border: 2px dashed var(--secondary-grey) !important;
     transition: background-color 0.3s ease, border-color 0.3s ease;
-    height: 100%;
+    min-height: 80px;
 }
 
-.form-wrap .employee-form .card:hover {
+.form .form-body .employee-form .role-card:hover {
     background-color: var(--secondary-white) !important;
     border-color: var(--primary-blue) !important;
 }
 
-.form-wrap .employee-form .input-group-sm .form-control {
+.form .form-body .employee-form .role-input-group .form-control {
     border-radius: 8px 0 0 8px;
     padding: 10px 14px;
     border-width: 1px;
 }
 
-.form-wrap .employee-form .input-group-sm #newRoleSalary {
+.form .form-body .employee-form .role-input-group .salary-width {
     border-radius: 0;
     border-left: none;
     border-right: none;
 }
 
-.add-role-button {
+/* 
+   ADD ROLE BUTTON 
+     */
+.form .form-body .employee-form .role-input-group .role-add-btn {
     width: 150px;
     cursor: pointer;
     background-color: var(--primary-blue);
-}
-
-.add-role-button,
-.button_icon,
-.button_text {
     transition: all 0.3s;
 }
 
-.add-role-button .button_text {
+.form .form-body .employee-form .role-input-group .role-add-btn .role-btn-text {
     transform: translateX(22px);
     font-weight: var(--font-weight-bold);
+    transition: all 0.3s;
 }
 
-.add-role-button .button_icon {
+.form .form-body .employee-form .role-input-group .role-add-btn .role-btn-icon {
     transform: translateX(109px);
-    height: 100%;
+    height: 48px;
     width: 39px;
     background-color: var(--primary-white);
+    transition: all 0.3s;
 }
 
-.add-role-button .svg {
+.form .form-body .employee-form .role-input-group .role-add-btn .role-btn-icon .role-btn-svg {
     width: 20px;
     fill: var(--primary-blue);
 }
 
-.add-role-button:hover .button_text {
+.form .form-body .employee-form .role-input-group .role-add-btn:hover .role-btn-text {
     color: transparent;
 }
 
-.add-role-button:hover .button_icon {
+.form .form-body .employee-form .role-input-group .role-add-btn:hover .role-btn-icon {
     width: 148px;
     transform: translateX(0);
 }
 
-.add-role-button:active {
+.form .form-body .employee-form .role-input-group .role-add-btn:active {
     transform: translate(3px, 3px);
-    box-shadow: 0px 0px var(--primary-blue);
+    box-shadow: 0 0 0 var(--primary-blue);
 }
 
-.form-wrap .employee-form .input-group-sm .btn-primary {
+/* --- Inner add button inside input group --- */
+.form .form-body .employee-form .role-input-group .role-save-btn {
     border-radius: 0 8px 8px 0;
     padding: 10px 20px;
     background-color: var(--primary-blue);
@@ -178,44 +195,23 @@
     transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
-.form-wrap .employee-form .input-group-sm .btn-primary:hover {
+.form .form-body .employee-form .role-input-group .role-save-btn:hover {
     background-color: var(--secondary-grey);
     border-color: var(--secondary-grey);
 }
 
-.form-wrap .employee-form .input-group-sm .btn-primary:active {
+.form .form-body .employee-form .role-input-group .role-save-btn:active {
     transform: scale(0.98);
 }
 
-/* Main primary button styling */
-.form-wrap .employee-form>.btn-primary {
-    background: linear-gradient(49deg, var(--secondary-dark-gray) 0%, var(--secondary-grey) 92%);
-    border: none;
-    border-radius: 50px;
-    padding: 14px 30px;
-    font-size: 1.15rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
-    transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
-    align-self: center;
-    min-width: 250px;
-    margin-top: 20px;
-    color: var(--secondary-white);
+/* 
+   ROLE DROPDOWN
+ */
+.form .form-body .employee-form .role-dropdown-btn {
+    background-color: var(--primary-white);
 }
 
-.form-wrap .employee-form>.btn-primary:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
-}
-
-.form-wrap .employee-form>.btn-primary:active {
-    transform: translateY(0);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
-}
-
-/* Dropdown Menu Enhancements */
-.form-wrap .employee-form .dropdown-menu {
+.form .form-body .employee-form .dropdown-menu {
     border-radius: 12px;
     border: 1px solid rgba(0, 0, 0, 0.08);
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
@@ -223,94 +219,155 @@
     margin-top: 5px;
 }
 
-.form-wrap .employee-form .dropdown-item {
+.form .form-body .employee-form .dropdown-item {
     padding: 12px 20px;
     color: var(--secondary-grey);
     transition: all 0.2s ease;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
 }
 
-.form-wrap .employee-form .dropdown-item:hover {
+.form .form-body .employee-form .dropdown-item:hover {
     background-color: var(--secondary-white);
     color: var(--primary-blue);
     padding-left: 25px;
 }
 
-/* Role Dropdown Button styling */
-.form-wrap .employee-form #roleDropdownBtn {
-    background-color: var(--primary-white);
+/* 
+   ANIMATED SEND BUTTON
+ */
+.form .form-body .submit-section .send-btn {
+    font-size: 20px;
+    background: var(--primary-blue);
+    padding: 11px 16px 11px 14px;
+    border-radius: 16px;
+    transition: all 0.2s;
+    cursor: pointer;
 }
 
-
-/* submit .button */
-
-.submit-btn {
-  font-size: 20px;
-  background: var(--primary-blue);
-  padding: 0.7em 1em;
-  padding-left: 0.9em;
-  border-radius: 16px;
-  overflow: hidden;
-  transition: all 0.2s;
-  cursor: pointer;
+.form .form-body .submit-section .send-btn .send-btn-label {
+    margin-left: 5px;
+    transition: all 0.3s ease-in-out;
 }
 
-.submit-btn span {
-  margin-left: 0.3em;
-  transition: all 0.3s ease-in-out;
+.form .form-body .submit-section .send-btn .send-btn-icon {
+    transform-origin: center center;
+    transition: transform 0.3s ease-in-out;
 }
 
-.submit-btn svg {
-  transform-origin: center center;
-  transition: transform 0.3s ease-in-out;
+.form .form-body .submit-section .send-btn:hover .send-btn-wrapper {
+    animation: fly-up 0.6s ease-in-out infinite alternate;
 }
 
-.submit-btn:hover .svg-wrapper {
-  animation: fly-1 0.6s ease-in-out infinite alternate;
+.form .form-body .submit-section .send-btn:hover .send-btn-icon {
+    transform: translateX(24px) rotate(45deg) scale(1.1);
 }
 
-.submit-btn:hover svg {
-  transform: translateX(1.2em) rotate(45deg) scale(1.1);
+.form .form-body .submit-section .send-btn:hover .send-btn-label {
+    transform: translateX(80px);
 }
 
-.submit-btn:hover span {
-  transform: translateX(5em);
+.form .form-body .submit-section .send-btn:active {
+    transform: scale(0.95);
 }
 
-.submit-btn:active {
-  transform: scale(0.95);
-}
-
-@keyframes fly-1 {
-  from {
-    transform: translateY(0.1em);
-  }
-
-  to {
-    transform: translateY(-0.1em);
-  }
-}
-
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
-    .form-wrap {
-        padding: 1.5rem;
+@keyframes fly-up {
+    from {
+        transform: translateY(4px);
     }
 
-    .form-wrap .employee-form .row {
+    to {
+        transform: translateY(-2px);
+    }
+}
+
+/* 
+   SUBMIT SECTION  (main gradient btn)
+ */
+.form .form-body .employee-form .submit-section>.btn-primary {
+    background: linear-gradient(49deg, var(--secondary-dark-gray) 0%, var(--secondary-grey) 92%);
+    border: none;
+    border-radius: 50px;
+    padding: 14px 30px;
+    font-size: 18px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    align-self: center;
+    min-width: 250px;
+    margin-top: 20px;
+    color: var(--secondary-white);
+}
+
+.form .form-body .employee-form .submit-section>.btn-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
+}
+
+.form .form-body .employee-form .submit-section>.btn-primary:active {
+    transform: translateY(0);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+}
+
+@media (max-width: 768px) {
+    .form .form-body {
+        padding: 24px;
+    }
+
+    /* Two-col rows stack to one col on tablets */
+    .form .form-body .employee-form .form-row {
         flex-direction: column;
     }
 
-    .form-wrap .employee-form .col-6 {
-        width: 100%;
-        margin-bottom: 1rem;
+    .form .form-body .employee-form .submit-section>.btn-primary {
+        width: 400px;
+        min-width: 0;
+    }
+}
+
+@media (max-width: 576px) {
+    .form .form-body .employee-form .role-input-group {
+        flex-direction: column;
+        align-items: stretch;
     }
 
-    .form-wrap .employee-form>.btn-primary {
+    .form .form-body .employee-form .role-input-group .form-control,
+    .form .form-body .employee-form .role-input-group .salary-width {
         width: 100%;
-        min-width: auto;
+        border-radius: 8px;
+        border-width: 1px;
+        border-right-width: 1px;
+        border-left-width: 1px;
+    }
+
+    .form .form-body .employee-form .role-input-group .role-save-btn {
+        border-radius: 8px;
+        width: 100%;
+    }
+
+    .form .form-body .employee-form .role-input-group .role-add-btn {
+        width: 100%;
+        padding: 5px;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 320px) {
+    .form .form-body {
+        padding: 16px;
+    }
+
+    .form .back-btn {
+        width: 160px;
+        height: 48px;
+        font-size: 16px;
+    }
+
+    .form .back-btn .back-icon-box {
+        width: 40px;
+        height: 40px;
+    }
+
+    .form .back-btn:hover .back-icon-box {
+        width: 152px;
     }
 }
