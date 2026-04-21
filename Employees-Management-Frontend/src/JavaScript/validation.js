@@ -11,8 +11,8 @@ const RULES = {
     joining_date: value => !value ? 'Required' : new Date(value) <= new Date('2026-01-01') ? 'Must be after 2026-01-01' : null
 };
 
-/**
- * Field Error Handlers
+/*
+ Field Error Handlers
  */
 const showFieldError = (fieldId, message) => {
     const element = document.getElementById(fieldId);
@@ -35,8 +35,8 @@ const clearFieldError = (fieldId) => {
     }
 };
 
-/**
- * Validates a single field and updates its UI state.
+/* 
+ Validates a single field and updates its UI state.
  */
 const validateField = (elementId) => {
     const element = document.getElementById(elementId);
@@ -54,8 +54,8 @@ const validateField = (elementId) => {
     }
 };
 
-/**
- * Form Checkers
+/* 
+ Form Checkers
  */
 const validateAddRole = () => {
     const validationFields = {
@@ -92,8 +92,8 @@ const validateForm = (formId, submitBtnSelector) => {
     return isFormValid;
 };
 
-/**
- * Backend Error Bridge
+/* 
+ Backend Error Bridge
  */
 const handleBackendErrors = (responseData) => {
     if (Array.isArray(responseData.errors)) {
@@ -103,6 +103,3 @@ const handleBackendErrors = (responseData) => {
         showToast(responseData.message || 'Operation failed', 'danger');
     }
 };
-
-
-

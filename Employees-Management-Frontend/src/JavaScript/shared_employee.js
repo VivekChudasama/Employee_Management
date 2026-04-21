@@ -96,8 +96,8 @@ const showToast = (message, type = 'success') => {
     }, 4000);
 };
 
-/**
- * Dropdown & Role Management
+/*
+  Dropdown & Role Management
  */
 const populateDepartments = (selectedId = null) => {
     const selectElement = document.getElementById('department_id');
@@ -209,9 +209,17 @@ const openRoleModal = (roleData = null) => {
 };
 
 const deleteRole = async (id) => {
-    const confirmed = await confirmUI('Delete Role', 'Are you sure? This affects assigned employees.', 'danger');
-    if (!confirmed) return;
+    const employeesWithRole = allEmployees.filter(employee => String(employee.role_id) === String(id));
 
+    if(employeesWithRole.length) {
+        const employeeNames = employeesWithRole.map(emp => emp.name).join(', ');
+        const message = `The following employees are assigned to this role: ${employeeNames}. Are you sure you want to delete it?`;
+        if (!(await confirmUI('Delete Role', message, 'danger'))) return;
+    } else {
+        const confirmed = await confirmUI('Delete Role', 'Are you sure you want to delete this role?', 'danger');
+        if (!confirmed) return;
+    }
+    
     const { ok } = await apiCall(`${API.roles}/${id}`, 'DELETE');
     if (ok) {
         showToast('Role deleted!', 'success');
