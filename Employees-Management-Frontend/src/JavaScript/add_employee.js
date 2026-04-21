@@ -2,7 +2,7 @@ const setupAddEmployeeForm = () => {
     const addEmployeeForm = document.getElementById('addEmployeeForm');
     if (!addEmployeeForm) return;
 
-    ['name', 'email', 'joining_date', 'status' , 'role'].forEach(fieldId => {
+    ['name', 'email', 'joining_date', 'status'].forEach(fieldId => {
         document.getElementById(fieldId)?.addEventListener('input', () => {
             validateField(fieldId);
             validateForm('addEmployeeForm', '#submitBtn');
@@ -12,12 +12,8 @@ const setupAddEmployeeForm = () => {
                 const emailValue = document.getElementById('email').value.trim();
                 const isDuplicate = allEmployees.some(employee => employee.email.toLowerCase() === emailValue.toLowerCase());
                 if (isDuplicate) {
-                    showFieldError('email', 'Email already registered.');
+                    showFieldError('email', 'Email address you have entered is already in use by another user.');
                 }
-            }
-
-            if (fieldId === 'role'){
-                const roleValue = document.getElementById()
             }
         });
     });
@@ -29,7 +25,7 @@ const setupAddEmployeeForm = () => {
 
         const emailValue = formData.email.trim();
         if (allEmployees.some(employee => employee.email.toLowerCase() === emailValue.toLowerCase())) {
-            showFieldError('email', 'Email already registered.');
+            showFieldError('email', 'Email address you have entered is already in use by another user.');
             return validateForm('addEmployeeForm', '#submitBtn');
         }
 

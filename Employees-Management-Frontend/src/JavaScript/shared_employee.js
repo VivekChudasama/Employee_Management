@@ -103,7 +103,7 @@ const populateDepartments = (selectedId = null) => {
     const selectElement = document.getElementById('department_id');
     if (!selectElement) return;
 
-    selectElement.innerHTML = '<option value="">-- Select Department --</option>';
+    selectElement.innerHTML = '<option value="">Select Department</option>';
     const seenDepartments = new Map();
     allRoles.forEach(role => role.department && !seenDepartments.has(role.department.id) && seenDepartments.set(role.department.id, role.department.departmentName));
 

@@ -28,7 +28,7 @@ const setupEditEmployeeForm = () => {
             validateField(fieldId);
             validateForm('editEmployeeForm', '#submitBtn');
 
-            // Special case: If user types in email, check for duplicates (excluding current employee)
+            // check email is unique or not 
             if (fieldId === 'email') {
                 const emailValue = document.getElementById('email').value.trim();
                 const targetEmployeeId = document.getElementById('employeeId').value || employeeId;
@@ -37,7 +37,7 @@ const setupEditEmployeeForm = () => {
                     String(employee.id) !== String(targetEmployeeId)
                 );
                 if (isDuplicate) {
-                    showFieldError('email', 'Email registered to another user.');
+                    showFieldError('email', 'Email address you have entered is already in use by another user.');
                 }
             }
         });
@@ -52,8 +52,8 @@ const setupEditEmployeeForm = () => {
 
         const emailValue = formData.email.trim();
         if (allEmployees.some(employee => employee.email.toLowerCase() === emailValue.toLowerCase() && String(employee.id) !== String(targetEmployeeId))) {
-            showFieldError('email', 'Email registered to another user.');
-            return validateForm('editEmployeeForm', '#submitBtn');
+            showFieldError('email', 'Email address you have entered is already in use by another user.');
+            return validateForm('#submitBtn');
         }
 
         const isUserAgreed = await confirmUI('Update Employee', 'Save changes?', 'primary');
@@ -75,7 +75,7 @@ const init = async () => {
     setupRoleDropdown();
     setupAddRole();
     setupEditEmployeeForm();
-    validateForm('editEmployeeForm', '#submitBtn');
+    validateForm( '#submitBtn');
 };
 
 init();
