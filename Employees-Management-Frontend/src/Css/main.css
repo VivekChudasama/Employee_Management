@@ -35,8 +35,8 @@
 /* 
    FILTER BAR
  */
-.add-employee .filter-bar .filter-bar-search ,
-.add-employee .filter-bar .filter-bar-search .search-input  {
+.add-employee .filter-bar .filter-bar-search,
+.add-employee .filter-bar .filter-bar-search .search-input {
     width: 260px;
 }
 
@@ -90,18 +90,16 @@
     background-color: rgba(0, 0, 0, 0.08);
 }
 
-
 /* --- Sort icon --- */
 .emp-table .emp-table-head .sort-icon-box {
     width: 26px;
     height: 26px;
     border-radius: 13px;
-    background: rgba(0, 0, 0, 0.15);
+    background: var(--primary-blue);
     transition: all var(--transition-smooth);
     color: var(--secondary-white);
     font-size: 13px;
 }
-
 
 /* --- Body --- */
 .emp-table .emp-table-body .emp-table-td {
@@ -116,15 +114,7 @@
     background-color: rgba(0, 0, 0, 0.02);
 }
 
-.emp-table .emp-table-body .emp-table-row:last-child .emp-table-td {
-    border-bottom: none;
-}
-
-.emp-table .emp-table-td-center {
-    text-align: center;
-}
-
-.emp-table .emp-table-th:hover .sort-icon-box {
+.emp-table .emp-table-th:hover .sort-icon-box{
     background: var(--primary-blue);
     color: var(--primary-white);
     transform: translateY(-1px);
@@ -139,6 +129,10 @@
 
 .emp-table .emp-table-th .sort-icon-box .sort-arrow {
     transition: transform var(--transition-smooth);
+}
+
+#confirmModal #confirmIcon {
+    font-size: 48px;
 }
 
 @media (max-width: 768px) {
