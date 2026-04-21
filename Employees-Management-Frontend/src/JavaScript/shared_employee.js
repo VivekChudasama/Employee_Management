@@ -1,272 +1,269 @@
-const BASE_EMPLOYEES_API = 'http://localhost:3001/employees';
-const BASE_ROLES_API = 'http://localhost:3001/roles';
+const API = {
+    employees: 'http://localhost:3001/employees',
+    roles: 'http://localhost:3001/roles'
+};
 
 let allRoles = [];
+let allEmployees = [];
 let editRoleId = null;
 
-// Fetch all roles 
-const fetchRoles = async () => {
+/**
+ * Common API fetch 
+ */
+const apiCall = async (url, method = 'GET', body = null) => {
     try {
-        const res = await fetch(BASE_ROLES_API);
-        if (!res.ok) throw new Error('Failed to fetch roles');
-        allRoles = (await res.json()).data || [];
-    } catch (err) {
-        console.error('Fetch Roles Error:', err);
-        allRoles = [];
+        const options = {
+            method,
+            headers: { 'Content-Type': 'application/json' },
+            ...(body && { body: JSON.stringify(body) })
+        };
+        const response = await fetch(url, options);
+        const data = await response.json();
+
+        if (!response.ok) {
+            handleBackendErrors(data);
+            return { ok: false, data };
+        }
+        return { ok: true, data: data.data };
+    } catch (error) {
+        console.error(`API Error (${url}):`, error);
+        showToast('Could not connect to the server.', 'danger');
+        return { ok: false, error: error };
     }
 };
 
-//departments dropdown from roles 
-const populateDepartments = (selectedDeptId = null) => {
-    const select = document.getElementById('department_id');
-    if (!select) return;
+/**
+ * Data Fetching
+ */
+const fetchRolesData = async () => {
+    const { ok, data } = await apiCall(API.roles);
+    if (ok) allRoles = data || [];
+};
 
-    select.innerHTML = '<option value="">-- Select Department --</option>';
+const fetchEmployeesData = async () => {
+    const { ok, data } = await apiCall(API.employees);
+    if (ok) allEmployees = data || [];
+};
 
-    const seen = new Map();
-    allRoles.forEach(r => {
-        const d = r.department;
-        if (d && !seen.has(d.id)) seen.set(d.id, d.departmentName);
-    });
+/**
+ * UI Confirmation & Toasts
+ */
+const confirmUI = (title, message, type = 'warning') => {
+    return new Promise((resolve) => {
+        const modalElement = document.getElementById('confirmModal');
+        if (!modalElement) return resolve(confirm(message));
 
-    seen.forEach((name, id) => {
-        const opt = Object.assign(document.createElement('option'), {
-            value: id, textContent: name,
-            selected: String(id) === String(selectedDeptId)
-        });
-        select.appendChild(opt);
+        const modal = new bootstrap.Modal(modalElement);
+        document.getElementById('confirmTitle').textContent = title;
+        document.getElementById('confirmMessage').textContent = message;
+        document.getElementById('confirmIcon').className = `bi bi-exclamation-circle text-${type}`;
+
+        const actionButton = document.getElementById('confirmActionBtn');
+        const clearAndResolve = (value) => {
+            actionButton.replaceWith(actionButton.cloneNode(true));
+            modal.hide();
+            resolve(value);
+        };
+
+        document.getElementById('confirmActionBtn').onclick = () => clearAndResolve(true);
+        modalElement.addEventListener('hidden.bs.modal', () => resolve(false), { once: true });
+        modal.show();
     });
 };
 
-// roles dropdown 
+const showToast = (message, type = 'success') => {
+    let container = document.getElementById('toastContainer') || Object.assign(document.createElement('div'), { id: 'toastContainer' });
+    if (!container.parentElement) {
+        container.style.cssText = 'position:fixed;top:16px;right:16px;z-index:9999;display:flex;flex-direction:column;gap:12px;';
+        document.body.appendChild(container);
+    }
+
+    const iconName = type === 'success' ? 'check-circle' : type === 'danger' ? 'x-circle' : 'exclamation-circle';
+    const backgroundColor = type === 'success' ? '#198754' : type === 'danger' ? '#dc3545' : '#ffc107';
+
+    const toastElement = document.createElement('div');
+    toastElement.className = `alert alert-${type} d-flex align-items-center shadow-lg border-0 fade show`;
+    toastElement.style.cssText = `min-width:300px; border-left: 5px solid rgba(0,0,0,0.2) !important; color:#fff; background: ${backgroundColor}`;
+    toastElement.innerHTML = `
+        <i class="bi bi-${iconName} fs-4 me-3"></i>
+        <div class="flex-grow-1">${message}</div>
+        <button type="button" class="btn-close btn-close-white ms-2" data-bs-dismiss="alert"></button>`;
+
+    container.appendChild(toastElement);
+    setTimeout(() => {
+        toastElement.classList.remove('show');
+        setTimeout(() => toastElement.remove(), 500);
+    }, 4000);
+};
+
+/**
+ * Dropdown & Role Management
+ */
+const populateDepartments = (selectedId = null) => {
+    const selectElement = document.getElementById('department_id');
+    if (!selectElement) return;
+
+    selectElement.innerHTML = '<option value="">-- Select Department --</option>';
+    const seenDepartments = new Map();
+    allRoles.forEach(role => role.department && !seenDepartments.has(role.department.id) && seenDepartments.set(role.department.id, role.department.departmentName));
+
+    seenDepartments.forEach((name, id) => {
+        selectElement.appendChild(Object.assign(document.createElement('option'), {
+            value: id, textContent: name, selected: String(id) === String(selectedId)
+        }));
+    });
+};
+
 const populateRoles = (departmentId = null, selectedRoleId = null) => {
-    const menu = document.getElementById('roleDropdownMenu');
-    const btn = document.getElementById('roleDropdownBtn');
-    const input = document.getElementById('role_id');
-    const salary = document.getElementById('salary_display');
-    if (!menu) return;
+    const dropdownMenu = document.getElementById('roleDropdownMenu');
+    const dropdownButton = document.getElementById('roleDropdownBtn');
+    if (!dropdownMenu || !dropdownButton) return;
 
-    menu.innerHTML = '';
-
-    const list = departmentId
-        ? allRoles.filter(r => String(r.department?.id) === String(departmentId))
-        : allRoles;
-
-    if (!list.length) {
-        menu.innerHTML = '<li><span class="dropdown-item text-muted">No roles available</span></li>';
+    dropdownMenu.innerHTML = '';
+    if (!departmentId) {
+        dropdownMenu.innerHTML = '<li><span class="dropdown-item text-muted text-center py-3">Select a department first</span></li>';
+        dropdownButton.disabled = true;
         return;
     }
 
-    list.forEach(role => {
-        const li = document.createElement('li');
-        li.innerHTML = `
-            <a class="dropdown-item d-flex justify-content-between align-items-center role-option"
-               href="#" data-id="${role.id}" data-salary="${role.salary}" data-name="${role.role}">
-                <span>${role.role}</span>
-                <div class="d-flex align-items-center gap-1 ms-2">
-                    <span class="badge" style="background:var(--secondary-grey)">$${role.salary}</span>
-                    <button class="btn btn-sm btn-outline-warning py-0 px-1 role-edit-btn"
-                        data-id="${role.id}" data-name="${role.role}" data-salary="${role.salary}"
-                        type="button" title="Edit role">
-                        <i class="bi bi-pencil-fill" style="font-size:10px"></i>
-                    </button>
-                    <button class="btn btn-sm btn-outline-danger py-0 px-1 role-delete-btn"
-                        data-id="${role.id}" type="button" title="Delete role">
-                        <i class="bi bi-trash-fill" style="font-size:10px"></i>
-                    </button>
-                </div>
-            </a>`;
-        menu.appendChild(li);
+    dropdownButton.disabled = false;
+    const rolesInDepartment = allRoles.filter(role => String(role.department?.id) === String(departmentId));
 
-        // Pre-select in edit form
-        if (selectedRoleId && String(role.id) === String(selectedRoleId)) {
-            btn.textContent = role.role;
-            input.value = role.id;
-            salary.value = `$${role.salary}`;
-        }
-    });
+    if (!rolesInDepartment.length) {
+        dropdownMenu.innerHTML = '<li><span class="dropdown-item text-muted text-center py-3">No roles in this department</span></li>';
+    } else {
+        rolesInDepartment.forEach(role => {
+            const listItem = document.createElement('li');
+            listItem.innerHTML = `
+                <a class="dropdown-item d-flex justify-content-between align-items-center role-option py-2 px-3"
+                   href="#" data-id="${role.id}" data-salary="${role.salary}" data-name="${role.role}">
+                    <div class="d-flex flex-column"><span class="fw-bold">${role.role}</span><small class="text-muted">$${role.salary}</small></div>
+                    <div class="d-flex gap-2 ms-2 action-btns">
+                        <button class="btn btn-sm btn-outline-warning role-edit-btn border-0 shadow-sm" data-id="${role.id}" data-name="${role.role}" data-salary="${role.salary}"><i class="bi bi-pencil-fill"></i></button>
+                        <button class="btn btn-sm btn-outline-danger role-delete-btn border-0 shadow-sm" data-id="${role.id}"><i class="bi bi-trash-fill"></i></button>
+                    </div>
+                </a>`;
+            dropdownMenu.appendChild(listItem);
+            if (selectedRoleId && String(role.id) === String(selectedRoleId)) {
+                updateRolePickerSelection(role.role, role.id, role.salary);
+            }
+        });
+    }
+
+    const footerDivider = document.createElement('li');
+    footerDivider.innerHTML = '<hr class="dropdown-divider"><button class="dropdown-item text-primary text-center py-2" id="addRoleInDropdownBtn"><i class="bi bi-plus-circle-fill me-1"></i> Add New Role</button>';
+    dropdownMenu.appendChild(footerDivider);
+    document.getElementById('addRoleInDropdownBtn').onclick = () => openRoleModal();
+};
+
+const updateRolePickerSelection = (name, id, salary) => {
+    const button = document.getElementById('roleDropdownBtn');
+    const hiddenInput = document.getElementById('role_id');
+    const salaryDisplay = document.getElementById('salary_display');
+    if (button) button.textContent = name || 'Select a role';
+    if (hiddenInput) hiddenInput.value = id || '';
+    if (salaryDisplay) salaryDisplay.value = salary ? `$${salary}` : '';
 };
 
 const setupRoleDropdown = () => {
-    const menu = document.getElementById('roleDropdownMenu');
-    if (!menu) return;
+    document.getElementById('roleDropdownMenu')?.addEventListener('click', async (event) => {
+        const optionItem = event.target.closest('.role-option');
+        const editButton = event.target.closest('.role-edit-btn');
+        const deleteButton = event.target.closest('.role-delete-btn');
 
-    menu.addEventListener('click', async e => {
-        const editBtn = e.target.closest('.role-edit-btn');
-        const deleteBtn = e.target.closest('.role-delete-btn');
-        const item = e.target.closest('.role-option');
-
-        if (editBtn) {
-            e.preventDefault();
-            e.stopPropagation();
-            enterEditRoleMode(editBtn.dataset);
-            return;
-        }
-
-        if (deleteBtn) {
-            e.preventDefault();
-            e.stopPropagation();
-            await deleteRole(deleteBtn.dataset.id);
-            return;
-        }
-
-        if (item) {
-            e.preventDefault();
-            const btn = document.getElementById('roleDropdownBtn');
-            const input = document.getElementById('role_id');
-            const salary = document.getElementById('salary_display');
-            btn.textContent = item.dataset.name;
-            input.value = item.dataset.id;
-            salary.value = `$${item.dataset.salary}`;
+        if (editButton) return openRoleModal(editButton.dataset);
+        if (deleteButton) return deleteRole(deleteButton.dataset.id);
+        if (optionItem && !event.target.closest('.action-btns')) {
+            updateRolePickerSelection(optionItem.dataset.name, optionItem.dataset.id, optionItem.dataset.salary);
+            const formElement = optionItem.closest('form');
+            if (formElement) validateForm(formElement.id, '#submitBtn');
         }
     });
 };
 
-// role edit mode 
-const enterEditRoleMode = ({ id, name, salary }) => {
-    editRoleId = id;
+const openRoleModal = (roleData = null) => {
+    const departmentId = document.getElementById('department_id')?.value;
+    if (!departmentId) return showToast('Select a department first!', 'warning');
 
-    const nameEl = document.getElementById('newRoleName');
-    const salaryEl = document.getElementById('newRoleSalary');
-    const label = document.getElementById('roleCardLabel');
-    const cancelBtn = document.getElementById('cancelEditRole');
-    const saveBtnTx = document.querySelector('#saveRoleBtn .role-btn-text');
+    const modal = new bootstrap.Modal(document.getElementById('roleModal'));
+    const modalTitle = document.getElementById('roleModalLabel');
+    const nameInput = document.getElementById('newRoleName');
+    const salaryInput = document.getElementById('newRoleSalary');
+    const saveButton = document.getElementById('saveRoleBtn');
 
-    if (nameEl) nameEl.value = name;
-    if (salaryEl) salaryEl.value = salary;
-    if (label) label.textContent = 'Edit Role';
-    if (cancelBtn) cancelBtn.classList.remove('d-none');
-    if (saveBtnTx) saveBtnTx.textContent = 'Update';
-
-    nameEl?.focus();
+    if (roleData) {
+        editRoleId = roleData.id;
+        modalTitle.textContent = 'Edit Role';
+        nameInput.value = roleData.name;
+        salaryInput.value = roleData.salary;
+        saveButton.textContent = 'Update Role';
+    } else {
+        editRoleId = null;
+        modalTitle.textContent = 'Add New Role';
+        nameInput.value = '';
+        salaryInput.value = '';
+        saveButton.textContent = 'Add Role';
+    }
+    [nameInput, salaryInput].forEach(inputElement => inputElement.classList.remove('is-invalid'));
+    modal.show();
 };
 
-const exitEditRoleMode = () => {
-    editRoleId = null;
-
-    const nameEl = document.getElementById('newRoleName');
-    const salaryEl = document.getElementById('newRoleSalary');
-    const label = document.getElementById('roleCardLabel');
-    const cancelBtn = document.getElementById('cancelEditRole');
-    const saveBtnTx = document.querySelector('#saveRoleBtn .role-btn-text');
-
-    if (nameEl) { nameEl.value = ''; clearFieldError('newRoleName'); }
-    if (salaryEl) { salaryEl.value = ''; clearFieldError('newRoleSalary'); }
-    if (label) label.textContent = 'Quick Add Role';
-    if (cancelBtn) cancelBtn.classList.add('d-none');
-    if (saveBtnTx) saveBtnTx.textContent = 'Add Role';
-};
-
-// Delete a role
 const deleteRole = async (id) => {
-    if (!confirm('Delete this role? Employees assigned to it may be affected.')) return;
-    try {
-        const res = await fetch(`${BASE_ROLES_API}/${id}`, { method: 'DELETE' });
-        const data = await res.json();
-        if (!res.ok) { showToast(data.message || 'Failed to delete role.', 'danger'); return; }
+    const confirmed = await confirmUI('Delete Role', 'Are you sure? This affects assigned employees.', 'danger');
+    if (!confirmed) return;
 
+    const { ok } = await apiCall(`${API.roles}/${id}`, 'DELETE');
+    if (ok) {
         showToast('Role deleted!', 'success');
-        const deptId = document.getElementById('department_id')?.value || null;
-        await fetchRoles();
+        const deptId = document.getElementById('department_id')?.value;
+        await fetchRolesData();
         populateDepartments(deptId);
         populateRoles(deptId);
-    } catch {
-        showToast('Could not connect to the server.', 'danger');
     }
 };
 
-// Reset role picker
-const resetRolePicker = () => {
-    const btn = document.getElementById('roleDropdownBtn');
-    const input = document.getElementById('role_id');
-    const salary = document.getElementById('salary_display');
-    if (btn) btn.textContent = 'Select a role';
-    if (input) input.value = '';
-    if (salary) salary.value = '';
-};
-
-//  Department wise roles 
 const setupDepartmentFilter = () => {
-    document.getElementById('department_id')?.addEventListener('change', e => {
-        resetRolePicker();
-        exitEditRoleMode();
-        populateRoles(e.target.value || null);
+    document.getElementById('department_id')?.addEventListener('change', (event) => {
+        updateRolePickerSelection();
+        populateRoles(event.target.value);
+        const formElement = event.target.closest('form');
+        if (formElement) validateForm(formElement.id, '#submitBtn');
     });
 };
 
-// Save (Add or Update) role card 
 const setupAddRole = () => {
-    const btn = document.getElementById('saveRoleBtn');
-    if (!btn) return;
+    const saveButton = document.getElementById('saveRoleBtn');
+    const openButton = document.getElementById('openRoleModalBtn');
+    if (openButton) openButton.onclick = openRoleModal;
+    if (!saveButton) return;
 
-    // Cancel edit button
-    document.getElementById('cancelEditRole')?.addEventListener('click', exitEditRoleMode);
-
-    btn.addEventListener('click', async () => {
+    saveButton.onclick = async () => {
         const { valid } = validateAddRole();
-        if (!valid) { showToast('Please fix the role fields.', 'warning'); return; }
+        if (!valid) return;
 
         const roleName = document.getElementById('newRoleName').value.trim();
-        const salary = Number(document.getElementById('newRoleSalary').value.trim());
-        const deptId = Number(document.getElementById('department_id').value);
+        const roleSalary = Number(document.getElementById('newRoleSalary').value.trim());
+        const departmentId = Number(document.getElementById('department_id').value);
 
-        if (editRoleId) {
-            // UPDATE existing role
-            try {
-                const res = await fetch(`${BASE_ROLES_API}/${editRoleId}`, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ role: roleName, salary, department_id: deptId })
-                });
-                const data = await res.json();
-                if (!res.ok) { handleBackendErrors(data); return; }
+        const isDuplicate = allRoles.some(role => role.role.toLowerCase() === roleName.toLowerCase() && String(role.id) !== String(editRoleId) && String(role.department_id) === String(departmentId));
+        if (isDuplicate) {
+            showToast(`The role name you have entered already exists.` , 'warning')
+        } 
 
-                showToast('Role updated!', 'success');
-                exitEditRoleMode();
-                await fetchRoles();
-                populateDepartments(deptId);
-                populateRoles(deptId || null);
-            } catch {
-                showToast('Could not connect to the server.', 'danger');
-            }
-        } else {
-            // ADD new role 
-            try {
-                const res = await fetch(`${BASE_ROLES_API}/add-role`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ role: roleName, salary, department_id: deptId })
-                });
-                const data = await res.json();
-                if (!res.ok) { handleBackendErrors(data); return; }
+        const actionName = editRoleId ? 'Update' : 'Add';
+        if (!(await confirmUI(`${actionName} Role`, `Confirm ${actionName.toLowerCase()}?`))) return;
 
-                showToast('Role added!', 'success');
-                document.getElementById('newRoleName').value = '';
-                document.getElementById('newRoleSalary').value = '';
-                clearFieldError('newRoleName');
-                clearFieldError('newRoleSalary');
-                await fetchRoles();
-                populateDepartments(deptId);
-                populateRoles(deptId || null);
-            } catch {
-                showToast('Could not connect to the server.', 'danger');
-            }
+        const targetUrl = editRoleId ? `${API.roles}/${editRoleId}` : `${API.roles}/add-role`;
+        const { ok } = await apiCall(targetUrl, editRoleId ? 'PUT' : 'POST', { role: roleName, salary: roleSalary, department_id: departmentId });
+
+        if (ok) {
+            showToast(`Role ${actionName.toLowerCase()}ed!`, 'success');
+            bootstrap.Modal.getInstance(document.getElementById('roleModal')).hide();
+            await fetchRolesData();
+            populateDepartments(departmentId);
+            populateRoles(departmentId);
         }
-    });
+    };
 };
 
-// Toast notification
-const showToast = (message, type = 'success') => {
-    let container = document.getElementById('toastContainer');
-    if (!container) {
-        container = Object.assign(document.createElement('div'), { id: 'toastContainer' });
-        container.style.cssText = 'position:fixed;top:16px;right:16px;z-index:9999;display:flex;flex-direction:column;gap:8px;';
-        document.body.appendChild(container);
-    }
-    const toast = document.createElement('div');
-    toast.className = `alert alert-${type} alert-dismissible fade show shadow`;
-    toast.style.minWidth = '280px';
-    toast.innerHTML = `${message}<button type="button" class="btn-close" data-bs-dismiss="alert"></button>`;
-    container.appendChild(toast);
-    setTimeout(() => toast.remove(), 4000);
-};
+

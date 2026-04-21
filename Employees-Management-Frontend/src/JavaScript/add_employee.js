@@ -1,54 +1,59 @@
 const setupAddEmployeeForm = () => {
-    const form = document.getElementById('addEmployeeForm');
-    if (!form) return;
+    const addEmployeeForm = document.getElementById('addEmployeeForm');
+    if (!addEmployeeForm) return;
 
-    form.addEventListener('submit', async e => {
-        e.preventDefault();
-
-        // ── Bootstrap validates all visible required fields ──
-        const bootstrapOk = form.checkValidity();
-        form.classList.add('was-validated');
-
-        const roleError = RULES.role_id(document.getElementById('role_id')?.value);
-        if (roleError) showToast(roleError, 'warning');
-
-        if (!bootstrapOk || roleError) return;
-
-        const data = Object.fromEntries(new FormData(form));
-        data.role_id = Number(data.role_id);
-
-        try {
-            const res = await fetch(`${BASE_EMPLOYEES_API}/add-employee`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data)
-            });
-            const json = await res.json();
-
-            if (res.ok) {
-                showToast('Employee added successfully!', 'success');
-                form.reset();
-                form.classList.remove('was-validated');
-                resetRolePicker();
-                setTimeout(() => { window.location.href = './employees_list.html'; }, 1500);
-            } else {
-                handleBackendErrors(json);
+    ['name', 'email', 'joining_date', 'status' , 'role'].forEach(fieldId => {
+        document.getElementById(fieldId)?.addEventListener('input', () => {
+            validateField(fieldId);
+            validateForm('addEmployeeForm', '#submitBtn');
+            
+            // check email is unique or not 
+            if (fieldId === 'email') {
+                const emailValue = document.getElementById('email').value.trim();
+                const isDuplicate = allEmployees.some(employee => employee.email.toLowerCase() === emailValue.toLowerCase());
+                if (isDuplicate) {
+                    showFieldError('email', 'Email already registered.');
+                }
             }
-        } catch {
-            showToast('Could not connect to the server. Please try again.', 'danger');
+
+            if (fieldId === 'role'){
+                const roleValue = document.getElementById()
+            }
+        });
+    });
+
+    addEmployeeForm.addEventListener('submit', async event => {
+        event.preventDefault();
+        const formData = Object.fromEntries(new FormData(addEmployeeForm));
+        formData.role_id = Number(formData.role_id);
+
+        const emailValue = formData.email.trim();
+        if (allEmployees.some(employee => employee.email.toLowerCase() === emailValue.toLowerCase())) {
+            showFieldError('email', 'Email already registered.');
+            return validateForm('addEmployeeForm', '#submitBtn');
+        }
+
+        const isUserAgreed = await confirmUI('Add Employee', 'Confirm new entry?', 'primary');
+        if (isUserAgreed) {
+            const { ok: isSuccessful } = await apiCall(`${API.employees}/add-employee`, 'POST', formData);
+            if (isSuccessful) {
+                showToast('Employee added!', 'success');
+                setTimeout(() => location.href = './employees_list.html', 1500);
+            }
         }
     });
 };
 
-// ── Init ────────────────────────────────────────────────────
 const init = async () => {
-    await fetchRoles();
+    await Promise.all([fetchRolesData(), fetchEmployeesData()]);
     populateDepartments();
     populateRoles();
     setupDepartmentFilter();
     setupRoleDropdown();
     setupAddRole();
     setupAddEmployeeForm();
+    validateForm('addEmployeeForm', '#submitBtn');
 };
 
 init();
+

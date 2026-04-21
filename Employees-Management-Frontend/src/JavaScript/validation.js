@@ -1,56 +1,108 @@
-// Field rules 
+/**
+ * Validation Rules
+ */
 const RULES = {
-    role_id: v => (!v || v === '') ? 'Please select a role' : null,
-    roleName: v => !v?.trim() ? 'Role name is required'
-        : v.trim().length < 3 ? 'Role name must be at least 3 characters'
-            : v.trim().length > 30 ? 'Role name must be at most 30 characters' : null,
-    salary: v => !v?.trim() ? 'Salary is required'
-        : isNaN(+v) || +v < 1 ? 'Salary must be a positive number' : null,
-    department_id: v => (!v || v === '') ? 'Please select a department' : null
+    name: value => !value?.trim() ? 'Name is required' : value.trim().length < 3 ? 'At least 3 characters' : !/^[a-zA-Z\s.]+$/.test(value.trim()) ? 'Letters, spaces and dots only' : null,
+    email: value => !value?.trim() ? 'Email is required' : !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim()) ? 'Invalid email format' : null,
+    role_id: value => (!value || value === '') ? 'Required' : null,
+    roleName: value => !value?.trim() ? 'Required' : value.trim().length < 3 ? 'At least 3 characters' : value.trim().length > 30 ? 'Max 30 characters' : null,
+    salary: value => !value?.trim() ? 'Required' : (isNaN(+value) || +value < 1) ? 'Positive number only' : null,
+    department_id: value => (!value || value === '') ? 'Required' : null,
+    joining_date: value => !value ? 'Required' : new Date(value) <= new Date('2026-01-01') ? 'Must be after 2026-01-01' : null
 };
 
-// Inline field error helpers 
-const showFieldError = (id, msg) => {
-    const el = document.getElementById(id);
-    if (!el) return;
-    el.classList.add('is-invalid');
-    el.classList.remove('is-valid');
-    let fb = el.nextElementSibling;
-    if (!fb?.classList.contains('invalid-feedback')) {
-        fb = document.createElement('div');
-        fb.className = 'invalid-feedback';
-        el.insertAdjacentElement('afterend', fb);
+/**
+ * Field Error Handlers
+ */
+const showFieldError = (fieldId, message) => {
+    const element = document.getElementById(fieldId);
+    if (!element) return;
+    element.classList.add('is-invalid');
+    element.classList.remove('is-valid');
+    let feedbackElement = element.nextElementSibling;
+    if (!feedbackElement?.classList.contains('invalid-feedback')) {
+        feedbackElement = Object.assign(document.createElement('div'), { className: 'invalid-feedback' });
+        element.insertAdjacentElement('afterend', feedbackElement);
     }
-    fb.textContent = msg;
+    feedbackElement.textContent = message;
 };
 
-const clearFieldError = (id) => {
-    const el = document.getElementById(id);
-    if (!el) return;
-    el.classList.replace('is-invalid', 'is-valid');
+const clearFieldError = (fieldId) => {
+    const element = document.getElementById(fieldId);
+    if (element) {
+        element.classList.remove('is-invalid');
+        element.classList.add('is-valid');
+    }
 };
 
-// Validate role quick-add fields 
+/**
+ * Validates a single field and updates its UI state.
+ */
+const validateField = (elementId) => {
+    const element = document.getElementById(elementId);
+    if (!element) return true;
+
+    const ruleFunction = RULES[element.name || element.id];
+    const errorMessage = ruleFunction ? ruleFunction(element.value) : (element.required && !element.value ? 'Required' : null);
+
+    if (errorMessage) {
+        showFieldError(elementId, errorMessage);
+        return false;
+    } else {
+        clearFieldError(elementId);
+        return true;
+    }
+};
+
+/**
+ * Form Checkers
+ */
 const validateAddRole = () => {
-    const checks = {
+    const validationFields = {
         newRoleName: RULES.roleName(document.getElementById('newRoleName')?.value),
         newRoleSalary: RULES.salary(document.getElementById('newRoleSalary')?.value),
         department_id: RULES.department_id(document.getElementById('department_id')?.value)
     };
-    let valid = true;
-    Object.entries(checks).forEach(([id, msg]) => {
-        if (msg) { showFieldError(id, msg); valid = false; }
-        else clearFieldError(id);
+    let isAllValid = true;
+    Object.entries(validationFields).forEach(([id, error]) => {
+        if (error) {
+            showFieldError(id, error);
+            isAllValid = false;
+        } else {
+            clearFieldError(id);
+        }
     });
-    return { valid };
+    return { valid: isAllValid };
 };
 
-// Handle backend error response 
-const handleBackendErrors = (data) => {
-    if (Array.isArray(data.errors) && data.errors.length) {
-        data.errors.forEach(({ field, message }) => showFieldError(field, message));
-        showToast(data.message || 'Validation error', 'danger');
+const validateForm = (formId, submitBtnSelector) => {
+    const formElement = document.getElementById(formId);
+    if (!formElement) return false;
+
+    const submitButton = formElement.querySelector(submitBtnSelector);
+    const formInputs = [...formElement.querySelectorAll('input, select, textarea')];
+
+    // For general form validity (enabling/disabling submit button)
+    const isFormValid = formInputs.filter(input => (input.required || input.name === 'role_id')).every(input => {
+        const ruleFunction = RULES[input.name || input.id];
+        return ruleFunction ? !ruleFunction(input.value) : !!input.value;
+    });
+
+    if (submitButton) submitButton.disabled = !isFormValid;
+    return isFormValid;
+};
+
+/**
+ * Backend Error Bridge
+ */
+const handleBackendErrors = (responseData) => {
+    if (Array.isArray(responseData.errors)) {
+        responseData.errors.forEach(error => showFieldError(error.field, error.message));
+        showToast(responseData.message || 'Check form errors', 'danger');
     } else {
-        showToast(data.message || 'An error occurred.', 'danger');
+        showToast(responseData.message || 'Operation failed', 'danger');
     }
 };
+
+
+

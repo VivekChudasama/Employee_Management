@@ -214,6 +214,7 @@
 }
 
 .form .form-body .employee-form .dropdown-item {
+
     padding: 12px 20px;
     color: var(--secondary-grey);
     transition: all 0.2s ease;
@@ -262,6 +263,22 @@
 .form .form-body .submit-section .send-btn:active {
     transform: scale(0.95);
 }
+
+.form .form-body .submit-section .send-btn:disabled {
+    background: var(--secondary-white) !important;
+    cursor: not-allowed !important;
+    opacity: 0.6;
+    transform: none !important;
+}
+
+.form .form-body .submit-section .send-btn:disabled .send-btn-label {
+    color: var(--secondary-grey) !important;
+}
+
+.form .form-body .submit-section .send-btn:disabled .send-btn-icon {
+    color: var(--secondary-grey) !important;
+}
+
 
 @keyframes fly-up {
     from {

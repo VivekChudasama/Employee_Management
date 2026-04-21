@@ -2,82 +2,81 @@ const employeeId = new URLSearchParams(window.location.search).get('id');
 
 if (!employeeId) {
     showToast('No employee ID provided. Redirecting…', 'danger');
-    setTimeout(() => { window.location.href = './employees_list.html'; }, 2000);
+    setTimeout(() => location.href = './employees_list.html', 2000);
 }
 
-// Pre-fill form with existing employee data 
-const loadEmployee = async () => {
-    try {
-        const res = await fetch(`${BASE_EMPLOYEES_API}/${employeeId}`);
-        if (!res.ok) throw new Error('Employee not found');
-        const emp = (await res.json()).data;
+const loadEmployeeData = async () => {
+    const { ok: isSuccessful, data: employee } = await apiCall(`${API.employees}/${employeeId}`);
+    if (isSuccessful) {
+        document.getElementById('employeeId').value = employee.id;
+        document.getElementById('name').value = employee.name || '';
+        document.getElementById('email').value = employee.email || '';
+        document.getElementById('status').value = employee.status || 'active';
+        document.getElementById('joining_date').value = employee.joining_date?.split('T')[0] || '';
 
-        document.getElementById('employeeId').value = emp.id;
-        document.getElementById('name').value = emp.name || '';
-        document.getElementById('email').value = emp.email || '';
-        document.getElementById('status').value = emp.status || 'active';
-        document.getElementById('joining_date').value = emp.joining_date?.split('T')[0] || '';
-
-        populateDepartments(emp.role?.department?.id);
-        populateRoles(emp.role?.department?.id, emp.role?.id);
-    } catch (err) {
-        console.error('Load Employee Error:', err);
-        showToast('Could not load employee data.', 'danger');
+        populateDepartments(employee.role?.department?.id);
+        populateRoles(employee.role?.department?.id, employee.role?.id);
     }
 };
 
-//  Submit: update employee
 const setupEditEmployeeForm = () => {
-    const form = document.getElementById('editEmployeeForm');
-    if (!form) return;
+    const editEmployeeForm = document.getElementById('editEmployeeForm');
+    if (!editEmployeeForm) return;
 
-    form.addEventListener('submit', async e => {
-        e.preventDefault();
+    ['name', 'email', 'joining_date', 'status'].forEach(fieldId => {
+        document.getElementById(fieldId)?.addEventListener('input', () => {
+            validateField(fieldId);
+            validateForm('editEmployeeForm', '#submitBtn');
 
-        // Bootstrap validates all visible required fields
-        const bootstrapOk = form.checkValidity();
-        form.classList.add('was-validated');
+            // Special case: If user types in email, check for duplicates (excluding current employee)
+            if (fieldId === 'email') {
+                const emailValue = document.getElementById('email').value.trim();
+                const targetEmployeeId = document.getElementById('employeeId').value || employeeId;
+                const isDuplicate = allEmployees.some(employee => 
+                    employee.email.toLowerCase() === emailValue.toLowerCase() && 
+                    String(employee.id) !== String(targetEmployeeId)
+                );
+                if (isDuplicate) {
+                    showFieldError('email', 'Email registered to another user.');
+                }
+            }
+        });
+    });
 
-        const roleError = RULES.role_id(document.getElementById('role_id')?.value);
-        if (roleError) showToast(roleError, 'warning');
-
-        if (!bootstrapOk || roleError) return;
-
-        const formData = Object.fromEntries(new FormData(form));
-        const empId = formData.employeeId || employeeId;
+    editEmployeeForm.addEventListener('submit', async event => {
+        event.preventDefault();
+        const formData = Object.fromEntries(new FormData(editEmployeeForm));
+        const targetEmployeeId = formData.employeeId || employeeId;
         delete formData.employeeId;
         formData.role_id = Number(formData.role_id);
 
-        try {
-            const res = await fetch(`${BASE_EMPLOYEES_API}/${empId}`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(formData)
-            });
-            const json = await res.json();
+        const emailValue = formData.email.trim();
+        if (allEmployees.some(employee => employee.email.toLowerCase() === emailValue.toLowerCase() && String(employee.id) !== String(targetEmployeeId))) {
+            showFieldError('email', 'Email registered to another user.');
+            return validateForm('editEmployeeForm', '#submitBtn');
+        }
 
-            if (res.ok) {
-                showToast('Employee updated successfully!', 'success');
-                form.classList.remove('was-validated');
-                setTimeout(() => { window.location.href = './employees_list.html'; }, 1500);
-            } else {
-                handleBackendErrors(json);
+        const isUserAgreed = await confirmUI('Update Employee', 'Save changes?', 'primary');
+        if (isUserAgreed) {
+            const { ok: isSuccessful } = await apiCall(`${API.employees}/${targetEmployeeId}`, 'PUT', formData);
+            if (isSuccessful) {
+                showToast('Employee updated!', 'success');
+                setTimeout(() => location.href = './employees_list.html', 1500);
             }
-        } catch {
-            showToast('Could not connect to the server. Please try again.', 'danger');
         }
     });
 };
 
-
 const init = async () => {
     if (!employeeId) return;
-    await fetchRoles();
-    await loadEmployee();
+    await Promise.all([fetchRolesData(), fetchEmployeesData()]);
+    await loadEmployeeData();
     setupDepartmentFilter();
     setupRoleDropdown();
     setupAddRole();
     setupEditEmployeeForm();
+    validateForm('editEmployeeForm', '#submitBtn');
 };
 
 init();
+

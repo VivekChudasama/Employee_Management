@@ -148,8 +148,24 @@
 }
 
 
+@media (max-width: 1024px) {
+    .add-employee .filter-bar {
+        justify-content: center;
+    }
+}
+
+@media (max-width: 768px) {
+    .add-employee .filter-bar {
+        gap: 15px;
+    }
+    .emp-table .emp-table-head .emp-table-th,
+    .emp-table .emp-table-body .emp-table-td {
+        padding: 15px;
+    }
+}
+
 @media (max-width: 416px) {
-   .add-employee .filter-bar .filter-bar-search {
+    .add-employee .filter-bar .filter-bar-search {
         width: 100%;
     }
 
