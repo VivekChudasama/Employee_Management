@@ -8,7 +8,7 @@ const RULES = {
     },
     email: function(value) {
         if (!value || value.trim() === '') return 'Email is required';
-        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim())) return 'Invalid email format';
+        if (!/^(?!\.)(?!.*\.\.)([a-z0-9_'+\-\.]*)[a-z0-9_'+\-]@([a-zA-Z][a-zA-Z\-]*\.)+[a-z]{2,}$/i.test(value.trim())) return 'Invalid email format';
         return null;
     },
     role_id: function(value) {

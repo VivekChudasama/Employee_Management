@@ -16,14 +16,29 @@
     border-radius: 2px;
 }
 
-.form .back-btn{
+.form .back-btn {
     border: 1px solid var(--primary-blue);
 }
+
 .form .back-btn:hover {
     color: black;
     border: 1px solid var(--primary-blue);
     background-color: var(--primary-blue);
     text-decoration: none;
+}
+
+.form .form-body {
+    background: var(--primary-white);
+    border-radius: 20px;
+    padding: 40px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(0, 0, 0, 0.03);
+    margin-bottom: 32px;
+    transition: transform 0.3s ease;
+}
+
+.form .form-body:hover {
+    transform: translateY(-2px);
 }
 
 /*  Labels  */
@@ -128,9 +143,9 @@
 }
 
 @media (max-width: 600px) {
-    .form .form-title{
+    .form .form-title {
         display: flex !important;
-        justify-content: center  !important;
+        justify-content: center !important;
         width: 100% !important;
     }
 }
