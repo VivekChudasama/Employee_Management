@@ -99,11 +99,7 @@ function renderEmployees(employees) {
     }
 
     employees.forEach(employee => {
-        const departmentName = employee.role?.department?.departmentName || '—';
-        const roleName = employee.role?.role || '—';
-        const salary = employee.role?.salary || 0;
-        
-        // change the date formate of sql
+        // change the date formate of sql date to yyyy-mm-dd
         const rawDate = new Date(employee.joining_date);
         const joiningDate = isNaN(rawDate) ? '—' : rawDate.toLocaleDateString('en-CA');
         
@@ -116,9 +112,9 @@ function renderEmployees(employees) {
         tableRow.innerHTML = `
             <td class="emp-table-td ps-4 fw-bold text-dark">${employee.name}</td>
             <td class="emp-table-td">${employee.email}</td>
-            <td class="emp-table-td">${departmentName}</td>
-            <td class="emp-table-td">${roleName}</td>
-            <td class="emp-table-td">$${salary}</td>
+            <td class="emp-table-td">${employee.role.department.departmentName}</td>
+            <td class="emp-table-td">${employee.role.role}</td>
+            <td class="emp-table-td">$${employee.role.salary || 0}</td>
             <td class="emp-table-td emp-table-td-center">${joiningDate}</td>
             <td class="emp-table-td">
                 <span class="badge rounded-pill px-3 py-2 fw-normal text-white ${badgeClass}">${employee.status}</span>
