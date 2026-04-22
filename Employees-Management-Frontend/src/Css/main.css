@@ -93,9 +93,7 @@
     color: var(--primary-blue) !important;
 }
 
-/* 
-   EMPLOYEE TABLE
- */
+/* EMPLOYEE TABLE */
 .emp-table {
     box-shadow: var(--shadow-table);
     border-radius: 16px;
@@ -167,14 +165,12 @@
 }
 
 
-/* 
-   TOAST NOTIFICATIONS
-*/
+/* TOAST NOTIFICATIONS */
 #toastContainer {
     position: fixed;
     bottom: 16px;
     right: 16px;
-    z-index: 9999;
+    z-index: 10000;
     display: flex;
     flex-direction: column;
     gap: 12px;
@@ -235,7 +231,7 @@
 }
 
 @media (max-width: 320px) {
-        .add-employee .filter-bar .filter-bar-dropdown .dropdown-btn {
+    .add-employee .filter-bar .filter-bar-dropdown .dropdown-btn {
         width: 100% !important;
         text-align: left;
     }

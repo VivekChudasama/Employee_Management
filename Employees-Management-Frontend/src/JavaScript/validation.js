@@ -1,36 +1,36 @@
 // Validation Rules Map - returns error string if invalid, or null if valid.
 const RULES = {
-    name: function(value) {
+    name: function (value) {
         if (!value || value.trim() === '') return 'Name is required';
         if (value.trim().length < 3) return 'At least 3 characters needed';
         if (!/^[a-zA-Z\s.]+$/.test(value.trim())) return 'Letters, spaces and dots only';
         return null;
     },
-    email: function(value) {
+    email: function (value) {
         if (!value || value.trim() === '') return 'Email is required';
-        if (!/^(?!\.)(?!.*\.\.)([a-z0-9_'+\-\.]*)[a-z0-9_'+\-]@([a-zA-Z][a-zA-Z\-]*\.)+[a-z]{2,}$/i.test(value.trim())) return 'Invalid email format';
+        if (!/^(?!.*\.{2})[a-zA-Z0-9](\.?[a-zA-Z0-9_-])*@[a-zA-Z0-9-]+(\.[a-zA-Z]{2,})+$/.test(value.trim())) return 'Invalid email format';
         return null;
     },
-    role_id: function(value) {
+    role_id: function (value) {
         if (!value || value === '') return 'Required';
         return null;
     },
-    roleName: function(value) {
+    roleName: function (value) {
         if (!value || value.trim() === '') return 'Required';
         if (value.trim().length < 3) return 'At least 3 characters';
         if (value.trim().length > 30) return 'Max 30 characters';
         return null;
     },
-    salary: function(value) {
+    salary: function (value) {
         if (!value || value.trim() === '') return 'Required';
         if (isNaN(Number(value)) || Number(value) < 1) return 'Positive number only';
         return null;
     },
-    department_id: function(value) {
+    department_id: function (value) {
         if (!value || value === '') return 'Required';
         return null;
     },
-    joining_date: function(value) {
+    joining_date: function (value) {
         if (!value) return 'Required';
         if (new Date(value) <= new Date('2026-01-01')) return 'Must be after 2026-01-01';
         return null;
@@ -41,17 +41,17 @@ const RULES = {
 function showFieldError(fieldId, message) {
     const element = document.getElementById(fieldId);
     if (!element) return;
-    
+
     element.classList.add('is-invalid');
     element.classList.remove('is-valid');
-    
+
     let feedbackElement = element.nextElementSibling;
     if (!feedbackElement || !feedbackElement.classList.contains('invalid-feedback')) {
         feedbackElement = document.createElement('div');
         feedbackElement.className = 'invalid-feedback';
         element.insertAdjacentElement('afterend', feedbackElement);
     }
-    
+
     feedbackElement.textContent = message;
 }
 
@@ -59,7 +59,7 @@ function showFieldError(fieldId, message) {
 function clearFieldError(fieldId) {
     const element = document.getElementById(fieldId);
     if (!element) return;
-    
+
     element.classList.remove('is-invalid');
     element.classList.add('is-valid');
 }
@@ -70,9 +70,9 @@ function validateField(elementId) {
 
     const ruleName = element.name || element.id;
     const ruleFunction = RULES[ruleName];
-    
+
     let errorMessage = null;
-    
+
     if (ruleFunction) {
         errorMessage = ruleFunction(element.value);
     } else if (element.required && !element.value) {
@@ -92,15 +92,15 @@ function validateAddRole() {
     const roleNameValue = document.getElementById('newRoleName') ? document.getElementById('newRoleName').value : '';
     const roleSalaryValue = document.getElementById('newRoleSalary') ? document.getElementById('newRoleSalary').value : '';
     const departmentValue = document.getElementById('department_id') ? document.getElementById('department_id').value : '';
-    
+
     const validationErrors = {
         newRoleName: RULES.roleName(roleNameValue),
         newRoleSalary: RULES.salary(roleSalaryValue),
         department_id: RULES.department_id(departmentValue)
     };
-    
+
     let isAllValid = true;
-    
+
     for (const [fieldId, errorMessage] of Object.entries(validationErrors)) {
         if (errorMessage !== null) {
             showFieldError(fieldId, errorMessage);
@@ -109,7 +109,7 @@ function validateAddRole() {
             clearFieldError(fieldId);
         }
     }
-    
+
     return { valid: isAllValid };
 }
 
@@ -119,17 +119,17 @@ function validateForm(formId, submitBtnSelector) {
 
     const submitButton = formElement.querySelector(submitBtnSelector);
     let isFormValid = true;
-    
+
     // Find all inputs, selects, and textareas inside this form
     const formInputs = formElement.querySelectorAll('input, select, textarea');
-    
+
     // Check every required input or specific roles
     for (let i = 0; i < formInputs.length; i++) {
         const input = formInputs[i];
         if (input.required || input.name === 'role_id') {
             const ruleName = input.name || input.id;
             const ruleFunction = RULES[ruleName];
-            
+
             if (ruleFunction) {
                 // If there's an error message, form is invalid
                 if (ruleFunction(input.value) !== null) {
@@ -146,7 +146,7 @@ function validateForm(formId, submitBtnSelector) {
     if (submitButton) {
         submitButton.disabled = !isFormValid;
     }
-    
+
     return isFormValid;
 }
 

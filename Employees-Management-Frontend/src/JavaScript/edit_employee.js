@@ -79,7 +79,7 @@ async function handleEditFormSubmit(event) {
     if (isEmailDuplicateForEdit(payload.email, targetEmployeeId)) {
         showFieldError('email', 'Email address you have entered is already in use by another user.');
         validateForm('editEmployeeForm', '#submitBtn');
-        return; // Stop formal submission
+        return;
     }
 
     // Ask user to confirm

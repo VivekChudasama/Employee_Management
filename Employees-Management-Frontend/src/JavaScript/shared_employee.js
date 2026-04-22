@@ -447,7 +447,7 @@ function setupAddRole() {
             if (!isUserAgreed) return
         }
         else {
-            const isUserAgreed = await confirmUI('Add Role', 'Are you sure you want to Add this role', 'info')
+            const isUserAgreed = await confirmUI('Add Role', 'Are you sure you want to Add this role', 'primary')
             if (!isUserAgreed) return
         }
 

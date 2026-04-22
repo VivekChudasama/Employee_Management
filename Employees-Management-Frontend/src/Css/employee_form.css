@@ -78,9 +78,7 @@
     border-color: var(--secondary-white);
 }
 
-/* 
-   ANIMATED SEND BUTTON
- */
+/* ANIMATED SEND BUTTON */
 .form .form-body .submit-section .send-btn {
     font-size: 20px;
     background: var(--primary-blue);

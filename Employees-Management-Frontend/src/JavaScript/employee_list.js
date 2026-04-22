@@ -35,7 +35,7 @@ function populateStatusFilter(employeesList) {
     const statusMenu = document.getElementById('getEmpStatus');
     if (!statusMenu) return;
     
-    // Clear the menu and set a default "All Statuses" option
+    // set a default "All Statuses" option
     statusMenu.innerHTML = '<li><a class="dropdown-item active-filter" href="#" data-value="">All Statuses</a></li><li><hr class="dropdown-divider"></li>';
     
     // Add all statuses into an array

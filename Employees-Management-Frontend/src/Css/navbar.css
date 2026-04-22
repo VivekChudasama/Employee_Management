@@ -19,7 +19,7 @@
     box-sizing: border-box;
     border: 1px solid transparent;
     padding: 8px 22px;
-    font-weight: 500;
+    font-weight: var(--font-weight-normal);
     margin: 0 4px;
 }
 
