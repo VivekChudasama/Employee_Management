@@ -1,82 +1,129 @@
-const employeeId = new URLSearchParams(window.location.search).get('id');
+// Retrieve the current employee ID from the URL search params
+const employeeIdUrlParam = new URLSearchParams(window.location.search).get('id');
 
-if (!employeeId) {
+if (!employeeIdUrlParam) {
     showToast('No employee ID provided. Redirecting…', 'danger');
-    setTimeout(() => location.href = './employees_list.html', 2000);
+    setTimeout(() => {
+        location.href = './employees_list.html';
+    }, 2000);
 }
 
-const loadEmployeeData = async () => {
-    const { ok: isSuccessful, data: employee } = await apiCall(`${API.employees}/${employeeId}`);
-    if (isSuccessful) {
-        document.getElementById('employeeId').value = employee.id;
-        document.getElementById('name').value = employee.name || '';
-        document.getElementById('email').value = employee.email || '';
-        document.getElementById('status').value = employee.status || 'active';
-        document.getElementById('joining_date').value = employee.joining_date?.split('T')[0] || '';
+// check if an email already exists in our records (excluding current user)
+function isEmailDuplicateForEdit(email, targetEmployeeId) {
+    const enteredEmail = email.trim().toLowerCase();
 
-        populateDepartments(employee.role?.department?.id);
-        populateRoles(employee.role?.department?.id, employee.role?.id);
+    return allEmployees.some(employee => {
+        const isSameEmail = employee.email.toLowerCase() === enteredEmail;
+        const isDifferentUser = String(employee.id) !== String(targetEmployeeId);
+        return isSameEmail && isDifferentUser;
+    });
+}
+
+// Fetches the existing employee data and fills out the form inputs
+async function loadEmployeeData() {
+    const { ok: isSuccessful, data: employee } = await apiCall(`${API.employees}/${employeeIdUrlParam}`);
+    if (!isSuccessful) return;
+
+    // Fill in standard text inputs
+    document.getElementById('employeeId').value = employee.id;
+    document.getElementById('name').value = employee.name || '';
+    document.getElementById('email').value = employee.email || '';
+
+    const rawDate = employee.joining_date;
+    document.getElementById('joining_date').value = rawDate ? rawDate.split('T')[0] : '';
+
+    const departmentId = employee.role?.department?.id;
+    const roleId = employee.role?.id;
+    const status = employee.status;
+
+    populateDepartments(departmentId);
+    populateRoles(departmentId, roleId);
+    populateStatusDropdown(status);
+}
+
+// Validates individual inputs as the user types
+function handleEditInputEvent(event) {
+    const fieldId = event.target.id;
+    validateField(fieldId);
+    validateForm('editEmployeeForm', '#submitBtn');
+
+    //check for email uniqueness
+    if (fieldId === 'email') {
+        const emailValue = event.target.value;
+        const currentId = document.getElementById('employeeId').value || employeeIdUrlParam;
+
+        if (isEmailDuplicateForEdit(emailValue, currentId)) {
+            showFieldError('email', 'Email address you have entered is already in use by another user.');
+        }
     }
-};
+}
 
-const setupEditEmployeeForm = () => {
+// Handles the submission of the Edit Employee form
+async function handleEditFormSubmit(event) {
+    event.preventDefault();
+
+    const editEmployeeForm = event.target;
+    const formData = new FormData(editEmployeeForm);
+
+    const targetEmployeeId = formData.get('employeeId') || employeeIdUrlParam;
+
+    const payload = {
+        name: formData.get('name'),
+        email: formData.get('email').trim(),
+        role_id: Number(formData.get('role_id')),
+        joining_date: formData.get('joining_date'),
+        status: formData.get('status')
+    };
+
+    // uniqueness check before saving
+    if (isEmailDuplicateForEdit(payload.email, targetEmployeeId)) {
+        showFieldError('email', 'Email address you have entered is already in use by another user.');
+        validateForm('editEmployeeForm', '#submitBtn');
+        return; // Stop formal submission
+    }
+
+    // Ask user to confirm
+    const isUserAgreed = await confirmUI('Update Employee', 'Save changes?', 'primary');
+    if (!isUserAgreed) return;
+
+    // Send data to backend using PUT
+    const { ok: isSuccessful } = await apiCall(`${API.employees}/${targetEmployeeId}`, 'PUT', payload);
+    if (isSuccessful) {
+        showToast('Employee updated!', 'success');
+        setTimeout(() => {
+            location.href = './employees_list.html';
+        }, 1500);
+    }
+}
+
+function setupEditEmployeeForm() {
     const editEmployeeForm = document.getElementById('editEmployeeForm');
     if (!editEmployeeForm) return;
 
-    ['name', 'email', 'joining_date', 'status'].forEach(fieldId => {
-        document.getElementById(fieldId)?.addEventListener('input', () => {
-            validateField(fieldId);
-            validateForm('editEmployeeForm', '#submitBtn');
-
-            // check email is unique or not 
-            if (fieldId === 'email') {
-                const emailValue = document.getElementById('email').value.trim();
-                const targetEmployeeId = document.getElementById('employeeId').value || employeeId;
-                const isDuplicate = allEmployees.some(employee => 
-                    employee.email.toLowerCase() === emailValue.toLowerCase() && 
-                    String(employee.id) !== String(targetEmployeeId)
-                );
-                if (isDuplicate) {
-                    showFieldError('email', 'Email address you have entered is already in use by another user.');
-                }
-            }
-        });
-    });
-
-    editEmployeeForm.addEventListener('submit', async event => {
-        event.preventDefault();
-        const formData = Object.fromEntries(new FormData(editEmployeeForm));
-        const targetEmployeeId = formData.employeeId || employeeId;
-        delete formData.employeeId;
-        formData.role_id = Number(formData.role_id);
-
-        const emailValue = formData.email.trim();
-        if (allEmployees.some(employee => employee.email.toLowerCase() === emailValue.toLowerCase() && String(employee.id) !== String(targetEmployeeId))) {
-            showFieldError('email', 'Email address you have entered is already in use by another user.');
-            return validateForm('#submitBtn');
-        }
-
-        const isUserAgreed = await confirmUI('Update Employee', 'Save changes?', 'primary');
-        if (isUserAgreed) {
-            const { ok: isSuccessful } = await apiCall(`${API.employees}/${targetEmployeeId}`, 'PUT', formData);
-            if (isSuccessful) {
-                showToast('Employee updated!', 'success');
-                setTimeout(() => location.href = './employees_list.html', 1500);
-            }
+    const fieldsToValidate = ['name', 'email', 'joining_date', 'status'];
+    fieldsToValidate.forEach(fieldId => {
+        const element = document.getElementById(fieldId);
+        if (element) {
+            element.addEventListener('input', handleEditInputEvent);
         }
     });
-};
 
-const init = async () => {
-    if (!employeeId) return;
+    // Attach submit listener to the form itself
+    editEmployeeForm.addEventListener('submit', handleEditFormSubmit);
+}
+
+// Initializer function that runs when the page loads
+async function init() {
+    if (!employeeIdUrlParam) return;
+
     await Promise.all([fetchRolesData(), fetchEmployeesData()]);
     await loadEmployeeData();
     setupDepartmentFilter();
     setupRoleDropdown();
     setupAddRole();
     setupEditEmployeeForm();
-    validateForm( '#submitBtn');
-};
+    validateForm('editEmployeeForm', '#submitBtn');
+}
 
 init();
 

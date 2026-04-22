@@ -1,55 +1,86 @@
-const setupAddEmployeeForm = () => {
+//check if an email already exists in our database
+function isEmailDuplicate(email) {
+    const enteredEmail = email.trim().toLowerCase();
+    return allEmployees.some(employee => employee.email.toLowerCase() === enteredEmail);
+}
+
+// Validates individual inputs as the user types
+function handleInputEvent(event) {
+    const fieldId = event.target.id;
+    validateField(fieldId);
+    validateForm('addEmployeeForm', '#submitBtn');
+
+    //check for email uniqueness
+    if (fieldId === 'email') {
+        const emailValue = event.target.value;
+        if (isEmailDuplicate(emailValue)) {
+            showFieldError('email', 'Email address you have entered is already in use by another user.');
+        }
+    }
+}
+
+// Handles the submission of the Add Employee form
+async function handleFormSubmit(event) {
+    event.preventDefault();
+
+    const addEmployeeForm = event.target;
+    const formData = new FormData(addEmployeeForm);
+
+    const payload = {
+        name: formData.get('name'),
+        email: formData.get('email').trim(),
+        role_id: Number(formData.get('role_id')),
+        joining_date: formData.get('joining_date'),
+        status: formData.get('status')
+    };
+
+    //check uniqueness of email before saving
+    if (isEmailDuplicate(payload.email)) {
+        showFieldError('email', 'Email address you have entered is already in use by another user.');
+        validateForm('addEmployeeForm', '#submitBtn');
+        return;
+    }
+
+    // Ask user to confirm
+    const isUserAgreed = await confirmUI('Add Employee', 'Confirm new entry?', 'primary');
+    if (!isUserAgreed) return;
+
+    // Send data to backend
+    const { ok: isSuccessful } = await apiCall(`${API.employees}/add-employee`, 'POST', payload);
+    if (isSuccessful) {
+        showToast('Employee added!', 'success');
+        setTimeout(() => {
+            location.href = './employees_list.html';
+        }, 1500);
+    }
+}
+
+function setupAddEmployeeForm() {
     const addEmployeeForm = document.getElementById('addEmployeeForm');
     if (!addEmployeeForm) return;
 
-    ['name', 'email', 'joining_date', 'status'].forEach(fieldId => {
-        document.getElementById(fieldId)?.addEventListener('input', () => {
-            validateField(fieldId);
-            validateForm('addEmployeeForm', '#submitBtn');
-            
-            // check email is unique or not 
-            if (fieldId === 'email') {
-                const emailValue = document.getElementById('email').value.trim();
-                const isDuplicate = allEmployees.some(employee => employee.email.toLowerCase() === emailValue.toLowerCase());
-                if (isDuplicate) {
-                    showFieldError('email', 'Email address you have entered is already in use by another user.');
-                }
-            }
-        });
-    });
-
-    addEmployeeForm.addEventListener('submit', async event => {
-        event.preventDefault();
-        const formData = Object.fromEntries(new FormData(addEmployeeForm));
-        formData.role_id = Number(formData.role_id);
-
-        const emailValue = formData.email.trim();
-        if (allEmployees.some(employee => employee.email.toLowerCase() === emailValue.toLowerCase())) {
-            showFieldError('email', 'Email address you have entered is already in use by another user.');
-            return validateForm('addEmployeeForm', '#submitBtn');
-        }
-
-        const isUserAgreed = await confirmUI('Add Employee', 'Confirm new entry?', 'primary');
-        if (isUserAgreed) {
-            const { ok: isSuccessful } = await apiCall(`${API.employees}/add-employee`, 'POST', formData);
-            if (isSuccessful) {
-                showToast('Employee added!', 'success');
-                setTimeout(() => location.href = './employees_list.html', 1500);
-            }
+    // Add validation to specific input fields
+    const fieldsToValidate = ['name', 'email', 'joining_date', 'status'];
+    fieldsToValidate.forEach(fieldId => {
+        const element = document.getElementById(fieldId);
+        if (element) {
+            element.addEventListener('input', handleInputEvent);
         }
     });
-};
+    addEmployeeForm.addEventListener('submit', handleFormSubmit);
+}
 
-const init = async () => {
+async function init() {
     await Promise.all([fetchRolesData(), fetchEmployeesData()]);
     populateDepartments();
     populateRoles();
+    populateStatusDropdown();
     setupDepartmentFilter();
     setupRoleDropdown();
     setupAddRole();
     setupAddEmployeeForm();
     validateForm('addEmployeeForm', '#submitBtn');
-};
+}
 
 init();
 

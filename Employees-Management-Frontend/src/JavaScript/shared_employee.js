@@ -7,271 +7,468 @@ let allRoles = [];
 let allEmployees = [];
 let editRoleId = null;
 
-/**
- * Common API fetch 
- */
-const apiCall = async (url, method = 'GET', body = null) => {
+async function apiCall(url, method = 'GET', bodyContent = null) {
     try {
-        const options = {
-            method,
-            headers: { 'Content-Type': 'application/json' },
-            ...(body && { body: JSON.stringify(body) })
+        const fetchOptions = {
+            method: method,
+            headers: {
+                'Content-Type': 'application/json'
+            }
         };
-        const response = await fetch(url, options);
-        const data = await response.json();
+
+        // If we are sending data (POST/PUT), attach it as a JSON string
+        if (bodyContent !== null) {
+            fetchOptions.body = JSON.stringify(bodyContent);
+        }
+
+        const response = await fetch(url, fetchOptions);
+        const jsonResponse = await response.json();
 
         if (!response.ok) {
-            handleBackendErrors(data);
-            return { ok: false, data };
+            handleBackendErrors(jsonResponse);
+            return { ok: false, data: jsonResponse };
         }
-        return { ok: true, data: data.data };
-    } catch (error) {
-        console.error(`API Error (${url}):`, error);
+
+        return { ok: true, data: jsonResponse.data };
+
+    } catch (networkError) {
+        console.error(`API Error (${url}):`, networkError);
         showToast('Could not connect to the server.', 'danger');
-        return { ok: false, error: error };
+        return { ok: false, error: networkError };
     }
-};
+}
 
-/**
- * Data Fetching
- */
-const fetchRolesData = async () => {
-    const { ok, data } = await apiCall(API.roles);
-    if (ok) allRoles = data || [];
-};
+async function fetchRolesData() {
+    const response = await apiCall(API.roles);
+    if (response.ok) {
+        allRoles = response.data || [];
+    }
+}
 
-const fetchEmployeesData = async () => {
-    const { ok, data } = await apiCall(API.employees);
-    if (ok) allEmployees = data || [];
-};
+async function fetchEmployeesData() {
+    const response = await apiCall(API.employees);
+    if (response.ok) {
+        allEmployees = response.data || [];
+    }
+}
 
-/**
- * UI Confirmation & Toasts
- */
-const confirmUI = (title, message, type = 'warning') => {
+// Alerts & Confirms modal
+function confirmUI(title, message, visualType = 'warning') {
     return new Promise((resolve) => {
         const modalElement = document.getElementById('confirmModal');
-        if (!modalElement) return resolve(confirm(message));
+
+        if (!modalElement) {
+            const result = confirm(message);
+            resolve(result);
+            return;
+        }
 
         const modal = new bootstrap.Modal(modalElement);
+
+        // Fill HTML components with provided text
         document.getElementById('confirmTitle').textContent = title;
         document.getElementById('confirmMessage').textContent = message;
-        document.getElementById('confirmIcon').className = `bi bi-exclamation-circle text-${type}`;
 
-        const actionButton = document.getElementById('confirmActionBtn');
-        const clearAndResolve = (value) => {
-            actionButton.replaceWith(actionButton.cloneNode(true));
+        const iconElement = document.getElementById('confirmIcon');
+        iconElement.className = `bi bi-exclamation-circle text-${visualType}`;
+
+        // Get Add/Yes button
+        const oldActionButton = document.getElementById('confirmActionBtn');
+
+        const newActionButton = oldActionButton.cloneNode(true);
+        oldActionButton.replaceWith(newActionButton);
+
+        newActionButton.onclick = () => {
             modal.hide();
-            resolve(value);
+            resolve(true);
         };
 
-        document.getElementById('confirmActionBtn').onclick = () => clearAndResolve(true);
-        modalElement.addEventListener('hidden.bs.modal', () => resolve(false), { once: true });
+        modalElement.addEventListener('hidden.bs.modal', () => {
+            resolve(false);
+        });
+
         modal.show();
     });
-};
+}
 
-const showToast = (message, type = 'success') => {
-    let container = document.getElementById('toastContainer') || Object.assign(document.createElement('div'), { id: 'toastContainer' });
-    if (!container.parentElement) {
-        container.style.cssText = 'position:fixed;top:16px;right:16px;z-index:9999;display:flex;flex-direction:column;gap:12px;';
+function showToast(message, type = 'success') {
+    let container = document.getElementById('toastContainer');
+
+    if (!container) {
+        container = document.createElement('div');
+        container.id = 'toastContainer';
         document.body.appendChild(container);
     }
 
-    const iconName = type === 'success' ? 'check-circle' : type === 'danger' ? 'x-circle' : 'exclamation-circle';
-    const backgroundColor = type === 'success' ? '#198754' : type === 'danger' ? '#dc3545' : '#ffc107';
+    let iconName = 'exclamation-circle';
 
+    if (type === 'success') {
+        iconName = 'check-circle';
+    } else if (type === 'danger') {
+        iconName = 'x-circle';
+    }
+
+    // Create the toast box component
     const toastElement = document.createElement('div');
-    toastElement.className = `alert alert-${type} d-flex align-items-center shadow-lg border-0 fade show`;
-    toastElement.style.cssText = `min-width:300px; border-left: 5px solid rgba(0,0,0,0.2) !important; color:#fff; background: ${backgroundColor}`;
+    toastElement.className = `alert alert-${type} d-flex align-items-center shadow-lg fade show toast-custom`;
     toastElement.innerHTML = `
         <i class="bi bi-${iconName} fs-4 me-3"></i>
         <div class="flex-grow-1">${message}</div>
-        <button type="button" class="btn-close btn-close-white ms-2" data-bs-dismiss="alert"></button>`;
+        <button type="button" class="btn-close btn-close-white ms-2" data-bs-dismiss="alert"></button>
+    `;
 
     container.appendChild(toastElement);
+
     setTimeout(() => {
         toastElement.classList.remove('show');
-        setTimeout(() => toastElement.remove(), 500);
+        setTimeout(() => {
+            toastElement.remove();
+        }, 500);
     }, 4000);
-};
+}
 
-/*
-  Dropdown & Role Management
- */
-const populateDepartments = (selectedId = null) => {
+// Employee Form Dropdown
+function populateDepartments(selectedId = null) {
     const selectElement = document.getElementById('department_id');
     if (!selectElement) return;
 
     selectElement.innerHTML = '<option value="">Select Department</option>';
+
+    // Track unique departments using a Map
     const seenDepartments = new Map();
-    allRoles.forEach(role => role.department && !seenDepartments.has(role.department.id) && seenDepartments.set(role.department.id, role.department.departmentName));
+
+    for (let i = 0; i < allRoles.length; i++) {
+        const currentRole = allRoles[i];
+        if (currentRole.department) {
+            const deptId = currentRole.department.id;
+            const deptName = currentRole.department.departmentName;
+
+            if (!seenDepartments.has(deptId)) {
+                seenDepartments.set(deptId, deptName);
+            }
+        }
+    }
 
     seenDepartments.forEach((name, id) => {
-        selectElement.appendChild(Object.assign(document.createElement('option'), {
-            value: id, textContent: name, selected: String(id) === String(selectedId)
-        }));
-    });
-};
+        const option = document.createElement('option');
+        option.value = id;
+        option.textContent = name;
 
-const populateRoles = (departmentId = null, selectedRoleId = null) => {
+        // Select it if it matches the editing employee
+        if (String(id) === String(selectedId)) {
+            option.selected = true;
+        }
+        selectElement.appendChild(option);
+    });
+}
+
+function populateStatusDropdown(selectedStatus = null) {
+    const statusSelect = document.getElementById('status');
+    if (!statusSelect) return;
+
+    statusSelect.innerHTML = '<option  value="">Select Status</option>';
+
+    const statuses = allEmployees.map(emp => emp.status);
+    const validStatuses = statuses.filter(status => status !== null && status !== undefined);
+
+
+    let uniqueStatuses = [...new Set([...validStatuses])];
+
+    // Add them to the Dropdown
+    uniqueStatuses.forEach(status => {
+        const option = document.createElement('option');
+        option.innerHTML = status;
+        if (status === selectedStatus) {
+            option.selected = true;
+        }
+        statusSelect.appendChild(option);
+    });
+}
+
+function populateRoles(departmentId = null, selectedRoleId = null) {
     const dropdownMenu = document.getElementById('roleDropdownMenu');
     const dropdownButton = document.getElementById('roleDropdownBtn');
+
     if (!dropdownMenu || !dropdownButton) return;
 
     dropdownMenu.innerHTML = '';
+
+    // Cannot select a role without picking a department first
     if (!departmentId) {
-        dropdownMenu.innerHTML = '<li><span class="dropdown-item text-muted text-center py-3">Select a department first</span></li>';
+        const emptyMessage = '<li><span class="dropdown-item text-muted text-center py-3">Select a department first</span></li>';
+        dropdownMenu.innerHTML = emptyMessage;
         dropdownButton.disabled = true;
         return;
     }
 
     dropdownButton.disabled = false;
-    const rolesInDepartment = allRoles.filter(role => String(role.department?.id) === String(departmentId));
 
-    if (!rolesInDepartment.length) {
+    // Find all roles belonging to chosen department
+    const rolesInDepartment = allRoles.filter((role) => {
+        return String(role.department?.id) === String(departmentId);
+    });
+
+    if (rolesInDepartment.length === 0) {
         dropdownMenu.innerHTML = '<li><span class="dropdown-item text-muted text-center py-3">No roles in this department</span></li>';
     } else {
-        rolesInDepartment.forEach(role => {
+        rolesInDepartment.forEach((role) => {
             const listItem = document.createElement('li');
             listItem.innerHTML = `
                 <a class="dropdown-item d-flex justify-content-between align-items-center role-option py-2 px-3"
                    href="#" data-id="${role.id}" data-salary="${role.salary}" data-name="${role.role}">
-                    <div class="d-flex flex-column"><span class="fw-bold">${role.role}</span><small class="text-muted">$${role.salary}</small></div>
-                    <div class="d-flex gap-2 ms-2 action-btns">
-                        <button class="btn btn-sm btn-outline-warning role-edit-btn border-0 shadow-sm" data-id="${role.id}" data-name="${role.role}" data-salary="${role.salary}"><i class="bi bi-pencil-fill"></i></button>
-                        <button class="btn btn-sm btn-outline-danger role-delete-btn border-0 shadow-sm" data-id="${role.id}"><i class="bi bi-trash-fill"></i></button>
+                    <div class="d-flex flex-column">
+                        <span class="fw-bold">${role.role}</span>
+                        <small class="text-muted">$${role.salary}</small>
                     </div>
-                </a>`;
+                    <div class="d-flex gap-2 ms-2 action-btns">
+                        <button type="button" class="btn btn-sm btn-outline-warning role-edit-btn border-0 shadow-sm" data-id="${role.id}" data-name="${role.role}" data-salary="${role.salary}"><i class="bi bi-pencil-fill"></i></button>
+                        <button type="button" class="btn btn-sm btn-outline-danger role-delete-btn border-0 shadow-sm" data-id="${role.id}"><i class="bi bi-trash-fill"></i></button>
+                    </div>
+                </a>
+            `;
             dropdownMenu.appendChild(listItem);
+
+            // If editing an existing user, highlight their existing role 
             if (selectedRoleId && String(role.id) === String(selectedRoleId)) {
                 updateRolePickerSelection(role.role, role.id, role.salary);
             }
         });
     }
 
+    // Always append the "Add New Role" button at the bottom of the dropdown
     const footerDivider = document.createElement('li');
-    footerDivider.innerHTML = '<hr class="dropdown-divider"><button class="dropdown-item text-primary text-center py-2" id="addRoleInDropdownBtn"><i class="bi bi-plus-circle-fill me-1"></i> Add New Role</button>';
+    footerDivider.innerHTML = `
+        <hr class="dropdown-divider">
+        <button type="button" class="dropdown-item text-custom-primary text-center py-2" id="addRoleInDropdownBtn">
+            <i class="bi bi-plus-circle-fill me-1"></i> Add New Role
+        </button>
+    `;
     dropdownMenu.appendChild(footerDivider);
-    document.getElementById('addRoleInDropdownBtn').onclick = () => openRoleModal();
-};
 
-const updateRolePickerSelection = (name, id, salary) => {
+    // Attach listener for opening the popup Modal
+    document.getElementById('addRoleInDropdownBtn').onclick = () => {
+        openRoleModal();
+    };
+}
+
+// Event Listeners & DOM Adjustment
+function updateRolePickerSelection(name, id, salary) {
     const button = document.getElementById('roleDropdownBtn');
     const hiddenInput = document.getElementById('role_id');
     const salaryDisplay = document.getElementById('salary_display');
+
     if (button) button.textContent = name || 'Select a role';
     if (hiddenInput) hiddenInput.value = id || '';
-    if (salaryDisplay) salaryDisplay.value = salary ? `$${salary}` : '';
-};
 
-const setupRoleDropdown = () => {
-    document.getElementById('roleDropdownMenu')?.addEventListener('click', async (event) => {
-        const optionItem = event.target.closest('.role-option');
-        const editButton = event.target.closest('.role-edit-btn');
-        const deleteButton = event.target.closest('.role-delete-btn');
+    if (salaryDisplay) {
+        if (salary) {
+            salaryDisplay.value = `$${salary}`;
+        } else {
+            salaryDisplay.value = '';
+        }
+    }
+}
 
-        if (editButton) return openRoleModal(editButton.dataset);
-        if (deleteButton) return deleteRole(deleteButton.dataset.id);
-        if (optionItem && !event.target.closest('.action-btns')) {
-            updateRolePickerSelection(optionItem.dataset.name, optionItem.dataset.id, optionItem.dataset.salary);
-            const formElement = optionItem.closest('form');
-            if (formElement) validateForm(formElement.id, '#submitBtn');
+function setupRoleDropdown() {
+    const dropdownMenu = document.getElementById('roleDropdownMenu');
+    if (!dropdownMenu) return;
+
+    // Use event delegation to handle clicks inside the Dropdown
+    dropdownMenu.addEventListener('click', async (event) => {
+        const clickedOptionItem = event.target.closest('.role-option');
+        const clickedEditButton = event.target.closest('.role-edit-btn');
+        const clickedDeleteButton = event.target.closest('.role-delete-btn');
+
+        // Did they click Edit Role?
+        if (clickedEditButton) {
+            openRoleModal(clickedEditButton.dataset);
+            return;
+        }
+
+        // Did they click Delete Role?
+        if (clickedDeleteButton) {
+            deleteRole(clickedDeleteButton.dataset.id);
+            return;
+        }
+
+        // Did they click to Select a role? (But not near action buttons)
+        const clickedActionArea = event.target.closest('.action-btns');
+        if (clickedOptionItem && !clickedActionArea) {
+
+            const name = clickedOptionItem.dataset.name;
+            const id = clickedOptionItem.dataset.id;
+            const salary = clickedOptionItem.dataset.salary;
+
+            updateRolePickerSelection(name, id, salary);
+
+            // Re-validate parent form to unlock Submit Button
+            const parentFormElement = clickedOptionItem.closest('form');
+            if (parentFormElement) {
+                validateForm(parentFormElement.id, '#submitBtn');
+            }
         }
     });
-};
+}
 
-const openRoleModal = (roleData = null) => {
-    const departmentId = document.getElementById('department_id')?.value;
-    if (!departmentId) return showToast('Select a department first!', 'warning');
+function openRoleModal(roleData = null) {
+    const departmentDropdown = document.getElementById('department_id');
+    const departmentId = departmentDropdown ? departmentDropdown.value : null;
 
-    const modal = new bootstrap.Modal(document.getElementById('roleModal'));
+    if (!departmentId) {
+        showToast('Select a department first!', 'warning');
+        return;
+    }
+
+    const modalDOM = document.getElementById('roleModal');
+    const modal = new bootstrap.Modal(modalDOM);
+
+    // Access all Role Form fields
     const modalTitle = document.getElementById('roleModalLabel');
     const nameInput = document.getElementById('newRoleName');
     const salaryInput = document.getElementById('newRoleSalary');
     const saveButton = document.getElementById('saveRoleBtn');
 
-    if (roleData) {
+    if (roleData !== null) {
+        // Populating for UPDATE
         editRoleId = roleData.id;
         modalTitle.textContent = 'Edit Role';
         nameInput.value = roleData.name;
         salaryInput.value = roleData.salary;
         saveButton.textContent = 'Update Role';
     } else {
+        // Clearing for ADD
         editRoleId = null;
         modalTitle.textContent = 'Add New Role';
         nameInput.value = '';
         salaryInput.value = '';
         saveButton.textContent = 'Add Role';
     }
-    [nameInput, salaryInput].forEach(inputElement => inputElement.classList.remove('is-invalid'));
+
+    // Clear any previous red error outlines
+    nameInput.classList.remove('is-invalid');
+    salaryInput.classList.remove('is-invalid');
+
     modal.show();
-};
+}
 
-const deleteRole = async (id) => {
-    const employeesWithRole = allEmployees.filter(employee => String(employee.role_id) === String(id));
-
-    if(employeesWithRole.length) {
-        const employeeNames = employeesWithRole.map(emp => emp.name).join(', ');
-        const message = `The following employees are assigned to this role: ${employeeNames}. Are you sure you want to delete it?`;
-        if (!(await confirmUI('Delete Role', message, 'danger'))) return;
-    } else {
-        const confirmed = await confirmUI('Delete Role', 'Are you sure you want to delete this role?', 'danger');
-        if (!confirmed) return;
-    }
-    
-    const { ok } = await apiCall(`${API.roles}/${id}`, 'DELETE');
-    if (ok) {
-        showToast('Role deleted!', 'success');
-        const deptId = document.getElementById('department_id')?.value;
-        await fetchRolesData();
-        populateDepartments(deptId);
-        populateRoles(deptId);
-    }
-};
-
-const setupDepartmentFilter = () => {
-    document.getElementById('department_id')?.addEventListener('change', (event) => {
-        updateRolePickerSelection();
-        populateRoles(event.target.value);
-        const formElement = event.target.closest('form');
-        if (formElement) validateForm(formElement.id, '#submitBtn');
+async function deleteRole(roleIdToDelete) {
+    // 1. Safety check: Block if any employees securely rely on this Role
+    const safelyAssignedEmployees = allEmployees.filter((employee) => {
+        return String(employee.role_id) === String(roleIdToDelete);
     });
-};
 
-const setupAddRole = () => {
-    const saveButton = document.getElementById('saveRoleBtn');
-    const openButton = document.getElementById('openRoleModalBtn');
-    if (openButton) openButton.onclick = openRoleModal;
-    if (!saveButton) return;
+    if (safelyAssignedEmployees.length > 0) {
+        showToast('This role cannot be deleted because it is currently assigned to one or more employees.', 'danger');
+        return;
+    } else {
+        const isUserAgreed = await confirmUI('Delete Role', 'Are you sure you want to delete this role?', 'danger');
+        if (!isUserAgreed) return;
+    }
 
-    saveButton.onclick = async () => {
-        const { valid } = validateAddRole();
-        if (!valid) return;
+    // 2. Perform background delete query
+    const apiResponse = await apiCall(`${API.roles}/${roleIdToDelete}`, 'DELETE');
+    if (apiResponse.ok) {
+        showToast('Role deleted!', 'success');
 
-        const roleName = document.getElementById('newRoleName').value.trim();
-        const roleSalary = Number(document.getElementById('newRoleSalary').value.trim());
+        // Refresh local cache and UI
+        const departmentDropdown = document.getElementById('department_id');
+        const currentDeptId = departmentDropdown ? departmentDropdown.value : null;
+
+        await fetchRolesData();
+        populateDepartments(currentDeptId);
+        populateRoles(currentDeptId);
+    }
+}
+
+function setupDepartmentFilter() {
+    const departmentDropdown = document.getElementById('department_id');
+    if (!departmentDropdown) return;
+
+    departmentDropdown.addEventListener('change', (event) => {
+        const newlySelectedDeptId = event.target.value;
+
+        // Reset old role picker texts since they changed departments
+        updateRolePickerSelection(null, null, null);
+
+        // Re-construct the Role Dropdown Options
+        populateRoles(newlySelectedDeptId);
+
+        // Re-validate the overall Form
+        const parentFormElement = event.target.closest('form');
+        if (parentFormElement) {
+            validateForm(parentFormElement.id, '#submitBtn');
+        }
+    });
+}
+
+function setupAddRole() {
+    const saveRoleButton = document.getElementById('saveRoleBtn');
+    const openRoleButton = document.getElementById('openRoleModalBtn');
+
+    if (openRoleButton) {
+        openRoleButton.onclick = () => openRoleModal();
+    }
+
+    if (!saveRoleButton) return;
+
+    // Attach logic to submit the Mini Form inside the Role Modal
+    saveRoleButton.onclick = async () => {
+        // Step 1: Frontend rules validation
+        const validationResult = validateAddRole();
+        if (!validationResult.valid) {
+            return; // Stops here if invalid
+        }
+
+        const newRoleName = document.getElementById('newRoleName').value.trim();
+        const newRoleSalary = Number(document.getElementById('newRoleSalary').value.trim());
         const departmentId = Number(document.getElementById('department_id').value);
 
-        const isDuplicate = allRoles.some(role => role.role.toLowerCase() === roleName.toLowerCase() && String(role.id) !== String(editRoleId) && String(role.department_id) === String(departmentId));
-        if (isDuplicate) {
-            showToast(`The role name you have entered already exists.` , 'warning')
-        } 
+        // Step 2: Prevent duplicating role names manually
+        const isDuplicateRoleName = allRoles.some((role) => {
+            const hasSameName = role.role.toLowerCase() === newRoleName.toLowerCase();
+            const isInSameDept = String(role.department_id) === String(departmentId);
+            const isNotItself = String(role.id) !== String(editRoleId);
 
-        const actionName = editRoleId ? 'Update' : 'Add';
-        if (!(await confirmUI(`${actionName} Role`, `Confirm ${actionName.toLowerCase()}?`))) return;
+            return hasSameName && isInSameDept && isNotItself;
+        });
 
-        const targetUrl = editRoleId ? `${API.roles}/${editRoleId}` : `${API.roles}/add-role`;
-        const { ok } = await apiCall(targetUrl, editRoleId ? 'PUT' : 'POST', { role: roleName, salary: roleSalary, department_id: departmentId });
+        if (isDuplicateRoleName) {
+            showToast('The role name you have entered already exists.', 'warning');
+            // Allow it to proceed in case they just ignored warning, Backend will formally catch.
+        }
 
-        if (ok) {
-            showToast(`Role ${actionName.toLowerCase()}ed!`, 'success');
-            bootstrap.Modal.getInstance(document.getElementById('roleModal')).hide();
+        // Step 3: Determine Path & Payload
+        const willUpdateExistingRole = !!editRoleId;
+        const actionLabel = willUpdateExistingRole ? 'Update' : 'Add';
+        const targetApiEndpoint = willUpdateExistingRole ? `${API.roles}/${editRoleId}` : `${API.roles}/add-role`;
+        const methodType = willUpdateExistingRole ? 'PUT' : 'POST';
+
+        const rolePayload = {
+            role: newRoleName,
+            salary: newRoleSalary,
+            department_id: departmentId
+        };
+
+        // Step 4: Perform Backend Request
+        const apiResponse = await apiCall(targetApiEndpoint, methodType, rolePayload);
+
+        // Step 5: On Success, cleanup and refresh views
+        if (apiResponse.ok) {
+            showToast(`Role ${actionLabel.toLowerCase()}ed!`, 'success');
+
+            // Close the visual popup
+            const modalDOM = document.getElementById('roleModal');
+            const boostrapModalInstance = bootstrap.Modal.getInstance(modalDOM);
+            if (boostrapModalInstance) {
+                boostrapModalInstance.hide();
+            }
+
+            // Refresh lists from the server
             await fetchRolesData();
             populateDepartments(departmentId);
             populateRoles(departmentId);
         }
     };
-};
+}
 
 

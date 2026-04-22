@@ -16,54 +16,17 @@
     border-radius: 2px;
 }
 
-/* 
-   BACK BUTTON
- */
-.form .back-btn {
-    background: var(--primary-white);
-    width: 192px;
-    height: 56px;
-    border-radius: 16px;
-    font-size: 20px;
+.form .back-btn{
+    border: 1px solid var(--primary-blue);
+}
+.form .back-btn:hover {
+    color: black;
+    border: 1px solid var(--primary-blue);
+    background-color: var(--primary-blue);
+    text-decoration: none;
 }
 
-.form .back-btn .back-icon-box {
-    background: var(--primary-blue);
-    height: 48px;
-    width: 48px;
-    border-radius: 12px;
-    transition: width 0.5s;
-    z-index: 1;
-}
-
-.form .back-btn:hover .back-icon-box {
-    width: 184px;
-}
-
-.form .back-btn .back-label {
-    z-index: 2;
-    margin-left: 8px;
-}
-
-.form .back-btn .back-label:hover {
-    display: none;
-}
-
-.form .form-body {
-    background: var(--primary-white);
-    border-radius: 20px;
-    padding: 40px;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
-    border: 1px solid rgba(0, 0, 0, 0.03);
-    margin-bottom: 32px;
-    transition: transform 0.3s ease;
-}
-
-.form .form-body:hover {
-    transform: translateY(-2px);
-}
-
-/* --- Labels --- */
+/*  Labels  */
 .form .form-body .employee-form .form-label {
     font-weight: var(--font-weight-bold);
     color: var(--secondary-dark-gray);
@@ -72,7 +35,7 @@
     letter-spacing: 0px;
 }
 
-/* --- Inputs, selects, outline button --- */
+/*  Inputs, selects, outline button  */
 .form .form-body .employee-form .form-control,
 .form .form-body .employee-form .form-select,
 .form .form-body .employee-form .outline-input-btn {
@@ -164,23 +127,16 @@
     }
 }
 
+@media (max-width: 600px) {
+    .form .form-title{
+        display: flex !important;
+        justify-content: center  !important;
+        width: 100% !important;
+    }
+}
+
 @media (max-width: 320px) {
     .form .form-body {
         padding: 16px;
-    }
-
-    .form .back-btn {
-        width: 160px;
-        height: 48px;
-        font-size: 16px;
-    }
-
-    .form .back-btn .back-icon-box {
-        width: 40px;
-        height: 40px;
-    }
-
-    .form .back-btn:hover .back-icon-box {
-        width: 152px;
     }
 }

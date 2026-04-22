@@ -56,22 +56,17 @@
         </nav>
     </header>
 
-    <div class="container form mt-4">
-        <h1 class="mb-4 form-title text-center position-relative mt-3">Edit Employee Details</h1>
+    <div class="container form mt-4 ">
+        <div class="d-flex flex-wrap justify-content-between">
+            <a href="../Html/employees_list.html" class="mt-3 mb-4">
+                <button class="btn back-btn"><i class="bi bi-arrow-left me-2"></i>Back</button>
+            </a>
 
-        <a href="../Html/employees_list.html">
-            <button class="back-btn border-0 mb-4 mt-3 position-relative" type="button">
-                <div class="back-icon-box position-absolute top-0 start-0 d-flex
-                    align-items-center justify-content-center m-1">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" height="25" width="25">
-                        <path d="M224 480h640a32 32 0 1 1 0 64H224a32 32 0 0 1 0-64z" fill="#000" />
-                        <path d="m237.248 512 265.408 265.344a32 32 0 0 1-45.312 45.312l-288-288a32
-                            32 0 0 1 0-45.312l288-288a32 32 0 1 1 45.312 45.312L237.248 512z" fill="#000" />
-                    </svg>
-                </div>
-                <span class="back-label">Back</span>
-            </button>
-        </a>
+            <h1 class="mb-4 form-title position-relative mt-3">Edit Employee Details
+            </h1>
+            <p ></p>
+        </div>
+
 
         <div class="form-body">
             <form class="employee-form needs-validation" id="editEmployeeForm" novalidate>
@@ -131,17 +126,15 @@
                     </div>
                     <div class="mb-3 col-12 col-md-6">
                         <label for="status" class="form-label">Status</label>
-                        <select name="status" id="status" class="form-select" required>
-                            <option value="active">Active</option>
-                            <option value="inactive">Inactive</option>
-                        </select>
+                        <select name="status" id="status" class="form-select" required></select>
                         <div class="invalid-feedback">Select Employee Status</div>
                     </div>
                 </div>
 
                 <!-- Submit -->
                 <div class="submit-section d-flex justify-content-center mt-3 mb-3">
-                    <button class="send-btn overflow-hidden d-flex align-items-center border-0" type="submit" disabled id="submitBtn">
+                    <button class="send-btn overflow-hidden d-flex align-items-center border-0" type="submit" disabled
+                        id="submitBtn">
                         <div class="svg-wrapper-1 text-white">
                             <div class="send-btn-wrapper">
                                 <svg class="send-btn-icon d-block" xmlns="http://www.w3.org/2000/svg"
@@ -167,12 +160,14 @@
             <div class="modal-content border-0 shadow">
                 <div class="modal-header bg-dark text-white border-0">
                     <h5 class="modal-title" id="roleModalLabel">Manage Role</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
                 </div>
                 <div class="modal-body p-4">
                     <div class="mb-3">
                         <label for="newRoleName" class="form-label">Role Name</label>
-                        <input type="text" id="newRoleName" class="form-control" placeholder="Enter role name" minlength="3" maxlength="30">
+                        <input type="text" id="newRoleName" class="form-control" placeholder="Enter role name"
+                            minlength="3" maxlength="30">
                         <div class="invalid-feedback"></div>
                     </div>
                     <div class="mb-3">
@@ -182,8 +177,10 @@
                     </div>
                 </div>
                 <div class="modal-footer border-0">
-                    <button type="button" class="btn btn-secondary px-4 rounded-pill" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-primary px-4 rounded-pill" id="saveRoleBtn">Save Role</button>
+                    <button type="button" class="btn btn-secondary px-4 rounded-pill"
+                        data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-custom-primary px-4 rounded-pill" id="saveRoleBtn">Save
+                        Role</button>
                 </div>
             </div>
         </div>
