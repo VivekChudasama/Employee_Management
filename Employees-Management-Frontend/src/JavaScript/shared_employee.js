@@ -132,7 +132,7 @@ function populateDepartments(selectedId = null) {
     const selectElement = document.getElementById('department_id');
     if (!selectElement) return;
 
-    selectElement.innerHTML = '<option value="">Select Department</option>';
+    selectElement.innerHTML = '<option class="dropdown-item" value="">Select Department</option>';
 
     // Track unique departments using a Map
     const seenDepartments = new Map();
@@ -352,7 +352,7 @@ function openRoleModal(roleData = null) {
 }
 
 async function deleteRole(roleIdToDelete) {
-    // 1. Safety check: Block if any employees securely rely on this Role
+    // Block if any employees has this Role
     const safelyAssignedEmployees = allEmployees.filter((employee) => {
         return String(employee.role_id) === String(roleIdToDelete);
     });
@@ -365,12 +365,10 @@ async function deleteRole(roleIdToDelete) {
         if (!isUserAgreed) return;
     }
 
-    // 2. Perform background delete query
     const apiResponse = await apiCall(`${API.roles}/${roleIdToDelete}`, 'DELETE');
     if (apiResponse.ok) {
         showToast('Role deleted!', 'success');
 
-        // Refresh local cache and UI
         const departmentDropdown = document.getElementById('department_id');
         const currentDeptId = departmentDropdown ? departmentDropdown.value : null;
 
@@ -387,13 +385,10 @@ function setupDepartmentFilter() {
     departmentDropdown.addEventListener('change', (event) => {
         const newlySelectedDeptId = event.target.value;
 
-        // Reset old role picker texts since they changed departments
         updateRolePickerSelection(null, null, null);
 
-        // Re-construct the Role Dropdown Options
         populateRoles(newlySelectedDeptId);
 
-        // Re-validate the overall Form
         const parentFormElement = event.target.closest('form');
         if (parentFormElement) {
             validateForm(parentFormElement.id, '#submitBtn');
@@ -413,17 +408,17 @@ function setupAddRole() {
 
     // Attach logic to submit the Mini Form inside the Role Modal
     saveRoleButton.onclick = async () => {
-        // Step 1: Frontend rules validation
+        // Frontend rules validation
         const validationResult = validateAddRole();
         if (!validationResult.valid) {
-            return; // Stops here if invalid
+            return;
         }
 
         const newRoleName = document.getElementById('newRoleName').value.trim();
         const newRoleSalary = Number(document.getElementById('newRoleSalary').value.trim());
         const departmentId = Number(document.getElementById('department_id').value);
 
-        // Step 2: Prevent duplicating role names manually
+        //Prevent duplicating role names manually
         const isDuplicateRoleName = allRoles.some((role) => {
             const hasSameName = role.role.toLowerCase() === newRoleName.toLowerCase();
             const isInSameDept = String(role.department_id) === String(departmentId);
@@ -434,10 +429,8 @@ function setupAddRole() {
 
         if (isDuplicateRoleName) {
             showToast('The role name you have entered already exists.', 'warning');
-            // Allow it to proceed in case they just ignored warning, Backend will formally catch.
         }
 
-        // Step 3: Determine Path & Payload
         const willUpdateExistingRole = !!editRoleId;
         const actionLabel = willUpdateExistingRole ? 'Update' : 'Add';
         const targetApiEndpoint = willUpdateExistingRole ? `${API.roles}/${editRoleId}` : `${API.roles}/add-role`;
@@ -449,14 +442,20 @@ function setupAddRole() {
             department_id: departmentId
         };
 
-        // Step 4: Perform Backend Request
+        if (willUpdateExistingRole) {
+            const isUserAgreed = await confirmUI('Add Role', 'Are you sure you want to update this role', 'warning')
+            if (!isUserAgreed) return
+        }
+        else {
+            const isUserAgreed = await confirmUI('Add Role', 'Are you sure you want to Add this role', 'info')
+            if (!isUserAgreed) return
+        }
+
         const apiResponse = await apiCall(targetApiEndpoint, methodType, rolePayload);
 
-        // Step 5: On Success, cleanup and refresh views
         if (apiResponse.ok) {
             showToast(`Role ${actionLabel.toLowerCase()}ed!`, 'success');
 
-            // Close the visual popup
             const modalDOM = document.getElementById('roleModal');
             const boostrapModalInstance = bootstrap.Modal.getInstance(modalDOM);
             if (boostrapModalInstance) {

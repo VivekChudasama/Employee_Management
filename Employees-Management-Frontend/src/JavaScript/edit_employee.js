@@ -112,7 +112,6 @@ function setupEditEmployeeForm() {
     editEmployeeForm.addEventListener('submit', handleEditFormSubmit);
 }
 
-// Initializer function that runs when the page loads
 async function init() {
     if (!employeeIdUrlParam) return;
 

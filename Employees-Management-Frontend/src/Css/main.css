@@ -219,18 +219,24 @@
         margin: 0 !important;
     }
 
-    .add-employee .filter-bar .filter-bar-dropdown .dropdown-btn {
+    .add-employee .filter-bar .filter-bar-dropdown {
         margin: 0 !important;
-        width: 100% !important;
+        width: calc(100% - 53%) !important;
     }
 
     .add-employee .filter-bar .filter-bar-dropdown .dropdown-btn {
-        width: 100%;
+        width: 104% !important;
         text-align: left;
     }
 
-
     .add-employee .filter-bar .filter-bar-range .range-input {
         width: 100%;
+    }
+}
+
+@media (max-width: 320px) {
+        .add-employee .filter-bar .filter-bar-dropdown .dropdown-btn {
+        width: 100% !important;
+        text-align: left;
     }
 }

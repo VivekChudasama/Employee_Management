@@ -65,8 +65,7 @@
 
 .form .form-body .employee-form .form-control:focus,
 .form .form-body .employee-form .form-select:focus,
-.form .form-body .employee-form .outline-input-btn:focus,
-.form .form-body .employee-form .outline-input-btn {
+.form .form-body .employee-form .outline-input-btn:focus {
     border-color: var(--primary-blue);
     box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.08);
     outline: none;

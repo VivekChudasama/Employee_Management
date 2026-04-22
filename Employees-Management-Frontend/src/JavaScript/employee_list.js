@@ -114,7 +114,6 @@ function renderEmployees(employees) {
         const tableRow = document.createElement('tr');
         tableRow.className = 'emp-table-row';
         tableRow.innerHTML = `
-            <td class="emp-table-td">${employee.id}</td>
             <td class="emp-table-td ps-4 fw-bold text-dark">${employee.name}</td>
             <td class="emp-table-td">${employee.email}</td>
             <td class="emp-table-td">${departmentName}</td>
