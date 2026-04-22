@@ -224,7 +224,7 @@ function sortTable(columnIndex) {
     const newDirection = (currentDirection === 'asc') ? 'desc' : 'asc';
     sortState[columnIndex] = newDirection;
 
-    const iconMapping = { 5: 'sortIcon', 6: 'sortDateIcon' };
+    const iconMapping = { 4: 'sortIcon', 5: 'sortDateIcon' };
     for (const [col, elementId] of Object.entries(iconMapping)) {
         const container = document.getElementById(elementId);
         if (container) {
