@@ -35,6 +35,7 @@
     border: none;
 }
 
+/*media quearys for responsiveness */
 @media (max-width: 991px) {
     .nav-bar .nav-bar-content .navbar-toggler {
         transform: scale(0.95);

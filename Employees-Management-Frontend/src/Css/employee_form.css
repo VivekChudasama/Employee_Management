@@ -1,3 +1,4 @@
+/* form title */
 .form .form-title {
     color: var(--secondary-dark-gray);
     font-weight: var(--font-weight-bold);
@@ -16,6 +17,7 @@
     border-radius: 2px;
 }
 
+/* form back button */
 .form .back-btn {
     border: 1px solid var(--primary-blue);
 }
@@ -27,6 +29,7 @@
     text-decoration: none;
 }
 
+/* form body*/
 .form .form-body {
     background: var(--primary-white);
     border-radius: 20px;
@@ -84,7 +87,7 @@
     border-color: var(--secondary-white);
 }
 
-/* ANIMATED SEND BUTTON */
+/* Submit button */
 .form .form-body .submit-section .send-btn {
     font-size: 20px;
     background: var(--primary-blue);
@@ -145,6 +148,7 @@
     }
 }
 
+/* media quearys for responsiveness */
 @media (max-width: 600px) {
     .form .form-title {
         display: flex !important;

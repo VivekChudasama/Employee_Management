@@ -14,12 +14,12 @@ function buildEmployeesApiUrl() {
     if (filters.status !== '') queryParams.set('status', filters.status);
     if (filters.department !== '') queryParams.set('department_id', filters.department);
     if (filters.minSalary !== '') queryParams.set('min_salary', filters.minSalary);
-    if (filters.maxSalary !== '') queryParams.set('maxSalary', filters.maxSalary);
+    if (filters.maxSalary !== '') queryParams.set('max_salary', filters.maxSalary);
 
     return `${API.employees}?${queryParams.toString()}`;
 }
 
-// Fetches the employees list from the backend and then rendering
+// Fetch the employees list from the backend and then rendering
 async function fetchEmployeesForList() {
     const url = buildEmployeesApiUrl();
     const { ok, data } = await apiCall(url);
@@ -36,7 +36,7 @@ function populateStatusFilter(employeesList) {
     if (!statusMenu) return;
 
     // set a default "All Statuses" option
-    statusMenu.innerHTML = '<li><a class="dropdown-item dropdown-element active-filter" href="#" data-value="">All Statuses</a></li><li><hr class="dropdown-divider"></li>';
+    statusMenu.innerHTML = '<li><a class="dropdown-item active-filter" href="#" data-value="">All Statuses</a></li><li><hr class="dropdown-divider"></li>';
 
     // Add all statuses into an array
     const rawStatuses = employeesList.map(emp => emp.status);
@@ -46,7 +46,7 @@ function populateStatusFilter(employeesList) {
     //Create an HTML option for each status
     statuses.forEach(status => {
         const listItem = document.createElement('li');
-        listItem.innerHTML = `<a class="dropdown-item dropdown-element" href="#" data-value="${status}">${status}</a>`;
+        listItem.innerHTML = `<a class="dropdown-item" href="#" data-value="${status}">${status}</a>`;
         statusMenu.appendChild(listItem);
     });
 }
@@ -55,7 +55,7 @@ function populateDeptFilter(employeesList) {
     const departmentMenu = document.getElementById('getEmpDepartment');
     if (!departmentMenu) return;
 
-    departmentMenu.innerHTML = '<li><a class="dropdown-item dropdown-element active-filter" href="#" data-value="">All Departments</a></li><li><hr class="dropdown-divider"></li>';
+    departmentMenu.innerHTML = '<li><a class="dropdown-item active-filter" href="#" data-value="">All Departments</a></li><li><hr class="dropdown-divider"></li>';
 
     // Map to keep track of departments we've already seen
     const uniqueDepartments = new Map();
@@ -70,7 +70,7 @@ function populateDeptFilter(employeesList) {
     // Render the options
     uniqueDepartments.forEach((departmentName, departmentId) => {
         const listItem = document.createElement('li');
-        listItem.innerHTML = `<a class="dropdown-item dropdown-element" href="#" data-value="${departmentId}">${departmentName}</a>`;
+        listItem.innerHTML = `<a class="dropdown-item" href="#" data-value="${departmentId}">${departmentName}</a>`;
         departmentMenu.appendChild(listItem);
     });
 }
@@ -163,7 +163,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const statusMenu = document.getElementById('getEmpStatus');
     if (statusMenu) {
         statusMenu.addEventListener('click', (event) => {
-            const dropdownItem = event.target.closest('.dropdown-item dropdown-element');
+            const dropdownItem = event.target.closest('.dropdown-item');
             if (!dropdownItem) return;
 
             event.preventDefault();
@@ -180,7 +180,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const deptMenu = document.getElementById('getEmpDepartment');
     if (deptMenu) {
         deptMenu.addEventListener('click', (event) => {
-            const dropdownItem = event.target.closest('.dropdown-item dropdown-element');
+            const dropdownItem = event.target.closest('.dropdown-item');
             if (!dropdownItem) return;
 
             event.preventDefault();
@@ -246,7 +246,7 @@ function sortTable(columnIndex) {
         return isNaN(num) ? text.toLowerCase() : num;
     };
 
-    // Perform standard array sorting
+    // Perform array sorting
     tableRows.sort((rowA, rowB) => {
         const textA = rowA.cells[columnIndex].textContent.trim().replace(/[$,]/g, '');
         const textB = rowB.cells[columnIndex].textContent.trim().replace(/[$,]/g, '');

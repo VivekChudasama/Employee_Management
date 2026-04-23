@@ -1,4 +1,4 @@
-// Validates individual inputs as the user types
+// Validates individual inputs
 function handleInputEvent(event) {
     const fieldId = event.target.id;
     validateField(fieldId);
@@ -36,7 +36,7 @@ async function handleFormSubmit(event) {
     }
 
     // Ask user to confirm
-    const isUserAgreed = await confirmUI('Add Employee', 'Confirm new entry?', 'primary');
+    const isUserAgreed = await confirmUI('Add Employee', 'Confirm new entry of Employee?', 'primary');
     if (!isUserAgreed) return;
 
     // Send data to backend

@@ -37,7 +37,7 @@ const RULES = {
     }
 };
 
-// Show an error message underneath a specific input field
+// Show an error message on a specific input field
 function showFieldError(fieldId, message) {
     const element = document.getElementById(fieldId);
     if (!element) return;
@@ -142,7 +142,7 @@ function validateForm(formId, submitBtnSelector) {
     return isFormValid;
 }
 
-// Captures backend JSON errors and puts them into our UI Toasts
+// Captures backend JSON errors and puts them into UI Toasts
 function handleBackendErrors(responseData) {
     if (responseData.errors && Array.isArray(responseData.errors)) {
         responseData.errors.forEach(error => {

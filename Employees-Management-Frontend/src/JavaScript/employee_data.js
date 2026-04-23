@@ -237,7 +237,7 @@ function populateRoles(departmentId = null, selectedRoleId = null) {
             dropdownMenu.appendChild(listItem);
 
             // If editing an existing user, highlight their existing role 
-            if (selectedRoleId && String(role.id) === String(selectedRoleId)) {
+            if (selectedRoleId && role.id === selectedRoleId) {
                 updateRolePickerSelection(role.role, role.id, role.salary);
             }
         });
@@ -352,7 +352,7 @@ function openRoleModal(roleData = null) {
         saveButton.textContent = 'Add Role';
     }
 
-    // Clear any previous red error outlines
+    // Clear previous error
     nameInput.classList.remove('is-invalid');
     salaryInput.classList.remove('is-invalid');
 
@@ -360,7 +360,7 @@ function openRoleModal(roleData = null) {
 }
 
 async function deleteRole(roleIdToDelete) {
-    // Block if any employees has this Role
+    // unable to delete if any employees has this Role
     const isAssigned = allEmployees.some(employee => String(employee.role_id) === String(roleIdToDelete));
 
     if (isAssigned) {
@@ -431,8 +431,8 @@ function setupAddRole() {
         }
 
         const newRoleName = document.getElementById('newRoleName').value.trim();
-        const newRoleSalary = Number(document.getElementById('newRoleSalary').value.trim());
-        const departmentId = Number(document.getElementById('department_id').value);
+        const newRoleSalary = document.getElementById('newRoleSalary').value.trim();
+        const departmentId = document.getElementById('department_id').value;
 
         //Prevent duplicating role names manually
         const isDuplicateRoleName = allRoles.some(role =>
@@ -461,7 +461,7 @@ function setupAddRole() {
             if (!isUserAgreed) return
         }
         else {
-            const isUserAgreed = await confirmUI('Add Role', 'Are you sure you want to Add this role', 'primary')
+            const isUserAgreed = await confirmUI('Add Role', 'Are you sure you want to Add the role', 'primary')
             if (!isUserAgreed) return
         }
 
