@@ -283,7 +283,7 @@ function setupRoleDropdown() {
     const dropdownMenu = document.getElementById('roleDropdownMenu');
     if (!dropdownMenu) return;
 
-    // Use event delegation to handle clicks inside the Dropdown
+    // event to handle clicks inside the Dropdown
     dropdownMenu.addEventListener('click', async (event) => {
         const clickedOptionItem = event.target.closest('.role-option');
         const clickedEditButton = event.target.closest('.role-edit-btn');
@@ -463,7 +463,7 @@ function setupAddRole() {
             if (!isUserAgreed) return
         }
         else {
-            const isUserAgreed = await confirmUI('Add Role', 'Are you sure you want to Add this role', 'primary')
+            const isUserAgreed = await confirmUI('Add Role', 'Are you sure you want to Add the role', 'primary')
             if (!isUserAgreed) return
         }
 

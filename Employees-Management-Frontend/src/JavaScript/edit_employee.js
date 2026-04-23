@@ -97,7 +97,6 @@ function setupEditEmployeeForm() {
         }
     });
 
-    // Attach submit listener to the form itself
     editEmployeeForm.addEventListener('submit', handleEditFormSubmit);
 }
 

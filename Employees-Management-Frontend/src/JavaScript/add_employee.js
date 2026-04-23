@@ -69,7 +69,6 @@ async function init() {
     populateDepartments();
     populateRoles();
     populateStatusDropdown();
-    updateStatusSelection('active'); // Set default status to active for new employees
     setupDepartmentFilter();
     setupRoleDropdown();
     setupAddRole();

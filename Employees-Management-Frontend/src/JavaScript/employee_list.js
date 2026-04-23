@@ -19,7 +19,7 @@ function buildEmployeesApiUrl() {
     return `${API.employees}?${queryParams.toString()}`;
 }
 
-// Fetche the employees list from the backend and then rendering
+// Fetches the employees list from the backend and then rendering
 async function fetchEmployeesForList() {
     const url = buildEmployeesApiUrl();
     const { ok, data } = await apiCall(url);
@@ -57,7 +57,6 @@ function populateDeptFilter(employeesList) {
 
     departmentMenu.innerHTML = '<li><a class="dropdown-item dropdown-element active-filter" href="#" data-value="">All Departments</a></li><li><hr class="dropdown-divider"></li>';
 
-    // Map to keep track of departments we've already seen
     const uniqueDepartments = new Map();
 
     // Check each employee and their role to find departments
@@ -136,6 +135,7 @@ async function handleEmployeeDelete(employeeId) {
     const { ok } = await apiCall(`${API.employees}/${employeeId}`, 'DELETE');
     if (ok) {
         showToast('Employee deleted!', 'success');
+        // Refresh the list
         fetchEmployeesForList();
     }
 }
@@ -179,7 +179,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const deptMenu = document.getElementById('getEmpDepartment');
     if (deptMenu) {
         deptMenu.addEventListener('click', (event) => {
-            const dropdownItem = event.target.closest('.dropdown-item dropdown-element');
+            const dropdownItem = event.target.closest('.dropdown-item dropdown-element ');
             if (!dropdownItem) return;
 
             event.preventDefault();
