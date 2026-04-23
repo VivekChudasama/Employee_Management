@@ -24,7 +24,7 @@
 }
 
 .nav-bar .nav-bar-content .nav-item .nav-text:hover {
-    background-color: var(--secondary-grey);
+    background-color: var(--primary-blue);
     transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
