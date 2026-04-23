@@ -1,9 +1,3 @@
-//check if an email already exists in our database
-function isEmailDuplicate(email) {
-    const enteredEmail = email.trim().toLowerCase();
-    return allEmployees.some(employee => employee.email.toLowerCase() === enteredEmail);
-}
-
 // Validates individual inputs as the user types
 function handleInputEvent(event) {
     const fieldId = event.target.id;

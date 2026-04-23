@@ -1,4 +1,4 @@
-// Validation Rules Map - returns error string if invalid, or null if valid.
+// Validation Rules - returns error string if invalid, or null.
 const RULES = {
     name: function (value) {
         if (!value || value.trim() === '') return 'Name is required';
@@ -55,7 +55,6 @@ function showFieldError(fieldId, message) {
     feedbackElement.textContent = message;
 }
 
-// Remove the error message and display the green valid state for a field
 function clearFieldError(fieldId) {
     const element = document.getElementById(fieldId);
     if (!element) return;
@@ -71,27 +70,21 @@ function validateField(elementId) {
     const ruleName = element.name || element.id;
     const ruleFunction = RULES[ruleName];
 
-    let errorMessage = null;
-
-    if (ruleFunction) {
-        errorMessage = ruleFunction(element.value);
-    } else if (element.required && !element.value) {
-        errorMessage = 'Required';
-    }
+    let errorMessage = ruleFunction ? ruleFunction(element.value) : (element.required && !element.value ? 'Required' : null);
 
     if (errorMessage) {
         showFieldError(elementId, errorMessage);
         return false;
-    } else {
-        clearFieldError(elementId);
-        return true;
     }
+
+    clearFieldError(elementId);
+    return true;
 }
 
 function validateAddRole() {
-    const roleNameValue = document.getElementById('newRoleName') ? document.getElementById('newRoleName').value : '';
-    const roleSalaryValue = document.getElementById('newRoleSalary') ? document.getElementById('newRoleSalary').value : '';
-    const departmentValue = document.getElementById('department_id') ? document.getElementById('department_id').value : '';
+    const roleNameValue = document.getElementById('newRoleName')?.value || '';
+    const roleSalaryValue = document.getElementById('newRoleSalary')?.value || '';
+    const departmentValue = document.getElementById('department_id')?.value || '';
 
     const validationErrors = {
         newRoleName: RULES.roleName(roleNameValue),
@@ -124,8 +117,7 @@ function validateForm(formId, submitBtnSelector) {
     const formInputs = formElement.querySelectorAll('input, select, textarea');
 
     // Check every required input or specific roles
-    for (let i = 0; i < formInputs.length; i++) {
-        const input = formInputs[i];
+    for (const input of formInputs) {
         if (input.required || input.name === 'role_id') {
             const ruleName = input.name || input.id;
             const ruleFunction = RULES[ruleName];
@@ -153,7 +145,6 @@ function validateForm(formId, submitBtnSelector) {
 // Captures backend JSON errors and puts them into our UI Toasts
 function handleBackendErrors(responseData) {
     if (responseData.errors && Array.isArray(responseData.errors)) {
-        // Validation errors returned as an array mapping to specific inputs
         responseData.errors.forEach(error => {
             showFieldError(error.field, error.message);
         });

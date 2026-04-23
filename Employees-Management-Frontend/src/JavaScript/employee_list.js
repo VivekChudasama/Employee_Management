@@ -9,13 +9,13 @@ const filters = {
 // build the backend API URL with necessary query parameters
 function buildEmployeesApiUrl() {
     const queryParams = new URLSearchParams();
-    
+
     if (filters.search !== '') queryParams.set('search', filters.search);
     if (filters.status !== '') queryParams.set('status', filters.status);
     if (filters.department !== '') queryParams.set('department_id', filters.department);
     if (filters.minSalary !== '') queryParams.set('min_salary', filters.minSalary);
     if (filters.maxSalary !== '') queryParams.set('maxSalary', filters.maxSalary);
-    
+
     return `${API.employees}?${queryParams.toString()}`;
 }
 
@@ -23,7 +23,7 @@ function buildEmployeesApiUrl() {
 async function fetchEmployeesForList() {
     const url = buildEmployeesApiUrl();
     const { ok, data } = await apiCall(url);
-    
+
     if (ok) {
         renderEmployees(data);
         populateStatusFilter(data);
@@ -34,19 +34,19 @@ async function fetchEmployeesForList() {
 function populateStatusFilter(employeesList) {
     const statusMenu = document.getElementById('getEmpStatus');
     if (!statusMenu) return;
-    
+
     // set a default "All Statuses" option
-    statusMenu.innerHTML = '<li><a class="dropdown-item active-filter" href="#" data-value="">All Statuses</a></li><li><hr class="dropdown-divider"></li>';
-    
+    statusMenu.innerHTML = '<li><a class="dropdown-item dropdown-element active-filter" href="#" data-value="">All Statuses</a></li><li><hr class="dropdown-divider"></li>';
+
     // Add all statuses into an array
     const rawStatuses = employeesList.map(emp => emp.status);
-    
+
     const statuses = [...new Set(rawStatuses)];
-    
+
     //Create an HTML option for each status
     statuses.forEach(status => {
         const listItem = document.createElement('li');
-        listItem.innerHTML = `<a class="dropdown-item" href="#" data-value="${status}">${status}</a>`;
+        listItem.innerHTML = `<a class="dropdown-item dropdown-element" href="#" data-value="${status}">${status}</a>`;
         statusMenu.appendChild(listItem);
     });
 }
@@ -54,26 +54,23 @@ function populateStatusFilter(employeesList) {
 function populateDeptFilter(employeesList) {
     const departmentMenu = document.getElementById('getEmpDepartment');
     if (!departmentMenu) return;
-    
-    departmentMenu.innerHTML = '<li><a class="dropdown-item active-filter" href="#" data-value="">All Departments</a></li><li><hr class="dropdown-divider"></li>';
-    
+
+    departmentMenu.innerHTML = '<li><a class="dropdown-item dropdown-element active-filter" href="#" data-value="">All Departments</a></li><li><hr class="dropdown-divider"></li>';
+
     // Map to keep track of departments we've already seen
     const uniqueDepartments = new Map();
-    
+
     // Check each employee and their role to find departments
-    employeesList.forEach(employee => {
-        const hasDepartment = employee.role && employee.role.department;
-        if (hasDepartment) {
-            const deptId = employee.role.department.id;
-            const deptName = employee.role.department.departmentName;
-            uniqueDepartments.set(deptId, deptName);
+    employeesList.forEach(emp => {
+        if (emp.role?.department) {
+            uniqueDepartments.set(emp.role.department.id, emp.role.department.departmentName);
         }
     });
-    
+
     // Render the options
     uniqueDepartments.forEach((departmentName, departmentId) => {
         const listItem = document.createElement('li');
-        listItem.innerHTML = `<a class="dropdown-item" href="#" data-value="${departmentId}">${departmentName}</a>`;
+        listItem.innerHTML = `<a class="dropdown-item dropdown-element" href="#" data-value="${departmentId}">${departmentName}</a>`;
         departmentMenu.appendChild(listItem);
     });
 }
@@ -82,13 +79,13 @@ function renderEmployees(employees) {
     const tableBody = document.getElementById('employeeTableBody');
     const noEmployeesMessage = document.getElementById('noEmployeesMessage');
     const employeeTable = document.getElementById('sorting');
-    
+
     if (!tableBody) return;
 
-    tableBody.innerHTML = ''; 
-    
+    tableBody.innerHTML = '';
+
     const hasEmployees = employees.length > 0;
-    
+
     if (hasEmployees) {
         noEmployeesMessage?.classList.add('d-none');
         employeeTable?.classList.remove('d-none');
@@ -102,7 +99,7 @@ function renderEmployees(employees) {
         // change the date formate of sql date to yyyy-mm-dd
         const rawDate = new Date(employee.joining_date);
         const joiningDate = isNaN(rawDate) ? '—' : rawDate.toLocaleDateString('en-CA');
-        
+
         // Define badge color based on status
         const isStatusActive = employee.status === 'active';
         const badgeClass = isStatusActive ? 'bg-success' : 'bg-secondary';
@@ -125,7 +122,7 @@ function renderEmployees(employees) {
                     <button class="btn btn-outline-danger btn-sm rounded-pill delete-btn" data-id="${employee.id}"><i class="bi bi-trash"></i></button>
                 </div>
             </td>`;
-            
+
         tableBody.appendChild(tableRow);
     });
 }
@@ -134,7 +131,7 @@ function renderEmployees(employees) {
 async function handleEmployeeDelete(employeeId) {
     const isConfirmed = await confirmUI('Delete Employee', 'Are you sure? This cannot be undone.', 'danger');
     if (!isConfirmed) return;
-    
+
     // Call the delete API
     const { ok } = await apiCall(`${API.employees}/${employeeId}`, 'DELETE');
     if (ok) {
@@ -146,7 +143,7 @@ async function handleEmployeeDelete(employeeId) {
 
 // Event Listener Assignments when page is loaded
 document.addEventListener('DOMContentLoaded', () => {
-    
+
     function attachInputFilter(elementId, filterKey) {
         const element = document.getElementById(elementId);
         if (element) {
@@ -166,15 +163,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const statusMenu = document.getElementById('getEmpStatus');
     if (statusMenu) {
         statusMenu.addEventListener('click', (event) => {
-            const dropdownItem = event.target.closest('.dropdown-item');
+            const dropdownItem = event.target.closest('.dropdown-item dropdown-element');
             if (!dropdownItem) return;
-            
+
             event.preventDefault();
             filters.status = dropdownItem.dataset.value;
-            
+
             const btn = event.target.closest('.dropdown')?.querySelector('.dropdown-btn');
             if (btn) btn.textContent = filters.status ? dropdownItem.textContent : 'Status';
-            
+
             fetchEmployeesForList();
         });
     }
@@ -183,15 +180,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const deptMenu = document.getElementById('getEmpDepartment');
     if (deptMenu) {
         deptMenu.addEventListener('click', (event) => {
-            const dropdownItem = event.target.closest('.dropdown-item');
+            const dropdownItem = event.target.closest('.dropdown-item dropdown-element');
             if (!dropdownItem) return;
-            
+
             event.preventDefault();
             filters.department = dropdownItem.dataset.value;
-            
+
             const btn = event.target.closest('.dropdown')?.querySelector('.dropdown-btn');
             if (btn) btn.textContent = filters.department ? dropdownItem.textContent : 'Department';
-            
+
             fetchEmployeesForList();
         });
     }
@@ -214,7 +211,7 @@ document.addEventListener('DOMContentLoaded', () => {
 const sortState = {};
 function sortTable(columnIndex) {
     const tableElement = document.getElementById('sorting');
-    
+
     // Toggle the ascending vs descending state
     const currentDirection = sortState[columnIndex];
     const newDirection = (currentDirection === 'asc') ? 'desc' : 'asc';
@@ -242,37 +239,24 @@ function sortTable(columnIndex) {
     }
 
     const tableRows = Array.from(tableElement.rows).slice(1);
-    
+
+    const parseValue = text => {
+        if (/^\d{4}-\d{2}-\d{2}$/.test(text)) return new Date(text);
+        const num = Number(text);
+        return isNaN(num) ? text.toLowerCase() : num;
+    };
+
     // Perform standard array sorting
     tableRows.sort((rowA, rowB) => {
-        // Remove the internl text and remove $ symbols
-        let textA = rowA.cells[columnIndex].textContent.trim().replace(/[$,]/g, '');
-        let textB = rowB.cells[columnIndex].textContent.trim().replace(/[$,]/g, '');
-        
-        let valueA;
-        if (/^\d{4}-\d{2}-\d{2}$/.test(textA)) {
-            valueA = new Date(textA);
-        } else if (isNaN(Number(textA))) {
-            valueA = textA.toLowerCase();
-        } else {
-            valueA = Number(textA);
-        }
+        const textA = rowA.cells[columnIndex].textContent.trim().replace(/[$,]/g, '');
+        const textB = rowB.cells[columnIndex].textContent.trim().replace(/[$,]/g, '');
 
-        let valueB;
-        if (/^\d{4}-\d{2}-\d{2}$/.test(textB)) {
-            valueB = new Date(textB);
-        } else if (isNaN(Number(textB))) {
-            valueB = textB.toLowerCase();
-        } else {
-            valueB = Number(textB);
-        }
+        const valueA = parseValue(textA);
+        const valueB = parseValue(textB);
 
-        // Apply correct directional checking
-        if (newDirection === 'asc') {
-            return (valueA > valueB) ? 1 : -1;
-        } else {
-            return (valueA < valueB) ? 1 : -1;
-        }
+        if (valueA === valueB) return 0;
+        const diff = valueA > valueB ? 1 : -1;
+        return newDirection === 'asc' ? diff : -diff;
     });
 
     // Write the sorted rows in HTML DOM

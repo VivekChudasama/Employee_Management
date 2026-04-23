@@ -14,7 +14,7 @@
 }
 
 /* 
-   REUSABLE class
+   REUSABLE CLASS
  */
 .pill-radius {
     border-radius: 50px;
@@ -87,6 +87,12 @@
 .btn-custom-outline-primary:active {
     background-color: var(--primary-blue);
     color: var(--primary-white);
+}
+
+.dropdown-element:hover,
+.dropdown-element:focus {
+    background-color: rgba(0, 173, 181, 0.2);
+    color: var(--secondary-grey);
 }
 
 .text-custom-primary {

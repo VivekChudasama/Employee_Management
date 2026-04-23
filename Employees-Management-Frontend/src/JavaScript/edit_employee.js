@@ -8,17 +8,6 @@ if (!employeeIdUrlParam) {
     }, 2000);
 }
 
-// check if an email already exists in our records (excluding current user)
-function isEmailDuplicateForEdit(email, targetEmployeeId) {
-    const enteredEmail = email.trim().toLowerCase();
-
-    return allEmployees.some(employee => {
-        const isSameEmail = employee.email.toLowerCase() === enteredEmail;
-        const isDifferentUser = String(employee.id) !== String(targetEmployeeId);
-        return isSameEmail && isDifferentUser;
-    });
-}
-
 // Fetches the existing employee data and fills out the form inputs
 async function loadEmployeeData() {
     const { ok: isSuccessful, data: employee } = await apiCall(`${API.employees}/${employeeIdUrlParam}`);
@@ -52,7 +41,7 @@ function handleEditInputEvent(event) {
         const emailValue = event.target.value;
         const currentId = document.getElementById('employeeId').value || employeeIdUrlParam;
 
-        if (isEmailDuplicateForEdit(emailValue, currentId)) {
+        if (isEmailDuplicate(emailValue, currentId)) {
             showFieldError('email', 'Email address you have entered is already in use by another user.');
         }
     }
@@ -76,7 +65,7 @@ async function handleEditFormSubmit(event) {
     };
 
     // uniqueness check before saving
-    if (isEmailDuplicateForEdit(payload.email, targetEmployeeId)) {
+    if (isEmailDuplicate(payload.email, targetEmployeeId)) {
         showFieldError('email', 'Email address you have entered is already in use by another user.');
         validateForm('editEmployeeForm', '#submitBtn');
         return;
