@@ -40,6 +40,7 @@ async function apiCall(url, method = 'GET', bodyContent = null) {
         return { ok: true, data: jsonResponse.data };
 
     } catch (networkError) {
+        console.error(`API Error (${url}):`, networkError);
         showToast('Could not connect to the server.', 'danger');
         return { ok: false, error: networkError };
     }
@@ -181,12 +182,13 @@ function populateStatusDropdown(selectedStatus = null) {
 
     dropdownMenu.innerHTML = '<li><a class="dropdown-item dropdown-element text-muted status-option py-2 px-3" href="#" data-status="">Select Status</a></li>';
 
+    const defaultStatuses = ['active', 'inactive'];
     const validStatuses = allEmployees.map(emp => emp.status).filter(status => status !== null && status !== undefined);
-    const uniqueStatuses = [...new Set(validStatuses)];
+    const uniqueStatuses = [...new Set([...defaultStatuses, ...validStatuses])];
 
     uniqueStatuses.forEach(status => {
         const listItem = document.createElement('li');
-        listItem.innerHTML = `<a class="dropdown-item dropdown-element dropdown-element status-option py-2 px-3" href="#" data-status="${status}">${status}</a>`;
+        listItem.innerHTML = `<a class="dropdown-item dropdown-element status-option py-2 px-3" href="#" data-status="${status}">${status}</a>`;
         dropdownMenu.appendChild(listItem);
 
         if (status === selectedStatus) {
@@ -205,7 +207,7 @@ function populateRoles(departmentId = null, selectedRoleId = null) {
 
     // Cannot select a role without picking a department first
     if (!departmentId) {
-        const emptyMessage = '<li><span class="dropdown-item dropdown-element  text-muted text-center py-3">Select a department first</span></li>';
+        const emptyMessage = '<li><span class="dropdown-item dropdown-element text-muted text-center py-3">Select a department first</span></li>';
         dropdownMenu.innerHTML = emptyMessage;
         dropdownButton.disabled = true;
         return;
@@ -229,15 +231,15 @@ function populateRoles(departmentId = null, selectedRoleId = null) {
                         <small class="text-muted">$${role.salary}</small>
                     </div>
                     <div class="d-flex gap-2 ms-2 action-btns">
-                        <button type="button" class="btn btn-sm btn-outline-warning role-edit-btn border-1 shadow-sm" data-id="${role.id}" data-name="${role.role}" data-salary="${role.salary}"><i class="bi bi-pencil-fill"></i></button>
-                        <button type="button" class="btn btn-sm btn-outline-danger role-delete-btn border-1 shadow-sm" data-id="${role.id}"><i class="bi bi-trash-fill"></i></button>
+                        <button type="button" class="btn btn-sm btn-outline-warning role-edit-btn border-0 shadow-sm" data-id="${role.id}" data-name="${role.role}" data-salary="${role.salary}"><i class="bi bi-pencil-fill"></i></button>
+                        <button type="button" class="btn btn-sm btn-outline-danger role-delete-btn border-0 shadow-sm" data-id="${role.id}"><i class="bi bi-trash-fill"></i></button>
                     </div>
                 </a>
             `;
             dropdownMenu.appendChild(listItem);
 
             // If editing an existing user, highlight their existing role 
-            if (selectedRoleId && role.id === selectedRoleId) {
+            if (selectedRoleId && String(role.id) === String(selectedRoleId)) {
                 updateRolePickerSelection(role.role, role.id, role.salary);
             }
         });
@@ -287,19 +289,19 @@ function setupRoleDropdown() {
         const clickedEditButton = event.target.closest('.role-edit-btn');
         const clickedDeleteButton = event.target.closest('.role-delete-btn');
 
-        //click Edit Role?
+        // click Edit Role?
         if (clickedEditButton) {
             openRoleModal(clickedEditButton.dataset);
             return;
         }
 
-        //click Delete Role?
+        // click Delete Role?
         if (clickedDeleteButton) {
             deleteRole(clickedDeleteButton.dataset.id);
             return;
         }
 
-        //click to Select a role?
+        // click to Select a role?
         const clickedActionArea = event.target.closest('.action-btns');
         if (clickedOptionItem && !clickedActionArea) {
 
@@ -309,7 +311,7 @@ function setupRoleDropdown() {
 
             updateRolePickerSelection(name, id, salary);
 
-            // Re-validate the form to enable Submit Button
+            // Re-validate parent form to unlock Submit Button
             const parentFormElement = clickedOptionItem.closest('form');
             if (parentFormElement) {
                 validateForm(parentFormElement.id, '#submitBtn');
@@ -352,7 +354,7 @@ function openRoleModal(roleData = null) {
         saveButton.textContent = 'Add Role';
     }
 
-    // Clear previous error
+    // Clear any previous error 
     nameInput.classList.remove('is-invalid');
     salaryInput.classList.remove('is-invalid');
 
@@ -360,7 +362,7 @@ function openRoleModal(roleData = null) {
 }
 
 async function deleteRole(roleIdToDelete) {
-    // unable to delete if any employees has this Role
+    // Block if any employees has this Role
     const isAssigned = allEmployees.some(employee => String(employee.role_id) === String(roleIdToDelete));
 
     if (isAssigned) {
@@ -431,8 +433,8 @@ function setupAddRole() {
         }
 
         const newRoleName = document.getElementById('newRoleName').value.trim();
-        const newRoleSalary = document.getElementById('newRoleSalary').value.trim();
-        const departmentId = document.getElementById('department_id').value;
+        const newRoleSalary = Number(document.getElementById('newRoleSalary').value.trim());
+        const departmentId = Number(document.getElementById('department_id').value);
 
         //Prevent duplicating role names manually
         const isDuplicateRoleName = allRoles.some(role =>
@@ -461,7 +463,7 @@ function setupAddRole() {
             if (!isUserAgreed) return
         }
         else {
-            const isUserAgreed = await confirmUI('Add Role', 'Are you sure you want to Add the role', 'primary')
+            const isUserAgreed = await confirmUI('Add Role', 'Are you sure you want to Add this role', 'primary')
             if (!isUserAgreed) return
         }
 
@@ -483,5 +485,3 @@ function setupAddRole() {
         }
     };
 }
-
-

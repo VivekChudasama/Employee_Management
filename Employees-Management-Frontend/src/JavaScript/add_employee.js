@@ -36,7 +36,7 @@ async function handleFormSubmit(event) {
     }
 
     // Ask user to confirm
-    const isUserAgreed = await confirmUI('Add Employee', 'Confirm new entry of Employee?', 'primary');
+    const isUserAgreed = await confirmUI('Add Employee', 'Confirm new entry?', 'primary');
     if (!isUserAgreed) return;
 
     // Send data to backend
@@ -69,6 +69,7 @@ async function init() {
     populateDepartments();
     populateRoles();
     populateStatusDropdown();
+    updateStatusSelection('active'); // Set default status to active for new employees
     setupDepartmentFilter();
     setupRoleDropdown();
     setupAddRole();

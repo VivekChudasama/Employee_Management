@@ -88,7 +88,7 @@
 
 .dropdown-element:hover,
 .dropdown-element:focus {
-    background-color: rgba(0, 173, 181, 0.2);
+    background-color: rgba(0, 173, 181, 0.3);
     color: var(--secondary-grey);
 }
 

@@ -75,11 +75,12 @@
     background-color: var(--primary-white);
 }
 
-.dropdown-element:hover ,
-.dropdown-element:focus{
-    background-color: rgba(0, 173, 181, 0.2);
+.dropdown-element:hover,
+.dropdown-element:focus {
+    background-color: rgba(0, 173, 181, 0.3);
     color: var(--secondary-grey);
 }
+
 
 .form .form-body .employee-form .form-control:disabled {
     background-color: var(--secondary-white);
