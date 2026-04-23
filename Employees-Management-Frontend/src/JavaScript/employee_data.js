@@ -261,7 +261,6 @@ function populateRoles(departmentId = null, selectedRoleId = null) {
     };
 }
 
-// Event Listeners & DOM Adjustment
 function updateRolePickerSelection(name, id, salary) {
     const button = document.getElementById('roleDropdownBtn');
     const hiddenInput = document.getElementById('role_id');
@@ -311,7 +310,7 @@ function setupRoleDropdown() {
 
             updateRolePickerSelection(name, id, salary);
 
-            // Re-validate parent form to unlock Submit Button
+            // Re-validate form to unlock Submit Button
             const parentFormElement = clickedOptionItem.closest('form');
             if (parentFormElement) {
                 validateForm(parentFormElement.id, '#submitBtn');
@@ -339,14 +338,14 @@ function openRoleModal(roleData = null) {
     const saveButton = document.getElementById('saveRoleBtn');
 
     if (roleData !== null) {
-        // Populating for UPDATE
+        // Populating for UPDATE ROLE
         editRoleId = roleData.id;
         modalTitle.textContent = 'Edit Role';
         nameInput.value = roleData.name;
         salaryInput.value = roleData.salary;
         saveButton.textContent = 'Update Role';
     } else {
-        // Clearing for ADD
+        // Clearing for ADD ROLE
         editRoleId = null;
         modalTitle.textContent = 'Add New Role';
         nameInput.value = '';
@@ -424,7 +423,7 @@ function setupAddRole() {
 
     if (!saveRoleButton) return;
 
-    // Attach logic to submit the Mini Form inside the Role Modal
+    // logic to submit the Form inside the Role Modal
     saveRoleButton.onclick = async () => {
         // Frontend rules validation
         const validationResult = validateAddRole();
