@@ -19,7 +19,7 @@ function buildEmployeesApiUrl() {
     return `${API.employees}?${queryParams.toString()}`;
 }
 
-// Fetches the employees list from the backend and then rendering
+// Fetch the employees list from the backend and then rendering
 async function fetchEmployeesForList() {
     const url = buildEmployeesApiUrl();
     const { ok, data } = await apiCall(url);
@@ -135,7 +135,6 @@ async function handleEmployeeDelete(employeeId) {
     const { ok } = await apiCall(`${API.employees}/${employeeId}`, 'DELETE');
     if (ok) {
         showToast('Employee deleted!', 'success');
-        // Refresh the list
         fetchEmployeesForList();
     }
 }
