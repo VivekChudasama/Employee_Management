@@ -162,7 +162,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const statusMenu = document.getElementById('getEmpStatus');
     if (statusMenu) {
         statusMenu.addEventListener('click', (event) => {
-            const dropdownItem = event.target.closest('.dropdown-item dropdown-element');
+            const dropdownItem = event.target.closest('.dropdown-item');
             if (!dropdownItem) return;
 
             event.preventDefault();
@@ -179,7 +179,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const deptMenu = document.getElementById('getEmpDepartment');
     if (deptMenu) {
         deptMenu.addEventListener('click', (event) => {
-            const dropdownItem = event.target.closest('.dropdown-item dropdown-element ');
+            const dropdownItem = event.target.closest('.dropdown-item');
             if (!dropdownItem) return;
 
             event.preventDefault();
