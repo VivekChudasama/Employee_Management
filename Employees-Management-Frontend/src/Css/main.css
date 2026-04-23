@@ -206,7 +206,7 @@
     }
 }
 
-@media (max-width: 432px) {
+@media (max-width: 436px) {
     .add-employee .filter-bar .filter-bar-search {
         width: 100%;
         margin: 0 !important;
