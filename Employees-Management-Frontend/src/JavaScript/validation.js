@@ -16,13 +16,13 @@ const RULES = {
         return null;
     },
     roleName: function (value) {
-        if (!value || value.trim() === '') return 'Required';
+        if (!value || value.trim() === '') return 'RoleName is Required';
         if (value.trim().length < 3) return 'At least 3 characters';
         if (value.trim().length > 30) return 'Max 30 characters';
         return null;
     },
     salary: function (value) {
-        if (!value || value.trim() === '') return 'Required';
+        if (!value || value.trim() === '') return 'Salary is Required';
         if (isNaN(Number(value)) || Number(value) < 1) return 'Positive number only';
         return null;
     },
@@ -158,32 +158,39 @@ function fieldsValidation(formId, submitBtnSelector, excludeIdProvider = null) {
     const formElement = document.getElementById(formId);
     if (!formElement) return;
 
-    const fieldsToValidate = ['name', 'email', 'joining_date', 'status', 'salary', 'role_id'];
+    const fieldsToValidate = ['name', 'email', 'joining_date', 'status', 'salary', 'role_id', 'department_id'];
 
     fieldsToValidate.forEach(fieldId => {
         const element = document.getElementById(fieldId);
         if (element) {
-            // Validate on input event
-            element.addEventListener('input', (event) => {
-                validateField(fieldId);
-                validateForm(formId, submitBtnSelector);
+            if (element.type === 'hidden') {
+                element.addEventListener('change', () => {
+                    validateField(fieldId);
+                    validateForm(formId, submitBtnSelector);
+                });
+            } else {
+                // Validate on input event
+                element.addEventListener('input', (event) => {
+                    validateField(fieldId);
+                    validateForm(formId, submitBtnSelector);
 
-                // Specific email uniqueness check using global function
-                if (fieldId === 'email' && typeof isEmailDuplicate === 'function') {
-                    const excludeId = excludeIdProvider ? excludeIdProvider() : null;
-                    if (isEmailDuplicate(event.target.value, excludeId)) {
-                        showFieldError('email', 'Email address you have entered is already in use by another user.');
-                        const submitButton = document.querySelector(submitBtnSelector);
-                        if (submitButton) submitButton.disabled = true;
+                    // Specific email uniqueness check using global function
+                    if (fieldId === 'email' && typeof isEmailDuplicate === 'function') {
+                        const excludeId = excludeIdProvider ? excludeIdProvider() : null;
+                        if (isEmailDuplicate(event.target.value, excludeId)) {
+                            showFieldError('email', 'Email address you have entered is already in use by another user.');
+                            const submitButton = document.querySelector(submitBtnSelector);
+                            if (submitButton) submitButton.disabled = true;
+                        }
                     }
-                }
-            });
+                });
 
-            // Validate on blur event (when leaving the field)
-            element.addEventListener('blur', () => {
-                validateField(fieldId);
-                validateForm(formId, submitBtnSelector);
-            });
+                // Validate on blur event (when leaving the field)
+                element.addEventListener('blur', () => {
+                    validateField(fieldId);
+                    validateForm(formId, submitBtnSelector);
+                });
+            }
         }
     });
 }

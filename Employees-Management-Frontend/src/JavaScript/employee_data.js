@@ -140,7 +140,11 @@ function updateDropdownUI(btnId, inputId, defaultText, value, label) {
     const btn = document.getElementById(btnId);
     const hiddenInput = document.getElementById(inputId);
     if (btn) btn.textContent = label || defaultText;
-    if (hiddenInput) hiddenInput.value = value || '';
+    if (hiddenInput) {
+        hiddenInput.value = value || '';
+        // Trigger change event to notify validation listeners
+        hiddenInput.dispatchEvent(new Event('change', { bubbles: true }));
+    }
 }
 
 function revalidateParentForm(element) {
@@ -270,9 +274,6 @@ function updateRolePickerSelection(name, id) {
     const hiddenInput = document.getElementById('role_id');
 
     if (button) button.textContent = name || 'Select a role';
-    if (hiddenInput) hiddenInput.value = id || '';
-
-    // Salary is now employee-specific, not derived from role
 }
 
 function setupRoleDropdown() {
