@@ -191,9 +191,9 @@ function populateStatusDropdown(selectedStatus = null) {
 
     dropdownMenu.innerHTML = '<li><a class="dropdown-item dropdown-element text-muted status-option py-2 px-3" href="#" data-status="">Select Status</a></li>';
 
-    const defaultStatuses = ['active', 'inactive'];
     const validStatuses = allEmployees.map(emp => emp.status).filter(status => status !== null && status !== undefined);
-    const uniqueStatuses = [...new Set([...defaultStatuses, ...validStatuses])];
+    // to remove dublicate status
+    const uniqueStatuses = [...new Set([...validStatuses])];
 
     uniqueStatuses.forEach(status => {
         const listItem = document.createElement('li');

@@ -69,7 +69,7 @@ function populateDeptFilter(employeesList) {
         }
     });
 
-    // Render the options
+    // Render the department options
     uniqueDepartments.forEach((departmentName, departmentId) => {
         const listItem = document.createElement('li');
         listItem.innerHTML = `<a class="dropdown-item dropdown-element" href="#" data-value="${departmentId}">${departmentName}</a>`;
@@ -106,6 +106,7 @@ function renderEmployees(employees) {
         const isStatusActive = employee.status === 'active';
         const badgeClass = isStatusActive ? 'bg-success' : 'bg-secondary';
 
+        // disply employee data in table view
         const tableRow = document.createElement('tr');
         tableRow.className = 'emp-table-row';
         tableRow.innerHTML = `
