@@ -237,7 +237,6 @@ function populateRoles(departmentId = null, selectedRoleId = null) {
                    href="#" data-id="${role.id}" data-salary="${role.salary}" data-name="${role.role}">
                     <div class="d-flex flex-column">
                         <span class="fw-bold">${role.role}</span>
-                        <small class="text-muted">$${role.salary}</small>
                     </div>
                     <div class="d-flex gap-2 ms-2 action-btns">
                         <button type="button" class="btn btn-sm btn-outline-warning role-edit-btn border-0 shadow-sm" data-id="${role.id}" data-name="${role.role}" data-salary="${role.salary}"><i class="bi bi-pencil-fill"></i></button>

@@ -21,7 +21,7 @@ async function loadEmployeeData() {
     document.getElementById('employeeId').value = employee.id;
     document.getElementById('name').value = employee.name || '';
     document.getElementById('email').value = employee.email || '';
-    document.getElementById('salary').value = employee.salary || '';
+    document.getElementById('salary_display').value = employee.salary || '';
 
     const rawDate = employee.joining_date;
     document.getElementById('joining_date').value = rawDate ? rawDate.split('T')[0] : '';

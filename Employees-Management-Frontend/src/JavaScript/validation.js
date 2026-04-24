@@ -2,8 +2,8 @@
 const RULES = {
     name: function (value) {
         if (!value || value.trim() === '') return 'Name is required';
-        if (value.trim().length < 3) return 'At least 3 characters needed';
         if (!/^[a-zA-Z\s.]+$/.test(value.trim())) return 'Letters, spaces and dots only';
+        if (value.trim().length < 3) return 'At least 3 characters needed';
         return null;
     },
     email: function (value) {
@@ -12,7 +12,7 @@ const RULES = {
         return null;
     },
     role_id: function (value) {
-        if (!value || value === '') return 'Required';
+        if (!value || value === '') return 'Role_Id is Required';
         return null;
     },
     roleName: function (value) {
@@ -27,7 +27,7 @@ const RULES = {
         return null;
     },
     department_id: function (value) {
-        if (!value || value === '') return 'Required';
+        if (!value || value === '') return 'Department_Id Required';
         return null;
     },
     joining_date: function (value) {
