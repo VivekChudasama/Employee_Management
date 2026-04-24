@@ -25,11 +25,6 @@ export const addRoleValidation = [
         .isString().withMessage('Role must be a string')
         .isLength({ min: 3, max: 30 }).withMessage('Role name must be between 3 and 30 characters'),
 
-    body('salary').trim().notEmpty().withMessage('Salary is required')
-        .bail()
-        .isNumeric().withMessage('Salary must be a numeric value')
-        .isFloat({ min: 1 }).withMessage('Salary must be a positive value higher than zero'),
-
     body('department_id').trim().notEmpty().withMessage('Department ID is required')
         .bail()
         .isInt({ min: 1 }).withMessage('Department ID must be a valid positive integer')
@@ -42,10 +37,6 @@ export const updateRoleValidation = [
     body('role').optional().trim().notEmpty().withMessage('Role name cannot be empty').bail()
         .isString().withMessage('Role must be a string')
         .isLength({ min: 3, max: 30 }).withMessage('Role name must be between 3 and 30 characters'),
-
-    body('salary').optional().trim().notEmpty().withMessage('Salary cannot be empty').bail()
-        .isNumeric().withMessage('Salary must be a numeric value')
-        .isFloat({ min: 1 }).withMessage('Salary must be a positive value higher than zero'),
 
     body('department_id').optional().trim().notEmpty().withMessage('Department ID cannot be empty').bail()
         .isInt({ min: 1 }).withMessage('Department ID must be a valid positive integer')

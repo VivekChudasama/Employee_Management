@@ -114,7 +114,7 @@ function renderEmployees(employees) {
             <td class="emp-table-td">${employee.email}</td>
             <td class="emp-table-td">${employee.role.department.departmentName}</td>
             <td class="emp-table-td">${employee.role.role}</td>
-            <td class="emp-table-td">$${employee.role.salary || 0}</td>
+            <td class="emp-table-td">$${employee.salary || 0}</td>
             <td class="emp-table-td emp-table-td-center">${joiningDate}</td>
             <td class="emp-table-td">
                 <span class="badge rounded-pill px-3 py-2 fw-normal text-white ${badgeClass}">${employee.status}</span>

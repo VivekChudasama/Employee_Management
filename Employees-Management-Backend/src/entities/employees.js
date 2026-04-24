@@ -22,6 +22,10 @@ const employeesSchema = new EntitySchema({
             type: "int",
             name: "role_id"
         },
+        salary: {
+            type: "int",
+            name: "salary"
+        },
         status: {
             type: "enum",
             enum: ["active", "inactive"],

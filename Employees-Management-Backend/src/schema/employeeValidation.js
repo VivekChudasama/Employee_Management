@@ -49,6 +49,11 @@ export const addEmployeeValidation = [
         .bail()
         .isInt({ min: 1 }).withMessage('Role ID must be a valid positive integer'),
 
+    body('salary').trim().notEmpty().withMessage('Salary is required')
+        .bail()
+        .isNumeric().withMessage('Salary must be a numeric value')
+        .isFloat({ min: 1 }).withMessage('Salary must be a positive value higher than zero'),
+
     body('status').trim().notEmpty().withMessage('Status is required')
         .bail()
         .isIn(['active', 'inactive']).withMessage('Status must be either active or inactive'),
@@ -76,6 +81,10 @@ export const updateEmployessValidation = [
     body('role_id').optional().trim().notEmpty().withMessage('Role ID cannot be empty')
         .bail()
         .isInt({ min: 1 }).withMessage('Role ID must be a valid positive integer'),
+
+    body('salary').optional().trim().notEmpty().withMessage('Salary cannot be empty').bail()
+        .isNumeric().withMessage('Salary must be a numeric value')
+        .isFloat({ min: 1 }).withMessage('Salary must be a positive value higher than zero'),
 
     body('status').optional().trim().notEmpty().withMessage('Status cannot be empty')
         .bail()

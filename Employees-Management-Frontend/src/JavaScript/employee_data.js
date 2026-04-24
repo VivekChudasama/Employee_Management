@@ -437,7 +437,6 @@ function setupAddRole() {
         }
 
         const newRoleName = document.getElementById('newRoleName').value.trim();
-        const newRoleSalary = Number(document.getElementById('newRoleSalary').value.trim());
         const departmentId = Number(document.getElementById('department_id').value);
 
         //Prevent duplicating role names manually
@@ -455,8 +454,7 @@ function setupAddRole() {
         
         if (willUpdateExistingRole) {
             if (originalRoleData && 
-                newRoleName === originalRoleData.name && 
-                newRoleSalary === originalRoleData.salary) {
+                newRoleName === originalRoleData.name) {
                 showToast('No changes were made.', 'warning');
                 return;
             }
@@ -467,7 +465,6 @@ function setupAddRole() {
 
         const rolePayload = {
             role: newRoleName,
-            salary: newRoleSalary,
             department_id: departmentId
         };
 

@@ -9,6 +9,7 @@ async function handleFormSubmit(event) {
         name: formData.get('name'),
         email: formData.get('email').trim(),
         role_id: Number(formData.get('role_id')),
+        salary:formData.get('salary'),
         joining_date: formData.get('joining_date'),
         status: formData.get('status')
     };

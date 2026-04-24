@@ -21,6 +21,7 @@ async function loadEmployeeData() {
     document.getElementById('employeeId').value = employee.id;
     document.getElementById('name').value = employee.name || '';
     document.getElementById('email').value = employee.email || '';
+    document.getElementById('salary').value = employee.salary || '';
 
     const rawDate = employee.joining_date;
     document.getElementById('joining_date').value = rawDate ? rawDate.split('T')[0] : '';
@@ -49,6 +50,7 @@ async function handleEditFormSubmit(event) {
         name: formData.get('name'),
         email: formData.get('email').trim(),
         role_id: Number(formData.get('role_id')),
+        salary: formData.get('salary'),
         joining_date: formData.get('joining_date'),
         status: formData.get('status')
     };
@@ -57,11 +59,12 @@ async function handleEditFormSubmit(event) {
         const rawDate = originalEmployeeData.joining_date;
         const originalDate = rawDate ? rawDate.split('T')[0] : '';
         const originalRoleId = originalEmployeeData.role?.id;
-        
-        const hasChanges = 
+
+        const hasChanges =
             payload.name !== (originalEmployeeData.name || '') ||
             payload.email !== (originalEmployeeData.email || '') ||
             payload.role_id !== originalRoleId ||
+            payload.salary !== (originalEmployeeData.salary || '') ||
             payload.joining_date !== originalDate ||
             payload.status !== (originalEmployeeData.status || '');
 
