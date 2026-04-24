@@ -116,9 +116,10 @@
                 <!-- Row 3: Salary -->
                 <div class="row form-row">
                     <div class="mb-3 col-12">
-                        <label for="salary_display" class="form-label">Current Role Salary</label>
-                        <input type="text" id="salary_display" class="form-control" disabled
-                            placeholder="Select a role above">
+                        <label for="salary" class="form-label">Salary</label>
+                        <input type="number" name="salary" id="salary" class="form-control" 
+                            placeholder="Enter employee salary" min="1" required>
+                        <div class="invalid-feedback">Enter a valid salary (positive number)</div>
                     </div>
                 </div>
 

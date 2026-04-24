@@ -83,12 +83,10 @@ function validateField(elementId) {
 
 function validateAddRole() {
     const roleNameValue = document.getElementById('newRoleName')?.value || '';
-    const roleSalaryValue = document.getElementById('newRoleSalary')?.value || '';
     const departmentValue = document.getElementById('department_id')?.value || '';
 
     const validationErrors = {
         newRoleName: RULES.roleName(roleNameValue),
-        newRoleSalary: RULES.salary(roleSalaryValue),
         department_id: RULES.department_id(departmentValue)
     };
 
@@ -160,11 +158,12 @@ function fieldsValidation(formId, submitBtnSelector, excludeIdProvider = null) {
     const formElement = document.getElementById(formId);
     if (!formElement) return;
 
-    const fieldsToValidate = ['name', 'email', 'joining_date', 'status'];
+    const fieldsToValidate = ['name', 'email', 'joining_date', 'status', 'salary', 'role_id'];
 
     fieldsToValidate.forEach(fieldId => {
         const element = document.getElementById(fieldId);
         if (element) {
+            // Validate on input event
             element.addEventListener('input', (event) => {
                 validateField(fieldId);
                 validateForm(formId, submitBtnSelector);
@@ -178,6 +177,12 @@ function fieldsValidation(formId, submitBtnSelector, excludeIdProvider = null) {
                         if (submitButton) submitButton.disabled = true;
                     }
                 }
+            });
+
+            // Validate on blur event (when leaving the field)
+            element.addEventListener('blur', () => {
+                validateField(fieldId);
+                validateForm(formId, submitBtnSelector);
             });
         }
     });

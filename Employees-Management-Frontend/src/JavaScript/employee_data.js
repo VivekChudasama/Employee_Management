@@ -234,12 +234,12 @@ function populateRoles(departmentId = null, selectedRoleId = null) {
             const listItem = document.createElement('li');
             listItem.innerHTML = `
                 <a class="dropdown-item dropdown-element d-flex justify-content-between align-items-center role-option py-2 px-3"
-                   href="#" data-id="${role.id}" data-salary="${role.salary}" data-name="${role.role}">
+                   href="#" data-id="${role.id}" data-name="${role.role}">
                     <div class="d-flex flex-column">
                         <span class="fw-bold">${role.role}</span>
                     </div>
                     <div class="d-flex gap-2 ms-2 action-btns">
-                        <button type="button" class="btn btn-sm btn-outline-warning role-edit-btn border-0 shadow-sm" data-id="${role.id}" data-name="${role.role}" data-salary="${role.salary}"><i class="bi bi-pencil-fill"></i></button>
+                        <button type="button" class="btn btn-sm btn-outline-warning role-edit-btn border-0 shadow-sm" data-id="${role.id}" data-name="${role.role}"><i class="bi bi-pencil-fill"></i></button>
                         <button type="button" class="btn btn-sm btn-outline-danger role-delete-btn border-0 shadow-sm" data-id="${role.id}"><i class="bi bi-trash-fill"></i></button>
                     </div>
                 </a>
@@ -248,7 +248,7 @@ function populateRoles(departmentId = null, selectedRoleId = null) {
 
             // If editing an existing user, highlight their existing role 
             if (selectedRoleId && String(role.id) === String(selectedRoleId)) {
-                updateRolePickerSelection(role.role, role.id, role.salary);
+                updateRolePickerSelection(role.role, role.id);
             }
         });
     }
@@ -262,28 +262,17 @@ function populateRoles(departmentId = null, selectedRoleId = null) {
         </button>
     `;
     dropdownMenu.appendChild(footerDivider);
-
-    // Attach listener for opening the popup Modal
-    document.getElementById('addRoleInDropdownBtn').onclick = () => {
-        openRoleModal();
-    };
+    // Note: Event listener is now handled via event delegation in setupRoleDropdown()
 }
 
-function updateRolePickerSelection(name, id, salary) {
+function updateRolePickerSelection(name, id) {
     const button = document.getElementById('roleDropdownBtn');
     const hiddenInput = document.getElementById('role_id');
-    const salaryDisplay = document.getElementById('salary_display');
 
     if (button) button.textContent = name || 'Select a role';
     if (hiddenInput) hiddenInput.value = id || '';
 
-    if (salaryDisplay) {
-        if (salary) {
-            salaryDisplay.value = `$${salary}`;
-        } else {
-            salaryDisplay.value = '';
-        }
-    }
+    // Salary is now employee-specific, not derived from role
 }
 
 function setupRoleDropdown() {
@@ -295,15 +284,25 @@ function setupRoleDropdown() {
         const clickedOptionItem = event.target.closest('.role-option');
         const clickedEditButton = event.target.closest('.role-edit-btn');
         const clickedDeleteButton = event.target.closest('.role-delete-btn');
+        const clickedAddRoleButton = event.target.closest('#addRoleInDropdownBtn');
+
+        // click Add New Role button?
+        if (clickedAddRoleButton) {
+            event.preventDefault();
+            openRoleModal();
+            return;
+        }
 
         // click Edit Role?
         if (clickedEditButton) {
+            event.preventDefault();
             openRoleModal(clickedEditButton.dataset);
             return;
         }
 
         // click Delete Role?
         if (clickedDeleteButton) {
+            event.preventDefault();
             deleteRole(clickedDeleteButton.dataset.id);
             return;
         }
@@ -311,12 +310,12 @@ function setupRoleDropdown() {
         // click to Select a role?
         const clickedActionArea = event.target.closest('.action-btns');
         if (clickedOptionItem && !clickedActionArea) {
+            event.preventDefault();
 
             const name = clickedOptionItem.dataset.name;
             const id = clickedOptionItem.dataset.id;
-            const salary = clickedOptionItem.dataset.salary;
 
-            updateRolePickerSelection(name, id, salary);
+            updateRolePickerSelection(name, id);
 
             // Re-validate form to unlock Submit Button
             revalidateParentForm(clickedOptionItem);
@@ -339,16 +338,16 @@ function openRoleModal(roleData = null) {
     // Access all Role Form fields
     const modalTitle = document.getElementById('roleModalLabel');
     const nameInput = document.getElementById('newRoleName');
-    const salaryInput = document.getElementById('newRoleSalary');
+    // const salaryInput = document.getElementById('newRoleSalary');  // Salary is now employee-specific, not role-specific
     const saveButton = document.getElementById('saveRoleBtn');
 
     if (roleData !== null) {
         // Populating for UPDATE ROLE
         editRoleId = roleData.id;
-        originalRoleData = { name: roleData.name, salary: Number(roleData.salary) };
+        originalRoleData = { name: roleData.name };  // Removed salary from originalRoleData
         modalTitle.textContent = 'Edit Role';
         nameInput.value = roleData.name;
-        salaryInput.value = roleData.salary;
+        // salaryInput.value = roleData.salary;  // Salary is now employee-specific
         saveButton.textContent = 'Update Role';
     } else {
         // Clearing for ADD ROLE
@@ -356,13 +355,27 @@ function openRoleModal(roleData = null) {
         originalRoleData = null;
         modalTitle.textContent = 'Add New Role';
         nameInput.value = '';
-        salaryInput.value = '';
+        // salaryInput.value = '';  // Salary is now employee-specific
         saveButton.textContent = 'Add Role';
     }
 
     // Clear any previous error 
     nameInput.classList.remove('is-invalid');
-    salaryInput.classList.remove('is-invalid');
+    // salaryInput.classList.remove('is-invalid');  // Salary is now employee-specific
+
+    // Add blur event listener for real-time validation
+    if (!nameInput.dataset.blurListenerAdded) {
+        nameInput.addEventListener('blur', () => {
+            const roleNameValue = nameInput.value || '';
+            const errorMessage = RULES.roleName(roleNameValue);
+            if (errorMessage) {
+                showFieldError('newRoleName', errorMessage);
+            } else {
+                clearFieldError('newRoleName');
+            }
+        });
+        nameInput.dataset.blurListenerAdded = 'true';
+    }
 
     modal.show();
 }
@@ -401,7 +414,7 @@ function setupDepartmentFilter() {
             const id = deptOption.dataset.id;
             updateDepartmentSelection(deptOption.dataset.name, id);
 
-            updateRolePickerSelection(null, null, null);
+            updateRolePickerSelection(null, null);
             populateRoles(id);
 
             revalidateParentForm(deptOption);
@@ -420,9 +433,24 @@ function setupDepartmentFilter() {
 function setupAddRole() {
     const saveRoleButton = document.getElementById('saveRoleBtn');
     const openRoleButton = document.getElementById('openRoleModalBtn');
+    const newRoleNameInput = document.getElementById('newRoleName');
 
     if (openRoleButton) {
         openRoleButton.onclick = () => openRoleModal();
+    }
+
+    // Add input event listener to newRoleName for real-time validation feedback
+    if (newRoleNameInput && !newRoleNameInput.dataset.inputListenerAdded) {
+        newRoleNameInput.addEventListener('input', () => {
+            const roleNameValue = newRoleNameInput.value || '';
+            const errorMessage = RULES.roleName(roleNameValue);
+            if (errorMessage) {
+                showFieldError('newRoleName', errorMessage);
+            } else {
+                clearFieldError('newRoleName');
+            }
+        });
+        newRoleNameInput.dataset.inputListenerAdded = 'true';
     }
 
     if (!saveRoleButton) return;

@@ -20,11 +20,11 @@ const findAllEmployees = async ({ search, department_id, status, min_salary, max
     }
 
     if (min_salary && max_salary) {
-        roleFilter.salary = Between((min_salary), (max_salary));
+        Filter.salary = Between((min_salary), (max_salary));
     } else if (min_salary) {
-        roleFilter.salary = MoreThanOrEqual(min_salary);
+        Filter.salary = MoreThanOrEqual(min_salary);
     } else if (max_salary) {
-        roleFilter.salary = LessThanOrEqual(max_salary);
+        Filter.salary = LessThanOrEqual(max_salary);
     }
 
     // This method which return all the roles based on the filter applied on role and department
