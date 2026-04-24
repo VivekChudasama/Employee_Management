@@ -71,7 +71,7 @@ async function handleEditFormSubmit(event) {
         }
     }
 
-    // uniqueness check before saving
+    // check uniqueness of email before updating employee 
     if (isEmailDuplicate(payload.email, targetEmployeeId)) {
         showFieldError('email', 'Email address you have entered is already in use by another user.');
         validateForm('editEmployeeForm', '#submitBtn');
@@ -112,7 +112,6 @@ async function init() {
     setupRoleDropdown();
     setupAddRole();
     setupEditEmployeeForm();
-    validateForm('editEmployeeForm', '#submitBtn');
 }
 
 init();

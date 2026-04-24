@@ -13,7 +13,7 @@ async function handleFormSubmit(event) {
         status: formData.get('status')
     };
 
-    //check uniqueness of email before saving
+    //check uniqueness of email before Adding employee
     if (isEmailDuplicate(payload.email)) {
         showFieldError('email', 'Email address you have entered is already in use by another user.');
         validateForm('addEmployeeForm', '#submitBtn');
@@ -51,7 +51,6 @@ async function init() {
     setupRoleDropdown();
     setupAddRole();
     setupAddEmployeeForm();
-    validateForm('addEmployeeForm', '#submitBtn');
 }
 
 init();
