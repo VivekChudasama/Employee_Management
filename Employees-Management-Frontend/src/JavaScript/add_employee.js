@@ -1,18 +1,3 @@
-// Validates individual inputs
-function handleInputEvent(event) {
-    const fieldId = event.target.id;
-    validateField(fieldId);
-    validateForm('addEmployeeForm', '#submitBtn');
-
-    //check for email uniqueness
-    if (fieldId === 'email') {
-        const emailValue = event.target.value;
-        if (isEmailDuplicate(emailValue)) {
-            showFieldError('email', 'Email address you have entered is already in use by another user.');
-        }
-    }
-}
-
 // Handles the submission of the Add Employee form
 async function handleFormSubmit(event) {
     event.preventDefault();
@@ -53,14 +38,7 @@ function setupAddEmployeeForm() {
     const addEmployeeForm = document.getElementById('addEmployeeForm');
     if (!addEmployeeForm) return;
 
-    // Add validation to specific input fields
-    const fieldsToValidate = ['name', 'email', 'joining_date', 'status'];
-    fieldsToValidate.forEach(fieldId => {
-        const element = document.getElementById(fieldId);
-        if (element) {
-            element.addEventListener('input', handleInputEvent);
-        }
-    });
+    fieldsValidation('addEmployeeForm', '#submitBtn');
     addEmployeeForm.addEventListener('submit', handleFormSubmit);
 }
 

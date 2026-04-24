@@ -197,8 +197,14 @@
     background-color: #ffc107 !important;
 }
 
+@media (min-width: 768px) and (max-width: 1023px) {
+    .add-employee .filter-bar .filter-bar-dropdown {
+        margin: 0 2px 0 0;
+    }
+}
+
 /* media quearys for responsiveness */
-@media (max-width: 768px) {
+@media (max-width: 767px) {
 
     .emp-table .emp-table-head .emp-table-th,
     .emp-table .emp-table-body .emp-table-td {
@@ -233,8 +239,24 @@
 }
 
 @media (max-width: 320px) {
+
     .add-employee .filter-bar .filter-bar-dropdown .dropdown-btn {
         width: 100% !important;
         text-align: left;
+    }
+}
+
+@media (max-width: 600px) {
+
+    /* Prevent standard modals from stretching too wide */
+    .custom-modal-width {
+        max-width: 420px;
+        width: 92%;
+        margin: 24px auto;
+    }
+
+    /* Keep the confirm modal small on mobile devices */
+    .custom-modal-sm-width {
+        max-width: 300px !important;
     }
 }

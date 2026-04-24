@@ -154,3 +154,31 @@ function handleBackendErrors(responseData) {
         showToast(errorMsg, 'danger');
     }
 }
+
+// Input validation for employee forms (Add/Edit)
+function fieldsValidation(formId, submitBtnSelector, excludeIdProvider = null) {
+    const formElement = document.getElementById(formId);
+    if (!formElement) return;
+
+    const fieldsToValidate = ['name', 'email', 'joining_date', 'status'];
+
+    fieldsToValidate.forEach(fieldId => {
+        const element = document.getElementById(fieldId);
+        if (element) {
+            element.addEventListener('input', (event) => {
+                validateField(fieldId);
+                validateForm(formId, submitBtnSelector);
+
+                // Specific email uniqueness check using global function
+                if (fieldId === 'email' && typeof isEmailDuplicate === 'function') {
+                    const excludeId = excludeIdProvider ? excludeIdProvider() : null;
+                    if (isEmailDuplicate(event.target.value, excludeId)) {
+                        showFieldError('email', 'Email address you have entered is already in use by another user.');
+                        const submitButton = document.querySelector(submitBtnSelector);
+                        if (submitButton) submitButton.disabled = true;
+                    }
+                }
+            });
+        }
+    });
+}

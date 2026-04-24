@@ -8,10 +8,14 @@ if (!employeeIdUrlParam) {
     }, 2000);
 }
 
-// Fetches the existing employee data and fills out the form inputs
+let originalEmployeeData = null;
+
+// Fetch the existing employee data and fills out the form inputs
 async function loadEmployeeData() {
     const { ok: isSuccessful, data: employee } = await apiCall(`${API.employees}/${employeeIdUrlParam}`);
     if (!isSuccessful) return;
+
+    originalEmployeeData = employee;
 
     // Fill in standard text inputs
     document.getElementById('employeeId').value = employee.id;
@@ -30,22 +34,7 @@ async function loadEmployeeData() {
     populateStatusDropdown(status);
 }
 
-// Validates individual inputs as the user types
-function handleEditInputEvent(event) {
-    const fieldId = event.target.id;
-    validateField(fieldId);
-    validateForm('editEmployeeForm', '#submitBtn');
-
-    //check for email uniqueness
-    if (fieldId === 'email') {
-        const emailValue = event.target.value;
-        const currentId = document.getElementById('employeeId').value || employeeIdUrlParam;
-
-        if (isEmailDuplicate(emailValue, currentId)) {
-            showFieldError('email', 'Email address you have entered is already in use by another user.');
-        }
-    }
-}
+// handleEditInputEvent removed, logic extracted to validation.js
 
 // Handles the submission of the Edit Employee form
 async function handleEditFormSubmit(event) {
@@ -64,6 +53,24 @@ async function handleEditFormSubmit(event) {
         status: formData.get('status')
     };
 
+    if (originalEmployeeData) {
+        const rawDate = originalEmployeeData.joining_date;
+        const originalDate = rawDate ? rawDate.split('T')[0] : '';
+        const originalRoleId = originalEmployeeData.role?.id;
+        
+        const hasChanges = 
+            payload.name !== (originalEmployeeData.name || '') ||
+            payload.email !== (originalEmployeeData.email || '') ||
+            payload.role_id !== originalRoleId ||
+            payload.joining_date !== originalDate ||
+            payload.status !== (originalEmployeeData.status || '');
+
+        if (!hasChanges) {
+            showToast('No changes were made.', 'warning');
+            return;
+        }
+    }
+
     // uniqueness check before saving
     if (isEmailDuplicate(payload.email, targetEmployeeId)) {
         showFieldError('email', 'Email address you have entered is already in use by another user.');
@@ -72,7 +79,7 @@ async function handleEditFormSubmit(event) {
     }
 
     // Ask user to confirm
-    const isUserAgreed = await confirmUI('Update Employee', 'Save changes?', 'primary');
+    const isUserAgreed = await confirmUI('Update Employee', 'Save changes ?', 'primary');
     if (!isUserAgreed) return;
 
     // Send data to backend using PUT
@@ -89,12 +96,8 @@ function setupEditEmployeeForm() {
     const editEmployeeForm = document.getElementById('editEmployeeForm');
     if (!editEmployeeForm) return;
 
-    const fieldsToValidate = ['name', 'email', 'joining_date', 'status'];
-    fieldsToValidate.forEach(fieldId => {
-        const element = document.getElementById(fieldId);
-        if (element) {
-            element.addEventListener('input', handleEditInputEvent);
-        }
+    fieldsValidation('editEmployeeForm', '#submitBtn', () => {
+        return document.getElementById('employeeId').value || employeeIdUrlParam;
     });
 
     editEmployeeForm.addEventListener('submit', handleEditFormSubmit);

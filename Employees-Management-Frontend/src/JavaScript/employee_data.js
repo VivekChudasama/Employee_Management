@@ -6,6 +6,7 @@ const API = {
 let allRoles = [];
 let allEmployees = [];
 let editRoleId = null;
+let originalRoleData = null;
 
 function isEmailDuplicate(email, excludeEmployeeId = null) {
     const enteredEmail = email.trim().toLowerCase();
@@ -135,19 +136,27 @@ function showToast(message, type = 'success') {
     }, 4000);
 }
 
+function updateDropdownUI(btnId, inputId, defaultText, value, label) {
+    const btn = document.getElementById(btnId);
+    const hiddenInput = document.getElementById(inputId);
+    if (btn) btn.textContent = label || defaultText;
+    if (hiddenInput) hiddenInput.value = value || '';
+}
+
+function revalidateParentForm(element) {
+    const parentForm = element.closest('form');
+    if (parentForm && typeof validateForm === 'function') {
+        validateForm(parentForm.id, '#submitBtn');
+    }
+}
+
 // Employee Form Dropdown
 function updateDepartmentSelection(name, id) {
-    const btn = document.getElementById('departmentDropdownBtn');
-    const hiddenInput = document.getElementById('department_id');
-    if (btn) btn.textContent = name || 'Select Department';
-    if (hiddenInput) hiddenInput.value = id || '';
+    updateDropdownUI('departmentDropdownBtn', 'department_id', 'Select Department', id, name);
 }
 
 function updateStatusSelection(status) {
-    const btn = document.getElementById('statusDropdownBtn');
-    const hiddenInput = document.getElementById('status');
-    if (btn) btn.textContent = status || 'Select Status';
-    if (hiddenInput) hiddenInput.value = status || '';
+    updateDropdownUI('statusDropdownBtn', 'status', 'Select Status', status, status);
 }
 
 function populateDepartments(selectedId = null) {
@@ -311,10 +320,7 @@ function setupRoleDropdown() {
             updateRolePickerSelection(name, id, salary);
 
             // Re-validate form to unlock Submit Button
-            const parentFormElement = clickedOptionItem.closest('form');
-            if (parentFormElement) {
-                validateForm(parentFormElement.id, '#submitBtn');
-            }
+            revalidateParentForm(clickedOptionItem);
         }
     });
 }
@@ -340,6 +346,7 @@ function openRoleModal(roleData = null) {
     if (roleData !== null) {
         // Populating for UPDATE ROLE
         editRoleId = roleData.id;
+        originalRoleData = { name: roleData.name, salary: Number(roleData.salary) };
         modalTitle.textContent = 'Edit Role';
         nameInput.value = roleData.name;
         salaryInput.value = roleData.salary;
@@ -347,6 +354,7 @@ function openRoleModal(roleData = null) {
     } else {
         // Clearing for ADD ROLE
         editRoleId = null;
+        originalRoleData = null;
         modalTitle.textContent = 'Add New Role';
         nameInput.value = '';
         salaryInput.value = '';
@@ -397,8 +405,7 @@ function setupDepartmentFilter() {
             updateRolePickerSelection(null, null, null);
             populateRoles(id);
 
-            const parentForm = deptOption.closest('form');
-            if (parentForm && typeof validateForm === 'function') validateForm(parentForm.id, '#submitBtn');
+            revalidateParentForm(deptOption);
         }
 
         // Status Dropdown
@@ -406,9 +413,7 @@ function setupDepartmentFilter() {
         if (statusOption) {
             event.preventDefault();
             updateStatusSelection(statusOption.dataset.status);
-
-            const parentForm = statusOption.closest('form');
-            if (parentForm && typeof validateForm === 'function') validateForm(parentForm.id, '#submitBtn');
+            revalidateParentForm(statusOption);
         }
     });
 }
@@ -447,6 +452,15 @@ function setupAddRole() {
         }
 
         const willUpdateExistingRole = !!editRoleId;
+        
+        if (willUpdateExistingRole) {
+            if (originalRoleData && 
+                newRoleName === originalRoleData.name && 
+                newRoleSalary === originalRoleData.salary) {
+                showToast('No changes were made.', 'warning');
+                return;
+            }
+        }
         const actionLabel = willUpdateExistingRole ? 'Update' : 'Add';
         const targetApiEndpoint = willUpdateExistingRole ? `${API.roles}/${editRoleId}` : `${API.roles}/add-role`;
         const methodType = willUpdateExistingRole ? 'PUT' : 'POST';
@@ -457,14 +471,12 @@ function setupAddRole() {
             department_id: departmentId
         };
 
-        if (willUpdateExistingRole) {
-            const isUserAgreed = await confirmUI('Add Role', 'Are you sure you want to update this role', 'warning')
-            if (!isUserAgreed) return
-        }
-        else {
-            const isUserAgreed = await confirmUI('Add Role', 'Are you sure you want to Add the role', 'primary')
-            if (!isUserAgreed) return
-        }
+        const confirmTitle = willUpdateExistingRole ? 'Update Role' : 'Add Role';
+        const confirmMsg = `Are you sure you want to ${willUpdateExistingRole ? 'update' : 'add'} this role?`;
+        const confirmType = willUpdateExistingRole ? 'warning' : 'primary';
+        
+        const isUserAgreed = await confirmUI(confirmTitle, confirmMsg, confirmType);
+        if (!isUserAgreed) return;
 
         const apiResponse = await apiCall(targetApiEndpoint, methodType, rolePayload);
 

@@ -26,8 +26,11 @@ async function fetchEmployeesForList() {
 
     if (ok) {
         renderEmployees(data);
-        populateStatusFilter(data);
-        populateDeptFilter(data);
+        const isAnyFilterActive = filters.search !== '' || filters.status !== '' || filters.department !== '' || filters.minSalary !== '' || filters.maxSalary !== '';
+        if (!isAnyFilterActive) {
+            populateStatusFilter(data);
+            populateDeptFilter(data);
+        }
     }
 }
 
@@ -96,8 +99,8 @@ function renderEmployees(employees) {
 
     employees.forEach(employee => {
         // change the date formate of sql date to yyyy-mm-dd
-        const rawDate = new Date(employee.joining_date);
-        const joiningDate = isNaN(rawDate) ? '—' : rawDate.toLocaleDateString('en-CA');
+        const rawDate = employee.joining_date ? new Date(employee.joining_date) : null;
+        const joiningDate = rawDate && !isNaN(rawDate) ? rawDate.toLocaleDateString('en-CA') : '—';
 
         // Define badge color based on status
         const isStatusActive = employee.status === 'active';
@@ -157,39 +160,27 @@ document.addEventListener('DOMContentLoaded', () => {
     attachInputFilter('minInput', 'minSalary');
     attachInputFilter('maxInput', 'maxSalary');
 
-    // Dropdown Menu (Status)
-    const statusMenu = document.getElementById('getEmpStatus');
-    if (statusMenu) {
-        statusMenu.addEventListener('click', (event) => {
-            const dropdownItem = event.target.closest('.dropdown-item');
-            if (!dropdownItem) return;
+    // Reusable Dropdown Filter Setup
+    function setupDropdownFilter(menuId, filterKey, defaultText) {
+        const menu = document.getElementById(menuId);
+        if (menu) {
+            menu.addEventListener('click', (event) => {
+                const dropdownItem = event.target.closest('.dropdown-item');
+                if (!dropdownItem) return;
 
-            event.preventDefault();
-            filters.status = dropdownItem.dataset.value;
+                event.preventDefault();
+                filters[filterKey] = dropdownItem.dataset.value;
 
-            const btn = event.target.closest('.dropdown')?.querySelector('.dropdown-btn');
-            if (btn) btn.textContent = filters.status ? dropdownItem.textContent : 'Status';
+                const btn = event.target.closest('.dropdown')?.querySelector('.dropdown-btn');
+                if (btn) btn.textContent = filters[filterKey] ? dropdownItem.textContent : defaultText;
 
-            fetchEmployeesForList();
-        });
+                fetchEmployeesForList();
+            });
+        }
     }
 
-    // Dropdown Menu (Department)
-    const deptMenu = document.getElementById('getEmpDepartment');
-    if (deptMenu) {
-        deptMenu.addEventListener('click', (event) => {
-            const dropdownItem = event.target.closest('.dropdown-item');
-            if (!dropdownItem) return;
-
-            event.preventDefault();
-            filters.department = dropdownItem.dataset.value;
-
-            const btn = event.target.closest('.dropdown')?.querySelector('.dropdown-btn');
-            if (btn) btn.textContent = filters.department ? dropdownItem.textContent : 'Department';
-
-            fetchEmployeesForList();
-        });
-    }
+    setupDropdownFilter('getEmpStatus', 'status', 'Status');
+    setupDropdownFilter('getEmpDepartment', 'department', 'Department');
 
     // Attach Delete button 
     const tableBody = document.getElementById('employeeTableBody');
@@ -239,7 +230,8 @@ function sortTable(columnIndex) {
     const tableRows = Array.from(tableElement.rows).slice(1);
 
     const parseValue = text => {
-        if (/^\d{4}-\d{2}-\d{2}$/.test(text)) return new Date(text);
+        if (text === '—') return 0;
+        if (/^\d{4}-\d{2}-\d{2}$/.test(text)) return new Date(text).getTime();
         const num = Number(text);
         return isNaN(num) ? text.toLowerCase() : num;
     };
