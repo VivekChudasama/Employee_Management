@@ -73,12 +73,12 @@
         <div class="form-body">
             <form class="employee-form needs-validation" id="addEmployeeForm" novalidate>
 
-                <!-- Row 1: Name + Email -->
+                <!-- Row 1: Name and Email -->
                 <div class="row form-row">
                     <div class="mb-3 col-12 col-md-6">
                         <label for="name" class="form-label">Full Name</label>
                         <input type="text" name="name" placeholder="Enter your Name" id="name" class="form-control"
-                            minlength="3" maxlength="50" pattern="^[a-zA-Z\s.]+$" required>
+                            minlength="3" maxlength="50" pattern="^[a-zA-Z\s.]and$" required>
                         <div class="invalid-feedback">Enter a valid name (letters, spaces, dots only)</div>
                     </div>
                     <div class="mb-3 col-12 col-md-6">
@@ -89,7 +89,7 @@
                     </div>
                 </div>
 
-                <!-- Row 2: Department + Role -->
+                <!-- Row 2: Department and Role -->
                 <div class="row form-row">
                     <div class="mb-3 col-12 col-md-6">
                         <label class="form-label">Department</label>
@@ -118,13 +118,13 @@
                     <div class="mb-3 col-12">
                         <label for="salary" class="form-label">Salary</label>
                         <input type="number" name="salary" id="salary" class="form-control" 
-                            placeholder="Enter employee salary" min="1" required>
+                            placeholder="Select a role first" min="1" required disabled>
                         <div class="invalid-feedback">Enter a valid salary (positive number)</div>
                     </div>
                 </div>
 
 
-                <!-- Row 4: Joining Date + Status -->
+                <!-- Row 4: Joining Date and Status -->
                 <div class="row form-row">
                     <div class="mb-3 col-12 col-md-6">
                         <label for="joining_date" class="form-label">Joining Date</label>
@@ -184,11 +184,6 @@
                             minlength="3" maxlength="30">
                         <div class="invalid-feedback"></div>
                     </div>
-                    <!-- <div class="mb-3">
-                        <label for="newRoleSalary" class="form-label">Salary</label>
-                        <input type="number" id="newRoleSalary" class="form-control" placeholder="Enter salary" min="1">
-                        <div class="invalid-feedback"></div>
-                    </div> -->
                 </div>
                 <div class="modal-footer border-0">
                     <button type="button" class="btn btn-secondary px-4 rounded-pill"

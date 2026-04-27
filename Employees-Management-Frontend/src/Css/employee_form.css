@@ -81,13 +81,6 @@
     color: var(--secondary-grey);
 }
 
-
-.form .form-body .employee-form .form-control:disabled {
-    background-color: var(--secondary-white);
-    color: var(--secondary-grey);
-    border-color: var(--secondary-white);
-}
-
 /* Submit button */
 .form .form-body .submit-section .send-btn {
     font-size: 20px;
@@ -124,12 +117,22 @@
     transform: scale(0.95);
 }
 
+.form .form-body .employee-form .form-control:disabled,
+.form .form-body .employee-form .outline-input-btn:disabled {
+    border-color: var(--secondary-white);
+    pointer-events: auto;
+}
+
+.form .form-body .employee-form .form-control:disabled,
+.form .form-body .employee-form .outline-input-btn:disabled,
 .form .form-body .submit-section .send-btn:disabled {
     background: var(--secondary-white) !important;
     cursor: not-allowed !important;
     opacity: 0.6;
 }
 
+.form .form-body .employee-form .form-control:disabled,
+.form .form-body .employee-form .outline-input-btn:disabled,
 .form .form-body .submit-section .send-btn:disabled .send-btn-label,
 .form .form-body .submit-section .send-btn:disabled .send-btn-icon {
     color: var(--secondary-grey) !important;

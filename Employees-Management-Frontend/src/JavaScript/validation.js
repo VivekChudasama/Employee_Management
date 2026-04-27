@@ -12,7 +12,7 @@ const RULES = {
         return null;
     },
     role_id: function (value) {
-        if (!value || value === '') return 'Role_Id is Required';
+        if (!value || value === '') return 'Role is required';
         return null;
     },
     roleName: function (value) {
@@ -27,15 +27,21 @@ const RULES = {
         return null;
     },
     department_id: function (value) {
-        if (!value || value === '') return 'Department_Id Required';
+        if (!value || value === '') return 'Department is required';
         return null;
     },
     joining_date: function (value) {
-        if (!value) return 'Required';
+        if (!value) return 'Joining Date is Required';
         if (new Date(value) <= new Date('2026-01-01')) return 'Must be after 2026-01-01';
         return null;
     }
 };
+
+// Helper to get associated dropdown button for hidden inputs
+function getDropdownButton(fieldId) {
+    const btnId = (fieldId.endsWith('_id') ? fieldId.replace('_id', '') : fieldId) + 'DropdownBtn';
+    return document.getElementById(btnId);
+}
 
 // Show an error message on a specific input field
 function showFieldError(fieldId, message) {
@@ -45,6 +51,15 @@ function showFieldError(fieldId, message) {
     element.classList.add('is-invalid');
     element.classList.remove('is-valid');
 
+    // Also highlight the visual dropdown button if the field is hidden
+    if (element.type === 'hidden') {
+        const dropdownBtn = getDropdownButton(fieldId);
+        if (dropdownBtn) {
+            dropdownBtn.classList.add('is-invalid');
+            dropdownBtn.classList.remove('is-valid');
+        }
+    }
+
     let feedbackElement = element.nextElementSibling;
     if (!feedbackElement || !feedbackElement.classList.contains('invalid-feedback')) {
         feedbackElement = document.createElement('div');
@@ -53,6 +68,7 @@ function showFieldError(fieldId, message) {
     }
 
     feedbackElement.textContent = message;
+    feedbackElement.style.display = 'block'; // force display for hidden inputs
 }
 
 function clearFieldError(fieldId) {
@@ -61,6 +77,21 @@ function clearFieldError(fieldId) {
 
     element.classList.remove('is-invalid');
     element.classList.add('is-valid');
+
+    // Clear highlight from visual dropdown button
+    if (element.type === 'hidden') {
+        const dropdownBtn = getDropdownButton(fieldId);
+        if (dropdownBtn) {
+            dropdownBtn.classList.remove('is-invalid');
+            dropdownBtn.classList.add('is-valid');
+        }
+    }
+    
+    // Hide the dynamically added feedback block if it exists
+    const feedbackElement = element.nextElementSibling;
+    if (feedbackElement && feedbackElement.classList.contains('invalid-feedback')) {
+        feedbackElement.style.display = 'none';
+    }
 }
 
 function validateField(elementId) {
@@ -82,60 +113,34 @@ function validateField(elementId) {
 }
 
 function validateAddRole() {
-    const roleNameValue = document.getElementById('newRoleName')?.value || '';
-    const departmentValue = document.getElementById('department_id')?.value || '';
+    const nameVal = document.getElementById('newRoleName')?.value || '';
+    const deptVal = document.getElementById('department_id')?.value || '';
 
-    const validationErrors = {
-        newRoleName: RULES.roleName(roleNameValue),
-        department_id: RULES.department_id(departmentValue)
-    };
+    const nameError = RULES.roleName(nameVal);
+    const deptError = RULES.department_id(deptVal);
 
-    let isAllValid = true;
+    if (nameError) showFieldError('newRoleName', nameError); else clearFieldError('newRoleName');
+    if (deptError) showFieldError('department_id', deptError); else clearFieldError('department_id');
 
-    for (const [fieldId, errorMessage] of Object.entries(validationErrors)) {
-        if (errorMessage !== null) {
-            showFieldError(fieldId, errorMessage);
-            isAllValid = false;
-        } else {
-            clearFieldError(fieldId);
-        }
-    }
-
-    return { valid: isAllValid };
+    return { valid: !nameError && !deptError };
 }
 
 function validateForm(formId, submitBtnSelector) {
     const formElement = document.getElementById(formId);
     if (!formElement) return false;
 
+    // Find all required inputs or specific role_id
+    const formInputs = Array.from(formElement.querySelectorAll('input, select, textarea'))
+        .filter(input => input.required || input.name === 'role_id');
+
+    const isFormValid = formInputs.every(input => {
+        const ruleName = input.name || input.id;
+        const ruleFunction = RULES[ruleName];
+        return ruleFunction ? ruleFunction(input.value) === null : !!input.value;
+    });
+
     const submitButton = formElement.querySelector(submitBtnSelector);
-    let isFormValid = true;
-
-    // Find all inputs, selects, and textareas inside this form
-    const formInputs = formElement.querySelectorAll('input, select, textarea');
-
-    // Check every required input or specific roles
-    for (const input of formInputs) {
-        if (input.required || input.name === 'role_id') {
-            const ruleName = input.name || input.id;
-            const ruleFunction = RULES[ruleName];
-
-            if (ruleFunction) {
-                // If there's an error message, form is invalid
-                if (ruleFunction(input.value) !== null) {
-                    isFormValid = false;
-                    break;
-                }
-            } else if (!input.value) {
-                isFormValid = false;
-                break;
-            }
-        }
-    }
-
-    if (submitButton) {
-        submitButton.disabled = !isFormValid;
-    }
+    if (submitButton) submitButton.disabled = !isFormValid;
 
     return isFormValid;
 }
@@ -155,42 +160,34 @@ function handleBackendErrors(responseData) {
 
 // Input validation for employee forms (Add/Edit)
 function fieldsValidation(formId, submitBtnSelector, excludeIdProvider = null) {
-    const formElement = document.getElementById(formId);
-    if (!formElement) return;
-
     const fieldsToValidate = ['name', 'email', 'joining_date', 'status', 'salary', 'role_id', 'department_id'];
+
+    const runValidation = (fieldId, event) => {
+        validateField(fieldId);
+        validateForm(formId, submitBtnSelector);
+        
+        // Specific email uniqueness check
+        if (fieldId === 'email' && typeof isEmailDuplicate === 'function' && event?.type === 'input') {
+            const excludeId = excludeIdProvider ? excludeIdProvider() : null;
+            if (isEmailDuplicate(event.target.value, excludeId)) {
+                showFieldError('email', 'Email address you have entered is already in use by another user.');
+                const submitButton = document.querySelector(submitBtnSelector);
+                if (submitButton) submitButton.disabled = true;
+            }
+        }
+    };
 
     fieldsToValidate.forEach(fieldId => {
         const element = document.getElementById(fieldId);
-        if (element) {
-            if (element.type === 'hidden') {
-                element.addEventListener('change', () => {
-                    validateField(fieldId);
-                    validateForm(formId, submitBtnSelector);
-                });
-            } else {
-                // Validate on input event
-                element.addEventListener('input', (event) => {
-                    validateField(fieldId);
-                    validateForm(formId, submitBtnSelector);
+        if (!element) return;
 
-                    // Specific email uniqueness check using global function
-                    if (fieldId === 'email' && typeof isEmailDuplicate === 'function') {
-                        const excludeId = excludeIdProvider ? excludeIdProvider() : null;
-                        if (isEmailDuplicate(event.target.value, excludeId)) {
-                            showFieldError('email', 'Email address you have entered is already in use by another user.');
-                            const submitButton = document.querySelector(submitBtnSelector);
-                            if (submitButton) submitButton.disabled = true;
-                        }
-                    }
-                });
-
-                // Validate on blur event (when leaving the field)
-                element.addEventListener('blur', () => {
-                    validateField(fieldId);
-                    validateForm(formId, submitBtnSelector);
-                });
-            }
+        if (element.type === 'hidden') {
+            element.addEventListener('change', () => runValidation(fieldId));
+            const dropdownBtn = getDropdownButton(fieldId);
+            if (dropdownBtn) dropdownBtn.addEventListener('hidden.bs.dropdown', () => runValidation(fieldId));
+        } else {
+            element.addEventListener('input', (e) => runValidation(fieldId, e));
+            element.addEventListener('blur', () => runValidation(fieldId));
         }
     });
 }

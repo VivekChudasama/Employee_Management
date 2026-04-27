@@ -48,17 +48,11 @@ async function apiCall(url, method = 'GET', bodyContent = null) {
 }
 
 async function fetchRolesData() {
-    const response = await apiCall(API.roles);
-    if (response.ok) {
-        allRoles = response.data || [];
-    }
+    allRoles = (await apiCall(API.roles)).data || [];
 }
 
 async function fetchEmployeesData() {
-    const response = await apiCall(API.employees);
-    if (response.ok) {
-        allEmployees = response.data || [];
-    }
+    allEmployees = (await apiCall(API.employees)).data || [];
 }
 
 // Alerts & Confirms modal
@@ -142,7 +136,6 @@ function updateDropdownUI(btnId, inputId, defaultText, value, label) {
     if (btn) btn.textContent = label || defaultText;
     if (hiddenInput) {
         hiddenInput.value = value || '';
-        // Trigger change event to notify validation listeners
         hiddenInput.dispatchEvent(new Event('change', { bubbles: true }));
     }
 }
@@ -167,106 +160,69 @@ function populateDepartments(selectedId = null) {
     const dropdownMenu = document.getElementById('departmentDropdownMenu');
     if (!dropdownMenu) return;
 
-    dropdownMenu.innerHTML = '<li><a class="dropdown-item dropdown-element text-muted department-option py-2 px-3" href="#" data-id="" data-name="Select Department">Select Department</a></li>';
-
     const seenDepartments = new Map();
+    allRoles.forEach(r => r.department && seenDepartments.set(r.department.id, r.department.departmentName));
 
-    for (let i = 0; i < allRoles.length; i++) {
-        const currentRole = allRoles[i];
-        if (currentRole.department) {
-            seenDepartments.set(currentRole.department.id, currentRole.department.departmentName);
-        }
-    }
-
+    let html = '<li><a class="dropdown-item dropdown-element text-muted department-option py-2 px-3" href="#" data-id="" data-name="Select Department">Select Department</a></li>';
+    
     seenDepartments.forEach((name, id) => {
-        const listItem = document.createElement('li');
-        listItem.innerHTML = `<a class="dropdown-item dropdown-element department-option py-2 px-3" href="#" data-id="${id}" data-name="${name}">${name}</a>`;
-        dropdownMenu.appendChild(listItem);
-
-        if (String(id) === String(selectedId)) {
-            updateDepartmentSelection(name, id);
-        }
+        html += `<li><a class="dropdown-item dropdown-element department-option py-2 px-3" href="#" data-id="${id}" data-name="${name}">${name}</a></li>`;
+        if (String(id) === String(selectedId)) updateDepartmentSelection(name, id);
     });
+
+    dropdownMenu.innerHTML = html;
 }
 
 function populateStatusDropdown(selectedStatus = null) {
     const dropdownMenu = document.getElementById('statusDropdownMenu');
     if (!dropdownMenu) return;
 
-    dropdownMenu.innerHTML = '<li><a class="dropdown-item dropdown-element text-muted status-option py-2 px-3" href="#" data-status="">Select Status</a></li>';
-
-    const validStatuses = allEmployees.map(emp => emp.status).filter(status => status !== null && status !== undefined);
-    // to remove dublicate status
-    const uniqueStatuses = [...new Set([...validStatuses])];
-
+    const uniqueStatuses = [...new Set(allEmployees.map(emp => emp.status).filter(Boolean))];
+    
+    let html = '<li><a class="dropdown-item dropdown-element text-muted status-option py-2 px-3" href="#" data-status="">Select Status</a></li>';
     uniqueStatuses.forEach(status => {
-        const listItem = document.createElement('li');
-        listItem.innerHTML = `<a class="dropdown-item dropdown-element status-option py-2 px-3" href="#" data-status="${status}">${status}</a>`;
-        dropdownMenu.appendChild(listItem);
-
-        if (status === selectedStatus) {
-            updateStatusSelection(status);
-        }
+        html += `<li><a class="dropdown-item dropdown-element status-option py-2 px-3" href="#" data-status="${status}">${status}</a></li>`;
+        if (status === selectedStatus) updateStatusSelection(status);
     });
+
+    dropdownMenu.innerHTML = html;
 }
 
 function populateRoles(departmentId = null, selectedRoleId = null) {
     const dropdownMenu = document.getElementById('roleDropdownMenu');
     const dropdownButton = document.getElementById('roleDropdownBtn');
-
     if (!dropdownMenu || !dropdownButton) return;
 
-    dropdownMenu.innerHTML = '';
-
-    // Cannot select a role without picking a department first
     if (!departmentId) {
-        const emptyMessage = '<li><span class="dropdown-item dropdown-element text-muted text-center py-3">Select a department first</span></li>';
-        dropdownMenu.innerHTML = emptyMessage;
+        dropdownMenu.innerHTML = '<li><span class="dropdown-item dropdown-element text-muted text-center py-3">Select a department first</span></li>';
         dropdownButton.disabled = true;
         return;
     }
 
     dropdownButton.disabled = false;
-
-    // Find all roles belonging to chosen department
     const rolesInDepartment = allRoles.filter(role => String(role.department?.id) === String(departmentId));
 
-    if (rolesInDepartment.length === 0) {
-        dropdownMenu.innerHTML = '<li><span class="dropdown-item dropdown-element text-muted text-center py-3">No roles in this department</span></li>';
-    } else {
-        rolesInDepartment.forEach((role) => {
-            const listItem = document.createElement('li');
-            listItem.innerHTML = `
-                <a class="dropdown-item dropdown-element d-flex justify-content-between align-items-center role-option py-2 px-3"
-                   href="#" data-id="${role.id}" data-name="${role.role}">
-                    <div class="d-flex flex-column">
+    let html = rolesInDepartment.length === 0 
+        ? '<li><span class="dropdown-item dropdown-element text-muted text-center py-3">No roles in this department</span></li>'
+        : rolesInDepartment.map(role => {
+            if (selectedRoleId && String(role.id) === String(selectedRoleId)) updateRolePickerSelection(role.role, role.id);
+            return `
+                <li>
+                    <a class="dropdown-item dropdown-element d-flex justify-content-between align-items-center role-option py-2 px-3" href="#" data-id="${role.id}" data-name="${role.role}">
                         <span class="fw-bold">${role.role}</span>
-                    </div>
-                    <div class="d-flex gap-2 ms-2 action-btns">
-                        <button type="button" class="btn btn-sm btn-outline-warning role-edit-btn border-0 shadow-sm" data-id="${role.id}" data-name="${role.role}"><i class="bi bi-pencil-fill"></i></button>
-                        <button type="button" class="btn btn-sm btn-outline-danger role-delete-btn border-0 shadow-sm" data-id="${role.id}"><i class="bi bi-trash-fill"></i></button>
-                    </div>
-                </a>
-            `;
-            dropdownMenu.appendChild(listItem);
+                        <div class="d-flex gap-2 ms-2 action-btns">
+                            <button type="button" class="btn btn-sm btn-outline-warning role-edit-btn border-0 shadow-sm" data-id="${role.id}" data-name="${role.role}"><i class="bi bi-pencil-fill"></i></button>
+                            <button type="button" class="btn btn-sm btn-outline-danger role-delete-btn border-0 shadow-sm" data-id="${role.id}"><i class="bi bi-trash-fill"></i></button>
+                        </div>
+                    </a>
+                </li>`;
+        }).join('');
 
-            // If editing an existing user, highlight their existing role 
-            if (selectedRoleId && String(role.id) === String(selectedRoleId)) {
-                updateRolePickerSelection(role.role, role.id);
-            }
-        });
-    }
-
-    // Always append the "Add New Role" button at the bottom of the dropdown
-    const footerDivider = document.createElement('li');
-    footerDivider.innerHTML = `
-        <hr class="dropdown-divider">
-        <button type="button" class="dropdown-item dropdown-element text-custom-primary text-center py-2" id="addRoleInDropdownBtn">
+    dropdownMenu.innerHTML = html + `
+        <li><hr class="dropdown-divider"></li>
+        <li><button type="button" class="dropdown-item dropdown-element text-custom-primary text-center py-2" id="addRoleInDropdownBtn">
             <i class="bi bi-plus-circle-fill me-1"></i> Add New Role
-        </button>
-    `;
-    dropdownMenu.appendChild(footerDivider);
-    // Note: Event listener is now handled via event delegation in setupRoleDropdown()
+        </button></li>`;
 }
 
 function updateRolePickerSelection(name, id) {
@@ -274,6 +230,13 @@ function updateRolePickerSelection(name, id) {
     const hiddenInput = document.getElementById('role_id');
 
     if (button) button.textContent = name || 'Select a role';
+    
+    if (hiddenInput) {
+        hiddenInput.value = id || '';
+        if (id) revalidateParentForm(hiddenInput);
+    }
+
+    toggleSalaryField(!!id);
 }
 
 function setupRoleDropdown() {
@@ -339,16 +302,14 @@ function openRoleModal(roleData = null) {
     // Access all Role Form fields
     const modalTitle = document.getElementById('roleModalLabel');
     const nameInput = document.getElementById('newRoleName');
-    // const salaryInput = document.getElementById('newRoleSalary');  // Salary is now employee-specific, not role-specific
     const saveButton = document.getElementById('saveRoleBtn');
 
     if (roleData !== null) {
         // Populating for UPDATE ROLE
         editRoleId = roleData.id;
-        originalRoleData = { name: roleData.name };  // Removed salary from originalRoleData
+        originalRoleData = { name: roleData.name };  
         modalTitle.textContent = 'Edit Role';
         nameInput.value = roleData.name;
-        // salaryInput.value = roleData.salary;  // Salary is now employee-specific
         saveButton.textContent = 'Update Role';
     } else {
         // Clearing for ADD ROLE
@@ -356,13 +317,11 @@ function openRoleModal(roleData = null) {
         originalRoleData = null;
         modalTitle.textContent = 'Add New Role';
         nameInput.value = '';
-        // salaryInput.value = '';  // Salary is now employee-specific
         saveButton.textContent = 'Add Role';
     }
 
     // Clear any previous error 
     nameInput.classList.remove('is-invalid');
-    // salaryInput.classList.remove('is-invalid');  // Salary is now employee-specific
 
     // Add blur event listener for real-time validation
     if (!nameInput.dataset.blurListenerAdded) {
@@ -403,6 +362,21 @@ async function deleteRole(roleIdToDelete) {
         await fetchRolesData();
         populateDepartments(currentDeptId);
         populateRoles(currentDeptId);
+    }
+}
+
+function toggleSalaryField(isEnabled) {
+    const salaryInput = document.getElementById('salary');
+    if (!salaryInput) return;
+
+    if (isEnabled) {
+        salaryInput.disabled = false;
+        salaryInput.placeholder = 'Enter employee salary';
+    } else {
+        salaryInput.disabled = true;
+        salaryInput.value = '';
+        salaryInput.placeholder = 'Select a role first';
+        salaryInput.classList.remove('is-invalid', 'is-valid');
     }
 }
 

@@ -38,43 +38,21 @@ function populateStatusFilter(employeesList) {
     const statusMenu = document.getElementById('getEmpStatus');
     if (!statusMenu) return;
 
-    // set a default "All Statuses" option
-    statusMenu.innerHTML = '<li><a class="dropdown-item dropdown-element active-filter" href="#" data-value="">All Statuses</a></li><li><hr class="dropdown-divider"></li>';
-
-    // Add all statuses into an array
-    const rawStatuses = employeesList.map(emp => emp.status);
-
-    const statuses = [...new Set(rawStatuses)];
-
-    //Create an HTML option for each status
-    statuses.forEach(status => {
-        const listItem = document.createElement('li');
-        listItem.innerHTML = `<a class="dropdown-item dropdown-element" href="#" data-value="${status}">${status}</a>`;
-        statusMenu.appendChild(listItem);
-    });
+    const statuses = [...new Set(employeesList.map(emp => emp.status))];
+    
+    statusMenu.innerHTML = '<li><a class="dropdown-item dropdown-element active-filter" href="#" data-value="">All Statuses</a></li><li><hr class="dropdown-divider"></li>' + 
+        statuses.map(status => `<li><a class="dropdown-item dropdown-element" href="#" data-value="${status}">${status}</a></li>`).join('');
 }
 
 function populateDeptFilter(employeesList) {
     const departmentMenu = document.getElementById('getEmpDepartment');
     if (!departmentMenu) return;
 
-    departmentMenu.innerHTML = '<li><a class="dropdown-item dropdown-element active-filter" href="#" data-value="">All Departments</a></li><li><hr class="dropdown-divider"></li>';
-
     const uniqueDepartments = new Map();
+    employeesList.forEach(emp => emp.role?.department && uniqueDepartments.set(emp.role.department.id, emp.role.department.departmentName));
 
-    // Check each employee and their role to find departments
-    employeesList.forEach(emp => {
-        if (emp.role?.department) {
-            uniqueDepartments.set(emp.role.department.id, emp.role.department.departmentName);
-        }
-    });
-
-    // Render the department options
-    uniqueDepartments.forEach((departmentName, departmentId) => {
-        const listItem = document.createElement('li');
-        listItem.innerHTML = `<a class="dropdown-item dropdown-element" href="#" data-value="${departmentId}">${departmentName}</a>`;
-        departmentMenu.appendChild(listItem);
-    });
+    departmentMenu.innerHTML = '<li><a class="dropdown-item dropdown-element active-filter" href="#" data-value="">All Departments</a></li><li><hr class="dropdown-divider"></li>' + 
+        Array.from(uniqueDepartments, ([id, name]) => `<li><a class="dropdown-item dropdown-element" href="#" data-value="${id}">${name}</a></li>`).join('');
 }
 
 function renderEmployees(employees) {
@@ -98,18 +76,12 @@ function renderEmployees(employees) {
     }
 
     employees.forEach(employee => {
-        // change the date formate of sql date to yyyy-mm-dd
         const rawDate = employee.joining_date ? new Date(employee.joining_date) : null;
         const joiningDate = rawDate && !isNaN(rawDate) ? rawDate.toLocaleDateString('en-CA') : '—';
+        const badgeClass = employee.status === 'active' ? 'bg-success' : 'bg-secondary';
 
-        // Define badge color based on status
-        const isStatusActive = employee.status === 'active';
-        const badgeClass = isStatusActive ? 'bg-success' : 'bg-secondary';
-
-        // disply employee data in table view
-        const tableRow = document.createElement('tr');
-        tableRow.className = 'emp-table-row';
-        tableRow.innerHTML = `
+        tableBody.innerHTML += `
+        <tr class="emp-table-row">
             <td class="emp-table-td ps-4 fw-bold text-dark">${employee.name}</td>
             <td class="emp-table-td">${employee.email}</td>
             <td class="emp-table-td">${employee.role.department.departmentName}</td>
@@ -124,9 +96,8 @@ function renderEmployees(employees) {
                     <a href="edit_employee.html?id=${employee.id}" class="btn btn-custom-primary btn-sm rounded-pill"><i class="bi bi-pencil-square"></i></a>
                     <button class="btn btn-outline-danger btn-sm rounded-pill delete-btn" data-id="${employee.id}"><i class="bi bi-trash"></i></button>
                 </div>
-            </td>`;
-
-        tableBody.appendChild(tableRow);
+            </td>
+        </tr>`;
     });
 }
 
@@ -146,12 +117,22 @@ async function handleEmployeeDelete(employeeId) {
 // Event Listener Assignments when page is loaded
 document.addEventListener('DOMContentLoaded', () => {
 
+    function debounce(func, delay) {
+        let timeoutId;
+        return (...args) => {
+            clearTimeout(timeoutId);
+            timeoutId = setTimeout(() => func.apply(this, args), delay);
+        };
+    }
+
+    const fetchDebounced = debounce(fetchEmployeesForList, 300);
+
     function attachInputFilter(elementId, filterKey) {
         const element = document.getElementById(elementId);
         if (element) {
             element.addEventListener('input', (event) => {
                 filters[filterKey] = event.target.value.trim();
-                fetchEmployeesForList();
+                fetchDebounced();
             });
         }
     }
@@ -250,8 +231,5 @@ function sortTable(columnIndex) {
         return newDirection === 'asc' ? diff : -diff;
     });
 
-    // Write the sorted rows in HTML DOM
-    tableRows.forEach(row => {
-        tableElement.tBodies[0].appendChild(row);
-    });
+    tableElement.tBodies[0].append(...tableRows);
 }
