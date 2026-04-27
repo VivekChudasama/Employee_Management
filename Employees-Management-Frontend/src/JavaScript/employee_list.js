@@ -39,8 +39,8 @@ function populateStatusFilter(employeesList) {
     if (!statusMenu) return;
 
     const statuses = [...new Set(employeesList.map(emp => emp.status))];
-    
-    statusMenu.innerHTML = '<li><a class="dropdown-item dropdown-element active-filter" href="#" data-value="">All Statuses</a></li><li><hr class="dropdown-divider"></li>' + 
+
+    statusMenu.innerHTML = '<li><a class="dropdown-item dropdown-element active-filter" href="#" data-value="">All Statuses</a></li><li><hr class="dropdown-divider"></li>' +
         statuses.map(status => `<li><a class="dropdown-item dropdown-element" href="#" data-value="${status}">${status}</a></li>`).join('');
 }
 
@@ -51,7 +51,7 @@ function populateDeptFilter(employeesList) {
     const uniqueDepartments = new Map();
     employeesList.forEach(emp => emp.role?.department && uniqueDepartments.set(emp.role.department.id, emp.role.department.departmentName));
 
-    departmentMenu.innerHTML = '<li><a class="dropdown-item dropdown-element active-filter" href="#" data-value="">All Departments</a></li><li><hr class="dropdown-divider"></li>' + 
+    departmentMenu.innerHTML = '<li><a class="dropdown-item dropdown-element active-filter" href="#" data-value="">All Departments</a></li><li><hr class="dropdown-divider"></li>' +
         Array.from(uniqueDepartments, ([id, name]) => `<li><a class="dropdown-item dropdown-element" href="#" data-value="${id}">${name}</a></li>`).join('');
 }
 

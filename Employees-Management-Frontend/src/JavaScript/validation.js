@@ -73,7 +73,7 @@ function showFieldError(fieldId, message) {
     }
 
     feedbackElement.textContent = message;
-    feedbackElement.style.display = 'block'; 
+    feedbackElement.style.display = 'block';
 }
 
 function clearFieldError(fieldId) {
@@ -91,7 +91,7 @@ function clearFieldError(fieldId) {
             dropdownBtn.classList.add('is-valid');
         }
     }
-    
+
     // Hide the dynamically added feedback block if it exists
     const feedbackElement = element.nextElementSibling;
     if (feedbackElement && feedbackElement.classList.contains('invalid-feedback')) {
@@ -170,7 +170,7 @@ function fieldsValidation(formId, submitBtnSelector, excludeIdProvider = null) {
     const runValidation = (fieldId, event) => {
         validateField(fieldId);
         validateForm(formId, submitBtnSelector);
-        
+
         // Specific email uniqueness check
         if (fieldId === 'email' && typeof isEmailDuplicate === 'function' && event?.type === 'input') {
             const excludeId = excludeIdProvider ? excludeIdProvider() : null;

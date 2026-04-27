@@ -113,7 +113,7 @@ function showToast(message, type = 'success') {
 
     // Create the toast box component
     const toastElement = document.createElement('div');
-    toastElement.className = `alert alert-${type} d-flex align-items-center shadow-lg fade show toast-custom`;
+    toastElement.className = `alert alert-${type} d-flex align-items-center shadow-lg fade show custom-toast`;
     toastElement.innerHTML = `
         <i class="bi bi-${iconName} fs-4 me-3"></i>
         <div class="flex-grow-1">${message}</div>
