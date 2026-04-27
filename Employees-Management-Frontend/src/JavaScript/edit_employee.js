@@ -35,8 +35,6 @@ async function loadEmployeeData() {
     populateStatusDropdown(status);
 }
 
-// handleEditInputEvent removed, logic extracted to validation.js
-
 // Handles the submission of the Edit Employee form
 async function handleEditFormSubmit(event) {
     event.preventDefault();
@@ -58,26 +56,26 @@ async function handleEditFormSubmit(event) {
     if (originalEmployeeData) {
         const rawDate = originalEmployeeData.joining_date;
         const originalDate = rawDate ? rawDate.split('T')[0] : '';
-        const originalRoleId = originalEmployeeData.role?.id;
+        const originalRoleId = Number(originalEmployeeData.role?.id);
 
         const hasChanges =
-            payload.name !== (originalEmployeeData.name || '') ||
-            payload.email !== (originalEmployeeData.email || '') ||
+            payload.name.trim() !== (originalEmployeeData.name || '').trim() ||
+            payload.email.trim() !== (originalEmployeeData.email || '').trim() ||
             payload.role_id !== originalRoleId ||
-            payload.salary !== (originalEmployeeData.salary || '') ||
+            payload.salary !== String(originalEmployeeData.salary || '') ||
             payload.joining_date !== originalDate ||
             payload.status !== (originalEmployeeData.status || '');
 
         if (!hasChanges) {
             showToast('No changes were made.', 'warning');
-            return;
+            return
         }
     }
 
-    // check uniqueness of email before updating employee 
+    // check uniqueness of email before updating employee
     if (isEmailDuplicate(payload.email, targetEmployeeId)) {
         showFieldError('email', 'Email address you have entered is already in use by another user.');
-        validateForm('editEmployeeForm', '#submitBtn');
+        validateForm('editEmployeeForm', null);
         return;
     }
 
@@ -102,6 +100,8 @@ function setupEditEmployeeForm() {
     fieldsValidation('editEmployeeForm', '#submitBtn', () => {
         return document.getElementById('employeeId').value || employeeIdUrlParam;
     });
+
+    validateForm('editEmployeeForm', '#submitBtn');
 
     editEmployeeForm.addEventListener('submit', handleEditFormSubmit);
 }

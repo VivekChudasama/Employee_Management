@@ -150,6 +150,7 @@ function revalidateParentForm(element) {
 // Employee Form Dropdown
 function updateDepartmentSelection(name, id) {
     updateDropdownUI('departmentDropdownBtn', 'department_id', 'Select Department', id, name);
+    populateRoles(id, null);
 }
 
 function updateStatusSelection(status) {
@@ -196,10 +197,12 @@ function populateRoles(departmentId = null, selectedRoleId = null) {
     if (!departmentId) {
         dropdownMenu.innerHTML = '<li><span class="dropdown-item dropdown-element text-muted text-center py-3">Select a department first</span></li>';
         dropdownButton.disabled = true;
+        dropdownButton.textContent = 'Select department first';
         return;
     }
 
     dropdownButton.disabled = false;
+    dropdownButton.textContent = 'Select a role';
     const rolesInDepartment = allRoles.filter(role => String(role.department?.id) === String(departmentId));
 
     let html = rolesInDepartment.length === 0 
@@ -430,7 +433,7 @@ function setupAddRole() {
 
     if (!saveRoleButton) return;
 
-    // logic to submit the Form inside the Role Modal
+    // submit the Form inside the Role Modal
     saveRoleButton.onclick = async () => {
         // Frontend rules validation
         const validationResult = validateAddRole();
@@ -441,7 +444,7 @@ function setupAddRole() {
         const newRoleName = document.getElementById('newRoleName').value.trim();
         const departmentId = Number(document.getElementById('department_id').value);
 
-        //Prevent duplicating role names manually
+        //Prevent duplicating role names 
         const isDuplicateRoleName = allRoles.some(role =>
             role.role.toLowerCase() === newRoleName.toLowerCase() &&
             String(role.department_id) === String(departmentId) &&
@@ -488,7 +491,6 @@ function setupAddRole() {
                 boostrapModalInstance.hide();
             }
 
-            // Refresh lists from the server
             await fetchRolesData();
             populateDepartments(departmentId);
             populateRoles(departmentId);

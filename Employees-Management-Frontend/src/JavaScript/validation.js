@@ -23,6 +23,7 @@ const RULES = {
     },
     salary: function (value) {
         if (!value || value.trim() === '') return 'Salary is Required';
+        if (value.trim().length > 9) return 'Slaray shoulde not contain more then 9 digit'
         if (isNaN(Number(value)) || Number(value) < 1) return 'Positive number only';
         return null;
     },
@@ -33,6 +34,10 @@ const RULES = {
     joining_date: function (value) {
         if (!value) return 'Joining Date is Required';
         if (new Date(value) <= new Date('2026-01-01')) return 'Must be after 2026-01-01';
+        return null;
+    },
+    status: function (value) {
+        if (!value || value === '') return 'Status is required';
         return null;
     }
 };
@@ -68,7 +73,7 @@ function showFieldError(fieldId, message) {
     }
 
     feedbackElement.textContent = message;
-    feedbackElement.style.display = 'block'; // force display for hidden inputs
+    feedbackElement.style.display = 'block'; 
 }
 
 function clearFieldError(fieldId) {

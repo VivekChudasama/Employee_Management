@@ -40,6 +40,7 @@ function setupAddEmployeeForm() {
     if (!addEmployeeForm) return;
 
     fieldsValidation('addEmployeeForm', '#submitBtn');
+
     addEmployeeForm.addEventListener('submit', handleFormSubmit);
 }
 
