@@ -79,10 +79,6 @@ async function handleEditFormSubmit(event) {
         return;
     }
 
-    // Ask user to confirm
-    const isUserAgreed = await confirmUI('Update Employee', 'Save changes ?', 'primary');
-    if (!isUserAgreed) return;
-
     // Send data to backend using PUT
     const { ok: isSuccessful } = await apiCall(`${API.employees}/${targetEmployeeId}`, 'PUT', payload);
     if (isSuccessful) {

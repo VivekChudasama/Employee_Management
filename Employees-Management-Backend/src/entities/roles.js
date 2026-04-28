@@ -22,7 +22,7 @@ const roleSchema = new EntitySchema({
     relations: {
         department: {
             type: "many-to-one",
-            target: "department",
+            target: "departments",
             inverseSide: "roles",
             joinColumn: { name: "department_id" },
             onDelete: "RESTRICT"

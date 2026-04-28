@@ -48,11 +48,10 @@ function populateDeptFilter(employeesList) {
     const departmentMenu = document.getElementById('getEmpDepartment');
     if (!departmentMenu) return;
 
-    const uniqueDepartments = new Map();
-    employeesList.forEach(emp => emp.role?.department && uniqueDepartments.set(emp.role.department.id, emp.role.department.departmentName));
+    const departmentList = [...new Set(employeesList.map(emp => emp.role?.department && (emp.role.department.id, emp.role.department.departmentName)))]
 
     departmentMenu.innerHTML = '<li><a class="dropdown-item dropdown-element active-filter" href="#" data-value="">All Departments</a></li><li><hr class="dropdown-divider"></li>' +
-        Array.from(uniqueDepartments, ([id, name]) => `<li><a class="dropdown-item dropdown-element" href="#" data-value="${id}">${name}</a></li>`).join('');
+        departmentList.map(([id, name]) => `<li><a class="dropdown-item dropdown-element" href="#" data-value="${id}">${name}</a></li>`).join('');
 }
 
 function renderEmployees(employees) {
@@ -89,7 +88,7 @@ function renderEmployees(employees) {
             <td class="emp-table-td">$${employee.salary || 0}</td>
             <td class="emp-table-td emp-table-td-center">${joiningDate}</td>
             <td class="emp-table-td">
-                <span class="badge rounded-pill px-3 py-2 fw-normal text-white ${badgeClass}">${employee.status}</span>
+                <span class="badge rounded-pill px-3 py-2 fw-normal text-white text-capitalize ${badgeClass}">${employee.status}</span>
             </td>
             <td class="emp-table-td emp-table-td-center">
                 <div class="d-flex justify-content-center gap-1">

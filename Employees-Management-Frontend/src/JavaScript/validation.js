@@ -3,7 +3,9 @@ const RULES = {
     name: function (value) {
         if (!value || value.trim() === '') return 'Name is required';
         if (!/^[a-zA-Z\s.]+$/.test(value.trim())) return 'Letters, spaces and dots only';
-        if (value.trim().length < 3) return 'At least 3 characters needed';
+        if (value.trim().length < 3) return 'Name shoulde content At least 3 characters';
+        if (value.trim().length >= 70) return 'Please enter name below 70 character'
+
         return null;
     },
     email: function (value) {
@@ -17,14 +19,15 @@ const RULES = {
     },
     roleName: function (value) {
         if (!value || value.trim() === '') return 'RoleName is Required';
-        if (value.trim().length < 3) return 'At least 3 characters';
-        if (value.trim().length > 30) return 'Max 30 characters';
+        if (value.trim().length < 3) return 'RoleName shoulde content At least 3 characters';
+        if (value.trim().length >= 70) return 'Please enter name below 70 characters';
         return null;
     },
     salary: function (value) {
         if (!value || value.trim() === '') return 'Salary is Required';
-        if (value.trim().length > 9) return 'Slaray shoulde not contain more then 9 digit'
-        if (isNaN(Number(value)) || Number(value) < 1) return 'Positive number only';
+        if (value.trim().length > 9) return 'Salary shoulde not contain more then 9 digit'
+        if (isNaN(Number(value)) || Number(value) === 0) return 'Salary coule not be Zero'
+        if (isNaN(Number(value)) || Number(value) < 1) return 'Please enter valid Positive number only';
         return null;
     },
     department_id: function (value) {
@@ -34,6 +37,8 @@ const RULES = {
     joining_date: function (value) {
         if (!value) return 'Joining Date is Required';
         if (new Date(value) <= new Date('2026-01-01')) return 'Must be after 2026-01-01';
+        const today = new Date().toISOString().split('T')[0];
+        if (new Date(value) >= new Date(today)) return 'Please select a valid date. Future dates are not allowed.' ; else return '';
         return null;
     },
     status: function (value) {

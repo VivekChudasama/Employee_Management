@@ -18,7 +18,7 @@ const departmentSchema = new EntitySchema({
         roles: {
             type: "one-to-many",
             target: "roles",
-            inverseSide: "department",
+            inverseSide: "departments",
             onDelete: 'RESTRICT'
         }
     }

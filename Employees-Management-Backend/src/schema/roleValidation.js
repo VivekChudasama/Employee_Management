@@ -23,7 +23,7 @@ export const addRoleValidation = [
     body('role').trim().notEmpty().withMessage('Role name is required')
         .bail()
         .isString().withMessage('Role must be a string')
-        .isLength({ min: 3, max: 30 }).withMessage('Role name must be between 3 and 30 characters'),
+        .isLength({ min: 3, max: 70 }).withMessage('Role name must be between 3 and 70 characters'),
 
     body('department_id').trim().notEmpty().withMessage('Department ID is required')
         .bail()
@@ -36,7 +36,7 @@ export const updateRoleValidation = [
 
     body('role').optional().trim().notEmpty().withMessage('Role name cannot be empty').bail()
         .isString().withMessage('Role must be a string')
-        .isLength({ min: 3, max: 30 }).withMessage('Role name must be between 3 and 30 characters'),
+        .isLength({ min: 3, max: 70 }).withMessage('Role name must be between 3 and 70 characters'),
 
     body('department_id').optional().trim().notEmpty().withMessage('Department ID cannot be empty').bail()
         .isInt({ min: 1 }).withMessage('Department ID must be a valid positive integer')

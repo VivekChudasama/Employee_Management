@@ -39,7 +39,7 @@
 }
 
 .add-employee .filter-bar .filter-bar-range .range-input {
-    width: 80px;
+    width: 105px;
 }
 
 .add-employee .filter-bar .filter-bar-search .search-input,
@@ -57,6 +57,10 @@
 .add-employee .filter-bar .filter-bar-range .range-input:focus {
     border-color: var(--primary-blue);
     box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.08);
+}
+
+.add-employee .filter-bar .add-emp-btn {
+    padding: 8px 12px;
 }
 
 .btn-custom-primary {
@@ -139,6 +143,10 @@
     font-weight: var(--font-weight-normal);
     border-bottom: 1px solid rgba(0, 0, 0, 0.04);
     transition: background-color var(--transition-base);
+    /* max-width: 200px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis; */
 }
 
 .emp-table .emp-table-body .emp-table-row:hover .emp-table-td {

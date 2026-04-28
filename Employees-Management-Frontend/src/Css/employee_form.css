@@ -44,6 +44,12 @@
     transform: translateY(-2px);
 }
 
+.form .form-body .required-icon::before{
+  content:"*";
+  color:red;
+  font-size: 12px;
+}
+
 /*  Labels  */
 .form .form-body .employee-form .form-label {
     font-weight: var(--font-weight-bold);
@@ -85,7 +91,7 @@
 .form .form-body .submit-section .send-btn {
     font-size: 20px;
     background: var(--primary-blue);
-    padding: 11px 16px 11px 14px;
+    padding: 11px 16px 11px 16px;
     border-radius: 16px;
     transition: all 0.2s;
     cursor: pointer;
@@ -106,7 +112,7 @@
 }
 
 .form .form-body .submit-section .send-btn:hover .send-btn-icon {
-    transform: translateX(24px) rotate(45deg) scale(1.1);
+    transform: translateX(30px) rotate(45deg) scale(1.1);
 }
 
 .form .form-body .submit-section .send-btn:hover .send-btn-label {

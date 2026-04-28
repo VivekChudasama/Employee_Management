@@ -18,3 +18,4 @@ export const AppDataSource = new DataSource({
     logging: false,
     entities: [departmentSchema, employeesSchema, roleSchema]
 });
+  

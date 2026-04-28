@@ -214,8 +214,8 @@ function populateRoles(departmentId = null, selectedRoleId = null) {
                     <a class="dropdown-item dropdown-element d-flex justify-content-between align-items-center role-option py-2 px-3" href="#" data-id="${role.id}" data-name="${role.role}">
                         <span class="fw-bold">${role.role}</span>
                         <div class="d-flex gap-2 ms-2 action-btns">
-                            <button type="button" class="btn btn-sm btn-outline-warning role-edit-btn border-0 shadow-sm" data-id="${role.id}" data-name="${role.role}"><i class="bi bi-pencil-fill"></i></button>
-                            <button type="button" class="btn btn-sm btn-outline-danger role-delete-btn border-0 shadow-sm" data-id="${role.id}"><i class="bi bi-trash-fill"></i></button>
+                            <button type="button" class="btn btn-sm btn-outline-warning role-edit-btn border-0" data-id="${role.id}" data-name="${role.role}"><i class="bi bi-pencil-fill"></i></button>
+                            <button type="button" class="btn btn-sm btn-outline-danger role-delete-btn border-0" data-id="${role.id}"><i class="bi bi-trash-fill"></i></button>
                         </div>
                     </a>
                 </li>`;
@@ -318,7 +318,7 @@ function openRoleModal(roleData = null) {
         // Clearing for ADD ROLE
         editRoleId = null;
         originalRoleData = null;
-        modalTitle.textContent = 'Add New Role';
+        modalTitle.textContent = 'Add Role';
         nameInput.value = '';
         saveButton.textContent = 'Add Role';
     }
@@ -352,7 +352,7 @@ async function deleteRole(roleIdToDelete) {
         return;
     }
 
-    const isUserAgreed = await confirmUI('Delete Role', 'Are you sure you want to delete this role?', 'danger');
+    const isUserAgreed = await confirmUI('Delete Role', 'Are you sure you want to delete this role?' , 'danger');
     if (!isUserAgreed) return;
 
     const apiResponse = await apiCall(`${API.roles}/${roleIdToDelete}`, 'DELETE');

@@ -20,7 +20,7 @@
     <header>
         <nav class="navbar navbar-expand-lg nav-bar navbar-dark top-0 position-sticky">
             <div class="container nav-bar-content d-flex align-items-lg-center">
-                <a class="navbar-brand" href="#">
+                <a class="navbar-brand" href="./employees_list.html">
                     <p class="mt-2 text-white fw-bold">Employees-Management</p>
                 </a>
 
@@ -40,10 +40,6 @@
                             <li class="nav-item">
                                 <a class="nav-link nav-text d-inline-block align-middle text-white pill-radius"
                                     href="./employees_list.html">Home</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link nav-text text-white pill-radius" href="./add_employee.html">Add
-                                    Employees</a>
                             </li>
                         </ul>
                         <div class="nav-profile-wrap ms-4">
@@ -65,7 +61,7 @@
                 <button class="btn back-btn"><i class="bi bi-arrow-left me-2"></i>Back</button>
             </a>
 
-            <h1 class="mb-4 form-title position-relative mt-3">Edit Employee Details
+            <h1 class="mb-4 form-title position-relative mt-3">Edit Employee
             </h1>
             <p></p>
         </div>
@@ -78,13 +74,13 @@
                 <!-- Row 1: Name and Email -->
                 <div class="row form-row">
                     <div class="mb-3 col-12 col-md-6">
-                        <label for="name" class="form-label">Full Name</label>
-                        <input type="text" name="name" id="name" class="form-control" minlength="3" maxlength="50"
+                        <label for="name" class="form-label required-icon">Full Name</label>
+                        <input type="text" name="name" id="name" class="form-control" minlength="3" maxlength="70"
                             pattern="^[a-zA-Z\s.]and$" required>
                         <div class="invalid-feedback">Enter a valid name (letters, spaces, dots only)</div>
                     </div>
                     <div class="mb-3 col-12 col-md-6">
-                        <label for="email" class="form-label">Email</label>
+                        <label for="email" class="form-label required-icon">Email</label>
                         <input type="email" name="email" id="email" class="form-control" maxlength="254" required>
                         <div class="invalid-feedback">Enter a valid email address</div>
                     </div>
@@ -93,7 +89,7 @@
                 <!-- Row 2: Department and Role -->
                 <div class="row form-row">
                     <div class="mb-3 col-12 col-md-6">
-                        <label class="form-label">Department</label>
+                        <label class="form-label required-icon">Department</label>
                         <button
                             class="btn outline-input-btn dropdown-toggle w-100 text-start d-flex justify-content-between align-items-center department-dropdown-btn"
                             type="button" id="departmentDropdownBtn" data-bs-toggle="dropdown" aria-expanded="false">
@@ -103,7 +99,7 @@
                         <input type="hidden" name="department_id" id="department_id" required>
                     </div>
                     <div class="mb-3 col-12 col-md-6">
-                        <label class="form-label">Employee Role</label>
+                        <label class="form-label required-icon">Employee Role</label>
                         <button class="btn outline-input-btn dropdown-toggle w-100 text-start
                             d-flex justify-content-between align-items-center role-dropdown-btn" type="button"
                             id="roleDropdownBtn" data-bs-toggle="dropdown" aria-expanded="false">
@@ -113,27 +109,28 @@
                     </div>
                 </div>
 
-                <!-- Row 3: Salary -->
+                <!-- Row 3: Salary and Joining Date   -->
                 <div class="row form-row">
-                    <div class="mb-3 col-12">
-                        <label for="salary" class="form-label">Salary</label>
+                    <div class="mb-3 col-12 col-md-6">
+                        <label for="salary" class="form-label required-icon">Salary</label>
                         <input type="number" name="salary" id="salary" class="form-control"
                             placeholder="Select a role first" min="1" required disabled>
                         <div class="invalid-feedback">Enter a valid salary (positive number)</div>
                     </div>
-                </div>
-
-
-                <!-- Row 4: Joining Date and Status -->
-                <div class="row form-row">
                     <div class="mb-3 col-12 col-md-6">
-                        <label for="joining_date" class="form-label">Joining Date</label>
+                        <label for="joining_date" class="form-label required-icon">Joining Date</label>
                         <input type="date" name="joining_date" id="joining_date" class="form-control" min="2026-01-02"
                             required>
                         <div class="invalid-feedback">Joining date must be after 2026-01-01</div>
                     </div>
+                </div>
+
+
+                <!-- Row 4: Status -->
+                <div class="row form-row">
+
                     <div class="mb-3 col-12 col-md-6">
-                        <label class="form-label">Status</label>
+                        <label class="form-label required-icon">Status</label>
                         <button
                             class="btn outline-input-btn dropdown-toggle w-100 text-start d-flex justify-content-between align-items-center status-dropdown-btn"
                             type="button" id="statusDropdownBtn" data-bs-toggle="dropdown" aria-expanded="false">
@@ -181,7 +178,7 @@
                     <div class="mb-3">
                         <label for="newRoleName" class="form-label">Role Name</label>
                         <input type="text" id="newRoleName" class="form-control" placeholder="Enter role name"
-                            minlength="3" maxlength="30">
+                            minlength="3" maxlength="70">
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>

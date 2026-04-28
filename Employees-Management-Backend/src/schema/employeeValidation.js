@@ -36,7 +36,7 @@ export const getEmployeeByIdValidation = [
 export const addEmployeeValidation = [
     body('name').trim().notEmpty().withMessage('Name is required')
         .bail()
-        .isLength({ min: 3, max: 50 }).withMessage('Name must be between 3 and 50 characters')
+        .isLength({ min: 3, max: 70 }).withMessage('Name must be between 3 and 70 characters')
         .matches(/^[a-zA-Z\s.]+$/).withMessage('Name can only contain letters, spaces, and dots'),
 
     body('email').trim().notEmpty().withMessage('Email address is required')
@@ -70,7 +70,7 @@ export const updateEmployessValidation = [
 
     body('name').optional().trim().notEmpty().withMessage('Name cannot be empty')
         .bail()
-        .isLength({ min: 3, max: 50 }).withMessage('Name must be between 3 and 50 characters')
+        .isLength({ min: 3, max: 70 }).withMessage('Name must be between 3 and 70 characters')
         .matches(/^[a-zA-Z\s.]+$/).withMessage('Name can only contain letters, spaces, and dots'),
 
     body('email').optional().trim().notEmpty().withMessage('Email cannot be empty')

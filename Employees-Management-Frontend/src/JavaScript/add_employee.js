@@ -21,10 +21,6 @@ async function handleFormSubmit(event) {
         return;
     }
 
-    // Ask user to confirm
-    const isUserAgreed = await confirmUI('Add Employee', 'Confirm new entry?', 'primary');
-    if (!isUserAgreed) return;
-
     // Send data to backend
     const { ok: isSuccessful } = await apiCall(`${API.employees}/add-employee`, 'POST', payload);
     if (isSuccessful) {
