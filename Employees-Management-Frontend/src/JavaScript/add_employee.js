@@ -22,7 +22,7 @@ async function handleFormSubmit(event) {
     }
 
     const submitBtn = document.getElementById('submitBtn');
-    setBtnLoading(submitBtn, 'Submitting...');
+    setBtnLoading(submitBtn, 'Submitting');
 
     // Send data to backend
     const { ok: isSuccessful } = await apiCall(`${API.employees}/add-employee`, 'POST', payload);

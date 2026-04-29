@@ -155,19 +155,6 @@ function validateForm(formId, submitBtnSelector) {
     return isFormValid;
 }
 
-// Captures backend JSON errors and puts them into UI Toasts
-function handleBackendErrors(responseData) {
-    if (responseData.errors && Array.isArray(responseData.errors)) {
-        responseData.errors.forEach(error => {
-            showFieldError(error.field, error.message);
-        });
-        showToast(responseData.message || 'Check form errors', 'danger');
-    } else {
-        const errorMsg = responseData.error || responseData.message || 'Operation failed';
-        showToast(errorMsg, 'danger');
-    }
-}
-
 // Input validation for employee forms (Add/Edit)
 function fieldsValidation(formId, submitBtnSelector, excludeIdProvider = null) {
     const fieldsToValidate = ['name', 'email', 'joining_date', 'status', 'salary', 'role_id', 'department_id'];

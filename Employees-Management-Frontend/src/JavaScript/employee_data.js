@@ -34,7 +34,6 @@ async function apiCall(url, method = 'GET', bodyContent = null) {
         const jsonResponse = await response.json();
 
         if (!response.ok) {
-            handleBackendErrors(jsonResponse);
             return { ok: false, data: jsonResponse };
         }
 
@@ -193,7 +192,7 @@ function populateStatusDropdown(selectedStatus = null) {
     if (!dropdownMenu) return;
 
     const uniqueStatuses = [...new Set(['active', 'inactive', ...allEmployees.map(emp => emp.status).filter(Boolean)])];
-    
+
     const optionsHtml = uniqueStatuses.map(status => {
         const isActive = status === selectedStatus;
         if (isActive) updateStatusSelection(status);
@@ -219,7 +218,7 @@ function populateRoles(departmentId = null, selectedRoleId = null) {
     dropdownButton.textContent = 'Select a role';
     const rolesInDepartment = allRoles.filter(role => String(role.department?.id) === String(departmentId));
 
-    let html = rolesInDepartment.length === 0 
+    let html = rolesInDepartment.length === 0
         ? '<li><span class="dropdown-item dropdown-element text-muted text-center py-3">No roles in this department</span></li>'
         : rolesInDepartment.map(role => {
             const isActive = selectedRoleId && String(role.id) === String(selectedRoleId);
@@ -248,7 +247,7 @@ function updateRolePickerSelection(name, id) {
     const hiddenInput = document.getElementById('role_id');
 
     if (button) button.textContent = name || 'Select a role';
-    
+
     if (hiddenInput) {
         hiddenInput.value = id || '';
         if (id) revalidateParentForm(hiddenInput);
@@ -328,7 +327,7 @@ function openRoleModal(roleData = null) {
     if (roleData !== null) {
         // Populating for UPDATE ROLE
         editRoleId = roleData.id;
-        originalRoleData = { name: roleData.name };  
+        originalRoleData = { name: roleData.name };
         modalTitle.textContent = 'Edit Role';
         nameInput.value = roleData.name;
         saveButton.textContent = 'Update Role';
@@ -344,20 +343,6 @@ function openRoleModal(roleData = null) {
     // Clear any previous error 
     nameInput.classList.remove('is-invalid');
 
-    // Add blur event listener for real-time validation
-    if (!nameInput.dataset.blurListenerAdded) {
-        nameInput.addEventListener('blur', () => {
-            const roleNameValue = nameInput.value || '';
-            const errorMessage = RULES.roleName(roleNameValue);
-            if (errorMessage) {
-                showFieldError('newRoleName', errorMessage);
-            } else {
-                clearFieldError('newRoleName');
-            }
-        });
-        nameInput.dataset.blurListenerAdded = 'true';
-    }
-
     modal.show();
 }
 
@@ -371,9 +356,9 @@ async function deleteRole(roleIdToDelete) {
     }
 
     const roleToDelete = allRoles.find(r => String(r.id) === String(roleIdToDelete));
-    const roleName = roleToDelete ? roleToDelete.role : 'this role';
+    const roleName = roleToDelete ? roleToDelete.role :'';
 
-    const isUserAgreed = await confirmUI('Delete Role', `Are you sure you want to delete "${roleName}"? This cannot be undone.`, 'danger');
+    const isUserAgreed = await confirmUI('Delete Role', `Are you sure you want to delete Role: "${roleName}" ? This cannot be undone.`, 'danger');
     if (!isUserAgreed) return;
 
     const apiResponse = await apiCall(`${API.roles}/${roleIdToDelete}`, 'DELETE');
@@ -410,11 +395,11 @@ function setupDepartmentFilter() {
         const deptOption = event.target.closest('.department-option');
         if (deptOption) {
             event.preventDefault();
-            
+
             const menu = deptOption.closest('.dropdown-menu');
             if (menu) menu.querySelectorAll('.department-option').forEach(item => item.classList.remove('fw-bold', 'text-custom-primary'));
             deptOption.classList.add('fw-bold', 'text-custom-primary');
-            
+
             const id = deptOption.dataset.id;
             updateDepartmentSelection(deptOption.dataset.name, id);
 
@@ -428,11 +413,11 @@ function setupDepartmentFilter() {
         const statusOption = event.target.closest('.status-option');
         if (statusOption) {
             event.preventDefault();
-            
+
             const menu = statusOption.closest('.dropdown-menu');
             if (menu) menu.querySelectorAll('.status-option').forEach(item => item.classList.remove('fw-bold', 'text-custom-primary'));
             statusOption.classList.add('fw-bold', 'text-custom-primary');
-            
+
             updateStatusSelection(statusOption.dataset.status);
             revalidateParentForm(statusOption);
         }
@@ -488,9 +473,9 @@ function setupAddRole() {
         }
 
         const willUpdateExistingRole = !!editRoleId;
-        
+
         if (willUpdateExistingRole) {
-            if (originalRoleData && 
+            if (originalRoleData &&
                 newRoleName === originalRoleData.name) {
                 showToast('No changes were made.', 'warning');
                 return;

@@ -89,7 +89,7 @@
 
 .form .form-body .employee-form .date-input-validation.is-valid,
 .form .form-body .employee-form .date-input-validation.is-invalid {
-    background-position: right 2.5rem center !important;
+    background-position: right 40px center !important;
 }
 
 /* Submit button */

@@ -80,7 +80,7 @@ async function handleEditFormSubmit(event) {
     }
 
     const submitBtn = document.getElementById('submitBtn');
-    setBtnLoading(submitBtn, 'Updating...');
+    setBtnLoading(submitBtn, 'Updating');
 
     // Send data to backend using PUT
     const { ok: isSuccessful } = await apiCall(`${API.employees}/${targetEmployeeId}`, 'PUT', payload);

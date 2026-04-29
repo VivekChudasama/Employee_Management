@@ -21,7 +21,6 @@ function buildEmployeesApiUrl() {
 
 // Fetch the employees list from the backend and then rendering
 async function fetchEmployeesForList() {
-    // PREVENT bad API calls from triggering backend Toast errors
     if (filters.minSalary !== '' && filters.maxSalary !== '') {
         const minVal = parseFloat(filters.minSalary);
         const maxVal = parseFloat(filters.maxSalary);
@@ -36,7 +35,7 @@ async function fetchEmployeesForList() {
     const { ok, data } = await apiCall(url);
 
     if (ok) {
-        // Render newest employees first by strictly sorting by ID descending
+        // Render newest employees first
         const sortedData = [...data].sort((a, b) => Number(b.id) - Number(a.id));
         renderEmployees(sortedData);
 
@@ -75,15 +74,6 @@ function renderEmployees(employees) {
 
     if (!tableBody) return;
 
-    // Dispose old tooltips if any before clearing
-    const existingTooltips = document.querySelectorAll('[data-bs-toggle="tooltip"]');
-    existingTooltips.forEach(el => {
-        const tooltipInstance = bootstrap.Tooltip.getInstance(el);
-        if (tooltipInstance) {
-            tooltipInstance.dispose();
-        }
-    });
-
     tableBody.innerHTML = '';
 
     const hasEmployees = employees.length > 0;
@@ -106,12 +96,12 @@ function renderEmployees(employees) {
 
         rowsHtml += `
         <tr class="emp-table-row">
-            <td class="emp-table-td ps-4 text-dark" data-bs-toggle="tooltip" data-bs-custom-class="custom-tooltip"
+            <td class="emp-table-td ps-4 text-dark" data-bs-toggle="tooltip" data-bs-delay='{"show":400, "hide":100}' data-bs-custom-class="custom-tooltip"
                 data-bs-placement="top" title="${employee.name}">${employee.name}</td>
-            <td class="emp-table-td" data-bs-toggle="tooltip" data-bs-custom-class="custom-tooltip"
+            <td class="emp-table-td" data-bs-toggle="tooltip" data-bs-delay='{"show":500, "hide":100}' data-bs-custom-class="custom-tooltip"
                 data-bs-placement="top" title="${employee.email}">${employee.email}</td>
             <td class="emp-table-td">${employee.role.department.departmentName}</td>
-            <td class="emp-table-td" data-bs-toggle="tooltip" data-bs-custom-class="custom-tooltip"
+            <td class="emp-table-td" data-bs-toggle="tooltip" data-bs-delay='{"show":500, "hide":100}' data-bs-custom-class="custom-tooltip"
                 data-bs-placement="top" title="${employee.role.role}">${employee.role.role}</td>
             <td class="emp-table-td">$${employee.salary}</td>
             <td class="emp-table-td emp-table-td-center">${joiningDate}</td>
@@ -137,7 +127,7 @@ function renderEmployees(employees) {
 // Request backend to delete an employee
 async function handleEmployeeDelete(employeeId, employeeName) {
     const displayName = employeeName || 'this employee';
-    const isConfirmed = await confirmUI('Delete Employee', `Are you sure you want to delete "${displayName}"? This cannot be undone.`, 'danger');
+    const isConfirmed = await confirmUI('Delete Employee', `Are you sure you want to delete? This cannot be undone.`, 'danger');
     if (!isConfirmed) return;
 
     // Call the delete API
@@ -175,8 +165,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                 if (minEl && maxEl) {
                     const minStr = minEl.value;
                     const maxStr = maxEl.value;
-                    const minVal = minStr;
-                    const maxVal = maxStr;
+                    const minVal = parseFloat(minStr);
+                    const maxVal = parseFloat(maxStr);
 
                     let hasError = false;
 
@@ -227,7 +217,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const btn = event.target.closest('.dropdown')?.querySelector('.dropdown-btn');
                 if (btn) {
                     btn.textContent = filters[filterKey] ? dropdownItem.textContent : defaultText;
-                    btn.classList.remove('fw-bold'); // strictly ensure button is never bold
                 }
 
                 fetchEmployeesForList();
