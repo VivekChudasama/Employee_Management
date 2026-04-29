@@ -24,7 +24,13 @@ export const getEmployeeValidation = [
     query('min_salary').optional().isNumeric().withMessage('Minimum salary must be a numeric value')
         .isFloat({ min: 0 }).withMessage('Minimum salary cannot be negative'),
 
-    query('max_salary').optional().isNumeric().withMessage('Maximum salary must be a numeric value'),
+    query('max_salary').optional().isNumeric().withMessage('Maximum salary must be a numeric value')
+        .custom((value, { req }) => {
+            if (req.query.min_salary !== undefined && parseFloat(value) < parseFloat(req.query.min_salary)) {
+                throw new Error('Max salary must be greater than Min salary');
+            }
+            return true;
+        }),
 ];
 
 // Get Employee by ID validation rules

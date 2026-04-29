@@ -130,6 +130,21 @@ function showToast(message, type = 'success') {
     }, 4000);
 }
 
+// Button loading 
+function setBtnLoading(btn, loadingText) {
+    if (!btn) return;
+    btn._originalHTML = btn.innerHTML;
+    btn._wasDisabled = btn.disabled;
+    btn.disabled = true;
+    btn.innerHTML = `<span class="spinner-border spinner-border-sm me-2" role="status"></span>${loadingText}`;
+}
+
+function resetBtnLoading(btn) {
+    if (!btn || !btn._originalHTML) return;
+    btn.innerHTML = btn._originalHTML;
+    btn.disabled = btn._wasDisabled || false;
+}
+
 function updateDropdownUI(btnId, inputId, defaultText, value, label) {
     const btn = document.getElementById(btnId);
     const hiddenInput = document.getElementById(inputId);
@@ -164,29 +179,28 @@ function populateDepartments(selectedId = null) {
     const seenDepartments = new Map();
     allRoles.forEach(r => r.department && seenDepartments.set(r.department.id, r.department.departmentName));
 
-    let html = '<li><a class="dropdown-item dropdown-element text-muted department-option py-2 px-3" href="#" data-id="" data-name="Select Department">Select Department</a></li>';
-    
-    seenDepartments.forEach((name, id) => {
-        html += `<li><a class="dropdown-item dropdown-element department-option py-2 px-3" href="#" data-id="${id}" data-name="${name}">${name}</a></li>`;
-        if (String(id) === String(selectedId)) updateDepartmentSelection(name, id);
-    });
+    const optionsHtml = Array.from(seenDepartments.entries()).map(([id, name]) => {
+        const isActive = String(id) === String(selectedId);
+        if (isActive) updateDepartmentSelection(name, id);
+        return `<li><a class="dropdown-item dropdown-element department-option py-2 px-3 ${isActive ? 'fw-bold text-custom-primary' : ''}" href="#" data-id="${id}" data-name="${name}">${name}</a></li>`;
+    }).join('');
 
-    dropdownMenu.innerHTML = html;
+    dropdownMenu.innerHTML = `<li><a class="dropdown-item dropdown-element text-muted department-option py-2 px-3 ${!selectedId ? 'fw-bold text-custom-primary' : ''}" href="#" data-id="" data-name="Select Department">Select Department</a></li>` + optionsHtml;
 }
 
 function populateStatusDropdown(selectedStatus = null) {
     const dropdownMenu = document.getElementById('statusDropdownMenu');
     if (!dropdownMenu) return;
 
-    const uniqueStatuses = [...new Set(allEmployees.map(emp => emp.status).filter(Boolean))];
+    const uniqueStatuses = [...new Set(['active', 'inactive', ...allEmployees.map(emp => emp.status).filter(Boolean)])];
     
-    let html = '<li><a class="dropdown-item dropdown-element text-muted status-option py-2 px-3" href="#" data-status="">Select Status</a></li>';
-    uniqueStatuses.forEach(status => {
-        html += `<li><a class="dropdown-item dropdown-element status-option py-2 px-3" href="#" data-status="${status}">${status}</a></li>`;
-        if (status === selectedStatus) updateStatusSelection(status);
-    });
+    const optionsHtml = uniqueStatuses.map(status => {
+        const isActive = status === selectedStatus;
+        if (isActive) updateStatusSelection(status);
+        return `<li><a class="dropdown-item dropdown-element status-option py-2 px-3 ${isActive ? 'fw-bold text-custom-primary' : ''}" href="#" data-status="${status}">${status}</a></li>`;
+    }).join('');
 
-    dropdownMenu.innerHTML = html;
+    dropdownMenu.innerHTML = `<li><a class="dropdown-item dropdown-element text-muted status-option py-2 px-3 ${!selectedStatus ? 'fw-bold text-custom-primary' : ''}" href="#" data-status="">Select Status</a></li>` + optionsHtml;
 }
 
 function populateRoles(departmentId = null, selectedRoleId = null) {
@@ -208,11 +222,12 @@ function populateRoles(departmentId = null, selectedRoleId = null) {
     let html = rolesInDepartment.length === 0 
         ? '<li><span class="dropdown-item dropdown-element text-muted text-center py-3">No roles in this department</span></li>'
         : rolesInDepartment.map(role => {
-            if (selectedRoleId && String(role.id) === String(selectedRoleId)) updateRolePickerSelection(role.role, role.id);
+            const isActive = selectedRoleId && String(role.id) === String(selectedRoleId);
+            if (isActive) updateRolePickerSelection(role.role, role.id);
             return `
                 <li>
-                    <a class="dropdown-item dropdown-element d-flex justify-content-between align-items-center role-option py-2 px-3" href="#" data-id="${role.id}" data-name="${role.role}">
-                        <span class="fw-bold">${role.role}</span>
+                    <a class="dropdown-item dropdown-element d-flex justify-content-between align-items-center role-option py-2 px-3 ${isActive ? 'fw-bold text-custom-primary' : ''}" href="#" data-id="${role.id}" data-name="${role.role}">
+                        <span class="role-name-text">${role.role}</span>
                         <div class="d-flex gap-2 ms-2 action-btns">
                             <button type="button" class="btn btn-sm btn-outline-warning role-edit-btn border-0" data-id="${role.id}" data-name="${role.role}"><i class="bi bi-pencil-fill"></i></button>
                             <button type="button" class="btn btn-sm btn-outline-danger role-delete-btn border-0" data-id="${role.id}"><i class="bi bi-trash-fill"></i></button>
@@ -278,6 +293,9 @@ function setupRoleDropdown() {
         const clickedActionArea = event.target.closest('.action-btns');
         if (clickedOptionItem && !clickedActionArea) {
             event.preventDefault();
+
+            dropdownMenu.querySelectorAll('.role-option').forEach(item => item.classList.remove('fw-bold', 'text-custom-primary'));
+            clickedOptionItem.classList.add('fw-bold', 'text-custom-primary');
 
             const name = clickedOptionItem.dataset.name;
             const id = clickedOptionItem.dataset.id;
@@ -352,7 +370,10 @@ async function deleteRole(roleIdToDelete) {
         return;
     }
 
-    const isUserAgreed = await confirmUI('Delete Role', 'Are you sure you want to delete this role?' , 'danger');
+    const roleToDelete = allRoles.find(r => String(r.id) === String(roleIdToDelete));
+    const roleName = roleToDelete ? roleToDelete.role : 'this role';
+
+    const isUserAgreed = await confirmUI('Delete Role', `Are you sure you want to delete "${roleName}"? This cannot be undone.`, 'danger');
     if (!isUserAgreed) return;
 
     const apiResponse = await apiCall(`${API.roles}/${roleIdToDelete}`, 'DELETE');
@@ -389,6 +410,11 @@ function setupDepartmentFilter() {
         const deptOption = event.target.closest('.department-option');
         if (deptOption) {
             event.preventDefault();
+            
+            const menu = deptOption.closest('.dropdown-menu');
+            if (menu) menu.querySelectorAll('.department-option').forEach(item => item.classList.remove('fw-bold', 'text-custom-primary'));
+            deptOption.classList.add('fw-bold', 'text-custom-primary');
+            
             const id = deptOption.dataset.id;
             updateDepartmentSelection(deptOption.dataset.name, id);
 
@@ -402,6 +428,11 @@ function setupDepartmentFilter() {
         const statusOption = event.target.closest('.status-option');
         if (statusOption) {
             event.preventDefault();
+            
+            const menu = statusOption.closest('.dropdown-menu');
+            if (menu) menu.querySelectorAll('.status-option').forEach(item => item.classList.remove('fw-bold', 'text-custom-primary'));
+            statusOption.classList.add('fw-bold', 'text-custom-primary');
+            
             updateStatusSelection(statusOption.dataset.status);
             revalidateParentForm(statusOption);
         }
@@ -453,6 +484,7 @@ function setupAddRole() {
 
         if (isDuplicateRoleName) {
             showToast('The role name you have entered already exists.', 'warning');
+            return;
         }
 
         const willUpdateExistingRole = !!editRoleId;
@@ -473,17 +505,14 @@ function setupAddRole() {
             department_id: departmentId
         };
 
-        const confirmTitle = willUpdateExistingRole ? 'Update Role' : 'Add Role';
-        const confirmMsg = `Are you sure you want to ${willUpdateExistingRole ? 'update' : 'add'} this role?`;
-        const confirmType = willUpdateExistingRole ? 'warning' : 'primary';
-        
-        const isUserAgreed = await confirmUI(confirmTitle, confirmMsg, confirmType);
-        if (!isUserAgreed) return;
+        setBtnLoading(saveRoleButton, `${actionLabel === 'Update' ? 'Updating' : 'Adding'}`);
 
         const apiResponse = await apiCall(targetApiEndpoint, methodType, rolePayload);
 
+        resetBtnLoading(saveRoleButton);
+
         if (apiResponse.ok) {
-            showToast(`Role ${actionLabel.toLowerCase()}ed!`, 'success');
+            showToast(`Role ${willUpdateExistingRole ? 'updated' : 'added'} successfully!`, 'success');
 
             const modalDOM = document.getElementById('roleModal');
             const boostrapModalInstance = bootstrap.Modal.getInstance(modalDOM);

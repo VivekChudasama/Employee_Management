@@ -6,7 +6,8 @@ import { roleRepository } from "../repositories/rolesRepository.js";
 // Get all employees with search & filters
 const findAllEmployees = async ({ search, department_id, status, min_salary, max_salary }) => {
     let findOptions = {
-        relations: ["role", "role.department"]
+        relations: ["role", "role.department"],
+        order: { id: 'DESC' }
     };
 
     let Filter = {};
@@ -107,7 +108,7 @@ const updateEmployee = async (employeeId, updateData) => {
     // delete role relation and update it separately to avoid issues with TypeORM's relation handling during update.
     delete existingEmployee.role;
 
-    return await employeeRepository.updateEmployee(existingEmployee , updateData);
+    return await employeeRepository.updateEmployee(existingEmployee, updateData);
 };
 
 // Delete an employee by ID

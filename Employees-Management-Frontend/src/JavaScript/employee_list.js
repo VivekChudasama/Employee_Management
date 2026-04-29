@@ -21,15 +21,28 @@ function buildEmployeesApiUrl() {
 
 // Fetch the employees list from the backend and then rendering
 async function fetchEmployeesForList() {
+    // PREVENT bad API calls from triggering backend Toast errors
+    if (filters.minSalary !== '' && filters.maxSalary !== '') {
+        const minVal = parseFloat(filters.minSalary);
+        const maxVal = parseFloat(filters.maxSalary);
+        if (!isNaN(minVal) && !isNaN(maxVal) && maxVal < minVal) return;
+    }
+    if ((filters.minSalary !== '' && parseFloat(filters.minSalary) < 0) ||
+        (filters.maxSalary !== '' && parseFloat(filters.maxSalary) < 0)) {
+        return;
+    }
+
     const url = buildEmployeesApiUrl();
     const { ok, data } = await apiCall(url);
 
     if (ok) {
-        renderEmployees(data);
+        // Render newest employees first by strictly sorting by ID descending
+        const sortedData = [...data].sort((a, b) => Number(b.id) - Number(a.id));
+        renderEmployees(sortedData);
+
         const isAnyFilterActive = filters.search !== '' || filters.status !== '' || filters.department !== '' || filters.minSalary !== '' || filters.maxSalary !== '';
         if (!isAnyFilterActive) {
-            populateStatusFilter(data);
-            populateDeptFilter(data);
+            populateStatusFilter(sortedData);
         }
     }
 }
@@ -40,18 +53,19 @@ function populateStatusFilter(employeesList) {
 
     const statuses = [...new Set(employeesList.map(emp => emp.status))];
 
-    statusMenu.innerHTML = '<li><a class="dropdown-item dropdown-element active-filter" href="#" data-value="">All Statuses</a></li><li><hr class="dropdown-divider"></li>' +
+    statusMenu.innerHTML = '<li><a class="dropdown-item dropdown-element active-filter fw-bold text-custom-primary" href="#" data-value="">All Statuses</a></li><li><hr class="dropdown-divider"></li>' +
         statuses.map(status => `<li><a class="dropdown-item dropdown-element" href="#" data-value="${status}">${status}</a></li>`).join('');
 }
 
-function populateDeptFilter(employeesList) {
+function populateDeptFilter() {
     const departmentMenu = document.getElementById('getEmpDepartment');
     if (!departmentMenu) return;
 
-    const departmentList = [...new Set(employeesList.map(emp => emp.role?.department && (emp.role.department.id, emp.role.department.departmentName)))]
+    const seenDepartments = new Map();
+    allRoles.forEach(r => r.department && seenDepartments.set(r.department.id, r.department.departmentName));
 
-    departmentMenu.innerHTML = '<li><a class="dropdown-item dropdown-element active-filter" href="#" data-value="">All Departments</a></li><li><hr class="dropdown-divider"></li>' +
-        departmentList.map(([id, name]) => `<li><a class="dropdown-item dropdown-element" href="#" data-value="${id}">${name}</a></li>`).join('');
+    departmentMenu.innerHTML = '<li><a class="dropdown-item dropdown-element active-filter fw-bold text-custom-primary" href="#" data-value="">All Departments</a></li><li><hr class="dropdown-divider"></li>' +
+        Array.from(seenDepartments.entries()).map(([id, name]) => `<li><a class="dropdown-item dropdown-element" href="#" data-value="${id}">${name}</a></li>`).join('');
 }
 
 function renderEmployees(employees) {
@@ -60,6 +74,15 @@ function renderEmployees(employees) {
     const employeeTable = document.getElementById('sorting');
 
     if (!tableBody) return;
+
+    // Dispose old tooltips if any before clearing
+    const existingTooltips = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+    existingTooltips.forEach(el => {
+        const tooltipInstance = bootstrap.Tooltip.getInstance(el);
+        if (tooltipInstance) {
+            tooltipInstance.dispose();
+        }
+    });
 
     tableBody.innerHTML = '';
 
@@ -74,18 +97,23 @@ function renderEmployees(employees) {
         return;
     }
 
+    let rowsHtml = '';
+
     employees.forEach(employee => {
         const rawDate = employee.joining_date ? new Date(employee.joining_date) : null;
         const joiningDate = rawDate && !isNaN(rawDate) ? rawDate.toLocaleDateString('en-CA') : '—';
         const badgeClass = employee.status === 'active' ? 'bg-success' : 'bg-secondary';
 
-        tableBody.innerHTML += `
+        rowsHtml += `
         <tr class="emp-table-row">
-            <td class="emp-table-td ps-4 fw-bold text-dark">${employee.name}</td>
-            <td class="emp-table-td">${employee.email}</td>
+            <td class="emp-table-td ps-4 text-dark" data-bs-toggle="tooltip" data-bs-custom-class="custom-tooltip"
+                data-bs-placement="top" title="${employee.name}">${employee.name}</td>
+            <td class="emp-table-td" data-bs-toggle="tooltip" data-bs-custom-class="custom-tooltip"
+                data-bs-placement="top" title="${employee.email}">${employee.email}</td>
             <td class="emp-table-td">${employee.role.department.departmentName}</td>
-            <td class="emp-table-td">${employee.role.role}</td>
-            <td class="emp-table-td">$${employee.salary || 0}</td>
+            <td class="emp-table-td" data-bs-toggle="tooltip" data-bs-custom-class="custom-tooltip"
+                data-bs-placement="top" title="${employee.role.role}">${employee.role.role}</td>
+            <td class="emp-table-td">$${employee.salary}</td>
             <td class="emp-table-td emp-table-td-center">${joiningDate}</td>
             <td class="emp-table-td">
                 <span class="badge rounded-pill px-3 py-2 fw-normal text-white text-capitalize ${badgeClass}">${employee.status}</span>
@@ -93,16 +121,23 @@ function renderEmployees(employees) {
             <td class="emp-table-td emp-table-td-center">
                 <div class="d-flex justify-content-center gap-1">
                     <a href="edit_employee.html?id=${employee.id}" class="btn btn-custom-primary btn-sm rounded-pill"><i class="bi bi-pencil-square"></i></a>
-                    <button class="btn btn-outline-danger btn-sm rounded-pill delete-btn" data-id="${employee.id}"><i class="bi bi-trash"></i></button>
+                    <button class="btn btn-outline-danger btn-sm rounded-pill delete-btn" data-id="${employee.id}" data-name="${employee.name}"><i class="bi bi-trash"></i></button>
                 </div>
             </td>
         </tr>`;
     });
+
+    tableBody.innerHTML = rowsHtml;
+
+    // Initialize new tooltips
+    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+    [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
 }
 
 // Request backend to delete an employee
-async function handleEmployeeDelete(employeeId) {
-    const isConfirmed = await confirmUI('Delete Employee', 'Are you sure? This cannot be undone.', 'danger');
+async function handleEmployeeDelete(employeeId, employeeName) {
+    const displayName = employeeName || 'this employee';
+    const isConfirmed = await confirmUI('Delete Employee', `Are you sure you want to delete "${displayName}"? This cannot be undone.`, 'danger');
     if (!isConfirmed) return;
 
     // Call the delete API
@@ -114,7 +149,10 @@ async function handleEmployeeDelete(employeeId) {
 }
 
 // Event Listener Assignments when page is loaded
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+
+    await fetchRolesData();
+    populateDeptFilter();
 
     function debounce(func, delay) {
         let timeoutId;
@@ -131,6 +169,37 @@ document.addEventListener('DOMContentLoaded', () => {
         if (element) {
             element.addEventListener('input', (event) => {
                 filters[filterKey] = event.target.value.trim();
+
+                const minEl = document.getElementById('min_salary');
+                const maxEl = document.getElementById('max_salary');
+                if (minEl && maxEl) {
+                    const minStr = minEl.value;
+                    const maxStr = maxEl.value;
+                    const minVal = minStr;
+                    const maxVal = maxStr;
+
+                    let hasError = false;
+
+                    if (minStr && minVal < 0) {
+                        showFieldError('min_salary', 'Please enter Positive valid number');
+                        hasError = true;
+                    } else {
+                        clearFieldError('min_salary');
+                    }
+
+                    if (maxStr && maxVal < 0) {
+                        showFieldError('max_salary', 'Please enter Positive valid number');
+                        hasError = true;
+                    } else if (minStr && maxStr && !isNaN(minVal) && !isNaN(maxVal) && maxVal <= minVal) {
+                        showFieldError('max_salary', 'maximum salary must be greater than the minimum salary.');
+                        hasError = true;
+                    } else {
+                        clearFieldError('max_salary');
+                    }
+
+                    if (hasError) return;
+                }
+
                 fetchDebounced();
             });
         }
@@ -138,8 +207,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // add filters
     attachInputFilter('searchInput', 'search');
-    attachInputFilter('minInput', 'minSalary');
-    attachInputFilter('maxInput', 'maxSalary');
+    attachInputFilter('min_salary', 'minSalary');
+    attachInputFilter('max_salary', 'maxSalary');
 
     // Reusable Dropdown Filter Setup
     function setupDropdownFilter(menuId, filterKey, defaultText) {
@@ -152,8 +221,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 event.preventDefault();
                 filters[filterKey] = dropdownItem.dataset.value;
 
+                menu.querySelectorAll('.dropdown-item').forEach(item => item.classList.remove('fw-bold', 'text-custom-primary'));
+                dropdownItem.classList.add('fw-bold', 'text-custom-primary');
+
                 const btn = event.target.closest('.dropdown')?.querySelector('.dropdown-btn');
-                if (btn) btn.textContent = filters[filterKey] ? dropdownItem.textContent : defaultText;
+                if (btn) {
+                    btn.textContent = filters[filterKey] ? dropdownItem.textContent : defaultText;
+                    btn.classList.remove('fw-bold'); // strictly ensure button is never bold
+                }
 
                 fetchEmployeesForList();
             });
@@ -169,7 +244,7 @@ document.addEventListener('DOMContentLoaded', () => {
         tableBody.addEventListener('click', (event) => {
             const deleteButton = event.target.closest('.delete-btn');
             if (deleteButton) {
-                handleEmployeeDelete(deleteButton.dataset.id);
+                handleEmployeeDelete(deleteButton.dataset.id, deleteButton.dataset.name);
             }
         });
     }

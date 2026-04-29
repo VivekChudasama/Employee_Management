@@ -38,7 +38,7 @@ const RULES = {
         if (!value) return 'Joining Date is Required';
         if (new Date(value) <= new Date('2026-01-01')) return 'Must be after 2026-01-01';
         const today = new Date().toISOString().split('T')[0];
-        if (new Date(value) >= new Date(today)) return 'Please select a valid date. Future dates are not allowed.' ; else return '';
+        if (new Date(value) > new Date(today)) return 'Please select a valid date. Future dates are not allowed.';
         return null;
     },
     status: function (value) {
@@ -173,17 +173,24 @@ function fieldsValidation(formId, submitBtnSelector, excludeIdProvider = null) {
     const fieldsToValidate = ['name', 'email', 'joining_date', 'status', 'salary', 'role_id', 'department_id'];
 
     const runValidation = (fieldId, event) => {
-        validateField(fieldId);
-        validateForm(formId, submitBtnSelector);
+        let isValid = validateField(fieldId);
 
         // Specific email uniqueness check
-        if (fieldId === 'email' && typeof isEmailDuplicate === 'function' && event?.type === 'input') {
+        if (fieldId === 'email' && isValid && typeof isEmailDuplicate === 'function') {
+            const emailValue = document.getElementById('email')?.value || '';
             const excludeId = excludeIdProvider ? excludeIdProvider() : null;
-            if (isEmailDuplicate(event.target.value, excludeId)) {
+            if (isEmailDuplicate(emailValue, excludeId)) {
                 showFieldError('email', 'Email address you have entered is already in use by another user.');
-                const submitButton = document.querySelector(submitBtnSelector);
-                if (submitButton) submitButton.disabled = true;
+                isValid = false;
             }
+        }
+
+        const isFormValid = validateForm(formId, submitBtnSelector);
+        
+        // Disable submit button if either form-level or the specific duplicate check fails
+        const submitButton = document.querySelector(submitBtnSelector);
+        if (submitButton) {
+            submitButton.disabled = !(isFormValid && isValid);
         }
     };
 
@@ -197,6 +204,7 @@ function fieldsValidation(formId, submitBtnSelector, excludeIdProvider = null) {
             if (dropdownBtn) dropdownBtn.addEventListener('hidden.bs.dropdown', () => runValidation(fieldId));
         } else {
             element.addEventListener('input', (e) => runValidation(fieldId, e));
+            element.addEventListener('change', (e) => runValidation(fieldId, e));
             element.addEventListener('blur', () => runValidation(fieldId));
         }
     });

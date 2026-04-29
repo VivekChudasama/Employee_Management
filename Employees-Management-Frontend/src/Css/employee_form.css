@@ -87,6 +87,11 @@
     color: var(--secondary-grey);
 }
 
+.form .form-body .employee-form .date-input-validation.is-valid,
+.form .form-body .employee-form .date-input-validation.is-invalid {
+    background-position: right 2.5rem center !important;
+}
+
 /* Submit button */
 .form .form-body .submit-section .send-btn {
     font-size: 20px;

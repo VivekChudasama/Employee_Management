@@ -21,13 +21,19 @@ async function handleFormSubmit(event) {
         return;
     }
 
+    const submitBtn = document.getElementById('submitBtn');
+    setBtnLoading(submitBtn, 'Submitting...');
+
     // Send data to backend
     const { ok: isSuccessful } = await apiCall(`${API.employees}/add-employee`, 'POST', payload);
+
     if (isSuccessful) {
         showToast('Employee added!', 'success');
         setTimeout(() => {
             location.href = './employees_list.html';
         }, 1500);
+    } else {
+        resetBtnLoading(submitBtn);
     }
 }
 
@@ -44,7 +50,7 @@ async function init() {
     await Promise.all([fetchRolesData(), fetchEmployeesData()]);
     populateDepartments();
     populateRoles();
-    populateStatusDropdown();
+    populateStatusDropdown('active');
     setupDepartmentFilter();
     setupRoleDropdown();
     setupAddRole();
@@ -52,4 +58,3 @@ async function init() {
 }
 
 init();
-

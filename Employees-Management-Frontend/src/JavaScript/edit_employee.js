@@ -79,13 +79,19 @@ async function handleEditFormSubmit(event) {
         return;
     }
 
+    const submitBtn = document.getElementById('submitBtn');
+    setBtnLoading(submitBtn, 'Updating...');
+
     // Send data to backend using PUT
     const { ok: isSuccessful } = await apiCall(`${API.employees}/${targetEmployeeId}`, 'PUT', payload);
+
     if (isSuccessful) {
         showToast('Employee updated!', 'success');
         setTimeout(() => {
             location.href = './employees_list.html';
         }, 1500);
+    } else {
+        resetBtnLoading(submitBtn);
     }
 }
 
@@ -114,4 +120,3 @@ async function init() {
 }
 
 init();
-
