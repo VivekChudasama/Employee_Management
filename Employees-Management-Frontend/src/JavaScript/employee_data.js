@@ -433,7 +433,7 @@ function setupAddRole() {
         openRoleButton.onclick = () => openRoleModal();
     }
 
-    // Add input event listener to newRoleName for real-time validation feedback
+    // Add input event listener to newRoleName for validation
     if (newRoleNameInput && !newRoleNameInput.dataset.inputListenerAdded) {
         newRoleNameInput.addEventListener('input', () => {
             const roleNameValue = newRoleNameInput.value || '';
