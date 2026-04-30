@@ -432,16 +432,20 @@ function setupDepartmentFilter() {
 const roleModal = document.getElementById('roleModal');
 const newRoleNameInput = document.getElementById('newRoleName');
 
-roleModal.addEventListener('hidden.bs.modal', () => {
-    newRoleNameInput.value = '';
-    newRoleNameInput.classList.remove('is-invalid');
-    
-    const errorDiv = newRoleNameInput.parentElement.querySelector('.invalid-feedback');
-    if (errorDiv) {
-        errorDiv.textContent = '';
-        errorDiv.style.display = 'none';
-    }
-});
+if (roleModal) {
+    roleModal.addEventListener('hidden.bs.modal', () => {
+        newRoleNameInput.value = '';
+        newRoleNameInput.classList.remove('is-invalid');
+
+        const errorDiv = newRoleNameInput.parentElement.querySelector('.invalid-feedback');
+        if (errorDiv) {
+            errorDiv.textContent = '';
+            errorDiv.style.display = 'none';
+        }
+    });
+}
+
+
 
 function setupAddRole() {
     const saveRoleButton = document.getElementById('saveRoleBtn');
