@@ -74,6 +74,14 @@ function renderEmployees(employees) {
 
     if (!tableBody) return;
 
+    const existingTooltips = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+    existingTooltips.forEach(el => {
+        const tooltipInstance = bootstrap.Tooltip.getInstance(el);
+        if (tooltipInstance) {
+            tooltipInstance.dispose();
+        }
+    });
+
     tableBody.innerHTML = '';
 
     const hasEmployees = employees.length > 0;

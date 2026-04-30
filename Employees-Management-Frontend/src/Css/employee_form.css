@@ -44,10 +44,10 @@
     transform: translateY(-2px);
 }
 
-.form .form-body .required-icon::before{
-  content:"*";
-  color:red;
-  font-size: 12px;
+.form .form-body .required-icon::before {
+    content: "*";
+    color: red;
+    font-size: 12px;
 }
 
 /*  Labels  */
@@ -70,6 +70,18 @@
     transition: all 0.3s ease;
     background-color: var(--primary-white);
     color: var(--secondary-dark-gray);
+}
+
+
+.form .form-body .employee-form .role-name-text {
+    max-width: 160px;
+}
+
+.form .form-body .employee-form .role-name-text,
+.form .form-body .employee-form .role-dropdown-btn {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .form .form-body .employee-form .form-control:focus,
@@ -141,6 +153,8 @@
     cursor: not-allowed !important;
     opacity: 0.6;
 }
+
+
 
 .form .form-body .employee-form .form-control:disabled,
 .form .form-body .employee-form .outline-input-btn:disabled,

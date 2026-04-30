@@ -2,9 +2,9 @@
 const RULES = {
     name: function (value) {
         if (!value || value.trim() === '') return 'Name is required';
-        if (!/^[a-zA-Z\s.]+$/.test(value.trim())) return 'Letters, spaces and dots only';
-        if (value.trim().length < 3) return 'Name shoulde content At least 3 characters';
-        if (value.trim().length >= 70) return 'Please enter name below 70 character'
+        if (!/^[a-zA-Z\s.]+$/.test(value.trim())) return 'Name should contain Letters, spaces and dots only';
+        if (value.trim().length < 3) return 'Name should contain at least 3 characters.';
+        if (value.trim().length >= 70) return 'Please enter name below 70 characters'
 
         return null;
     },
@@ -18,15 +18,15 @@ const RULES = {
         return null;
     },
     roleName: function (value) {
-        if (!value || value.trim() === '') return 'RoleName is Required';
-        if (value.trim().length < 3) return 'RoleName shoulde content At least 3 characters';
-        if (value.trim().length >= 70) return 'Please enter name below 70 characters';
+        if (!value || value.trim() === '') return 'Role Name is Required';
+        if (value.trim().length < 3) return 'Role Name should content At least 3 characters';
+        if (value.trim().length >= 70) return 'Please enter Role Name below 70 characters';
         return null;
     },
     salary: function (value) {
         if (!value || value.trim() === '') return 'Salary is Required';
-        if (value.trim().length > 9) return 'Salary shoulde not contain more then 9 digit'
-        if (isNaN(Number(value)) || Number(value) === 0) return 'Salary coule not be Zero'
+        if (value.trim().length > 9) return 'Salary should not contain more then 9 digit'
+        if (isNaN(Number(value)) || Number(value) === 0) return 'Salary cannot be zero'
         if (isNaN(Number(value)) || Number(value) < 1) return 'Please enter valid Positive number only';
         return null;
     },
@@ -97,7 +97,7 @@ function clearFieldError(fieldId) {
         }
     }
 
-    // Hide the dynamically added feedback block if it exists
+    // Hide the added feedback block if it exists
     const feedbackElement = element.nextElementSibling;
     if (feedbackElement && feedbackElement.classList.contains('invalid-feedback')) {
         feedbackElement.style.display = 'none';

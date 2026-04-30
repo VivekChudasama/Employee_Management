@@ -196,13 +196,6 @@
     transition: transform var(--transition-smooth);
 }
 
-.emp-table-td {
-    max-width: 150px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
 #confirmModal #confirmIcon {
     font-size: 48px;
 }

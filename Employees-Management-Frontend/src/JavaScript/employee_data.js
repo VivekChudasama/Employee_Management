@@ -225,8 +225,9 @@ function populateRoles(departmentId = null, selectedRoleId = null) {
             if (isActive) updateRolePickerSelection(role.role, role.id);
             return `
                 <li>
-                    <a class="dropdown-item dropdown-element d-flex justify-content-between align-items-center role-option py-2 px-3 ${isActive ? 'fw-bold text-custom-primary' : ''}" href="#" data-id="${role.id}" data-name="${role.role}">
-                        <span class="role-name-text">${role.role}</span>
+                    <a class="dropdown-item dropdown-element d-flex justify-content-between align-items-center  role-option py-2 px-3 ${isActive ? 'fw-bold text-custom-primary' : ''}" href="#" data-id="${role.id}" data-name="${role.role}">
+                        <span class="role-name-text" data-bs-toggle="tooltip" data-bs-delay='{"show":400, "hide":100}' data-bs-custom-class="custom-tooltip"
+                data-bs-placement="top" title="${role.role}">${role.role}</span>
                         <div class="d-flex gap-2 ms-2 action-btns">
                             <button type="button" class="btn btn-sm btn-outline-warning role-edit-btn border-0" data-id="${role.id}" data-name="${role.role}"><i class="bi bi-pencil-fill"></i></button>
                             <button type="button" class="btn btn-sm btn-outline-danger role-delete-btn border-0" data-id="${role.id}"><i class="bi bi-trash-fill"></i></button>
@@ -234,6 +235,10 @@ function populateRoles(departmentId = null, selectedRoleId = null) {
                     </a>
                 </li>`;
         }).join('');
+
+    // Initialize new tooltips
+    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+    [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
 
     dropdownMenu.innerHTML = html + `
         <li><hr class="dropdown-divider"></li>
@@ -356,7 +361,7 @@ async function deleteRole(roleIdToDelete) {
     }
 
     const roleToDelete = allRoles.find(r => String(r.id) === String(roleIdToDelete));
-    const roleName = roleToDelete ? roleToDelete.role :'';
+    const roleName = roleToDelete ? roleToDelete.role : '';
 
     const isUserAgreed = await confirmUI('Delete Role', `Are you sure you want to delete Role: "${roleName}" ? This cannot be undone.`, 'danger');
     if (!isUserAgreed) return;
@@ -423,6 +428,20 @@ function setupDepartmentFilter() {
         }
     });
 }
+
+const roleModal = document.getElementById('roleModal');
+const newRoleNameInput = document.getElementById('newRoleName');
+
+roleModal.addEventListener('hidden.bs.modal', () => {
+    newRoleNameInput.value = '';
+    newRoleNameInput.classList.remove('is-invalid');
+    
+    const errorDiv = newRoleNameInput.parentElement.querySelector('.invalid-feedback');
+    if (errorDiv) {
+        errorDiv.textContent = '';
+        errorDiv.style.display = 'none';
+    }
+});
 
 function setupAddRole() {
     const saveRoleButton = document.getElementById('saveRoleBtn');
