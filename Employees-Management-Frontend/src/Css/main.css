@@ -195,6 +195,14 @@
     transition: transform var(--transition-smooth);
 }
 
+.salary-input::-webkit-inner-spin-button, 
+.salary-input::-webkit-outer-spin-button { 
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    margin: 0; 
+}
+
 #confirmModal #confirmIcon {
     font-size: 48px;
 }

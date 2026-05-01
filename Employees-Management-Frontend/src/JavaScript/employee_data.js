@@ -247,7 +247,7 @@ function populateRoles(departmentId = null, selectedRoleId = null) {
                         <span class="role-name-text text-capitalize d-inline-block click-pointer" data-bs-toggle="tooltip" data-bs-delay='{"show":400, "hide":100}' data-bs-custom-class="custom-tooltip"
                 data-bs-placement="auto"  title="${role.role}">${role.role}</span>
                         <div class="d-flex gap-2 ms-2 action-btns">
-                            <button type="button" class="btn btn-sm btn-outline-warning role-edit-btn border-0" data-id="${role.id}" data-name="${role.role}"><i class="bi bi-pencil-fill"></i></button>
+                            <button type="button" class="btn btn-sm btn-outline-warning ms-3 role-edit-btn border-0" data-id="${role.id}" data-name="${role.role}"><i class="bi bi-pencil-fill"></i></button>
                             <button type="button" class="btn btn-sm btn-outline-danger role-delete-btn border-0" data-id="${role.id}"><i class="bi bi-trash-fill"></i></button>
                         </div>
                     </a>
@@ -460,8 +460,6 @@ if (roleModal) {
         if (err) err.style.display = 'none';
     });
 }
-
-
 
 function setupAddRole() {
     const saveRoleButton = document.getElementById('saveRoleBtn');

@@ -27,6 +27,7 @@ const RULES = {
         if (!value || value.trim() === '') return 'Salary is required';
         if (value.trim().length > 9) return 'Salary should not contain more than 9 digits';
         const num = Number(value);
+        if (isNaN(num) || num === 0) return 'Salary cannot be zero';
         if (isNaN(num) || num < 1) return 'Please enter a valid positive number';
         return null;
     },
@@ -173,7 +174,7 @@ function fieldsValidation(formId, submitBtnSelector, excludeIdProvider = null) {
         }
 
         const isFormValid = validateForm(formId, submitBtnSelector);
-        
+
         // Disable submit button if either form-level or the specific duplicate check fails
         const submitButton = document.querySelector(submitBtnSelector);
         if (submitButton) {

@@ -5,7 +5,7 @@ if (!employeeIdUrlParam) {
     showToast('No employee ID provided. Redirecting…', 'danger');
     setTimeout(() => {
         location.href = './employees_list.html';
-    }, 2000);
+    }, 1000);
 }
 
 let originalEmployeeData = null;
