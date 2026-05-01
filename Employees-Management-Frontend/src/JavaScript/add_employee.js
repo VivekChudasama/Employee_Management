@@ -24,16 +24,20 @@ async function handleFormSubmit(event) {
     const submitBtn = document.getElementById('submitBtn');
     setBtnLoading(submitBtn, 'Submitting');
 
-    // Send data to backend
+    // Send data to backend using POST method
     const { ok: isSuccessful } = await apiCall(`${API.employees}/add-employee`, 'POST', payload);
 
     if (isSuccessful) {
-        showToast('Employee added!', 'success');
+        completeBtnLoading(submitBtn, 'Added');
         setTimeout(() => {
-            location.href = './employees_list.html';
-        }, 1500);
+            showToast('Employee added!', 'success');
+            setTimeout(() => {
+                location.href = './employees_list.html';
+            }, 1000);
+        }, 600);
     } else {
         resetBtnLoading(submitBtn);
+        showToast('Failed to Add employee. Please try again.', 'danger');
     }
 }
 

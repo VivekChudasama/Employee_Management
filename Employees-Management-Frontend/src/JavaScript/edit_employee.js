@@ -82,16 +82,20 @@ async function handleEditFormSubmit(event) {
     const submitBtn = document.getElementById('submitBtn');
     setBtnLoading(submitBtn, 'Updating');
 
-    // Send data to backend using PUT
+    // Send data to backend using PUT method
     const { ok: isSuccessful } = await apiCall(`${API.employees}/${targetEmployeeId}`, 'PUT', payload);
 
     if (isSuccessful) {
-        showToast('Employee updated!', 'success');
+        completeBtnLoading(submitBtn, 'Updated');
         setTimeout(() => {
-            location.href = './employees_list.html';
-        }, 1500);
+            showToast('Employee updated!', 'success');
+            setTimeout(() => {
+                location.href = './employees_list.html';
+            }, 1000);
+        }, 700);
     } else {
         resetBtnLoading(submitBtn);
+        showToast('Failed to update employee. Please try again.', 'danger');
     }
 }
 

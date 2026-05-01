@@ -18,16 +18,16 @@ const RULES = {
         return null;
     },
     roleName: function (value) {
-        if (!value || value.trim() === '') return 'Role Name is Required';
-        if (value.trim().length < 3) return 'Role Name should content At least 3 characters';
-        if (value.trim().length >= 70) return 'Please enter Role Name below 70 characters';
+        if (!value || value.trim() === '') return 'Role name is required';
+        if (value.trim().length < 3) return 'Role name should contain at least 3 characters';
+        if (value.trim().length >= 70) return 'Please enter role name below 70 characters';
         return null;
     },
     salary: function (value) {
-        if (!value || value.trim() === '') return 'Salary is Required';
-        if (value.trim().length > 9) return 'Salary should not contain more then 9 digit'
-        if (isNaN(Number(value)) || Number(value) === 0) return 'Salary cannot be zero'
-        if (isNaN(Number(value)) || Number(value) < 1) return 'Please enter valid Positive number only';
+        if (!value || value.trim() === '') return 'Salary is required';
+        if (value.trim().length > 9) return 'Salary should not contain more than 9 digits';
+        const num = Number(value);
+        if (isNaN(num) || num < 1) return 'Please enter a valid positive number';
         return null;
     },
     department_id: function (value) {
@@ -35,7 +35,7 @@ const RULES = {
         return null;
     },
     joining_date: function (value) {
-        if (!value) return 'Joining Date is Required';
+        if (!value) return 'Joining date is required';
         if (new Date(value) <= new Date('2026-01-01')) return 'Must be after 2026-01-01';
         const today = new Date().toISOString().split('T')[0];
         if (new Date(value) > new Date(today)) return 'Please select a valid date. Future dates are not allowed.';

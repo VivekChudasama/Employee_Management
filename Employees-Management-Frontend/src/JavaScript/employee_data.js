@@ -19,19 +19,23 @@ function isEmailDuplicate(email, excludeEmployeeId = null) {
 async function apiCall(url, method = 'GET', bodyContent = null) {
     try {
         const fetchOptions = {
-            method: method,
-            headers: {
-                'Content-Type': 'application/json'
-            }
+            method: method
         };
 
-        // If we are sending data (POST/PUT), attach it as a JSON string
+        // Only set Content-Type and body when sending data (POST/PUT)
         if (bodyContent !== null) {
+            fetchOptions.headers = { 'Content-Type': 'application/json' };
             fetchOptions.body = JSON.stringify(bodyContent);
         }
 
         const response = await fetch(url, fetchOptions);
-        const jsonResponse = await response.json();
+
+        let jsonResponse;
+        try {
+            jsonResponse = await response.json();
+        } catch {
+            return { ok: false, data: { message: `Server returned ${response.status}` } };
+        }
 
         if (!response.ok) {
             return { ok: false, data: jsonResponse };
@@ -80,14 +84,17 @@ function confirmUI(title, message, visualType = 'warning') {
         const newActionButton = oldActionButton.cloneNode(true);
         oldActionButton.replaceWith(newActionButton);
 
+        let resolved = false;
+
         newActionButton.onclick = () => {
+            resolved = true;
             modal.hide();
             resolve(true);
         };
 
         modalElement.addEventListener('hidden.bs.modal', () => {
-            resolve(false);
-        });
+            if (!resolved) resolve(false);
+        }, { once: true });
 
         modal.show();
     });
@@ -144,6 +151,12 @@ function resetBtnLoading(btn) {
     btn.disabled = btn._wasDisabled || false;
 }
 
+function completeBtnLoading(btn, successText = 'Success') {
+    if (!btn) return;
+    btn.innerHTML = `<i class="bi bi-check2-circle fs-5 me-2"></i> ${successText}`;
+    btn.disabled = true;
+}
+
 function updateDropdownUI(btnId, inputId, defaultText, value, label) {
     const btn = document.getElementById(btnId);
     const hiddenInput = document.getElementById(inputId);
@@ -171,12 +184,17 @@ function updateStatusSelection(status) {
     updateDropdownUI('statusDropdownBtn', 'status', 'Select Status', status, status);
 }
 
+function getDepartments(roles) {
+    const map = new Map();
+    roles.forEach(r => r.department && map.set(r.department.id, r.department.departmentName));
+    return map;
+}
+
 function populateDepartments(selectedId = null) {
     const dropdownMenu = document.getElementById('departmentDropdownMenu');
     if (!dropdownMenu) return;
 
-    const seenDepartments = new Map();
-    allRoles.forEach(r => r.department && seenDepartments.set(r.department.id, r.department.departmentName));
+    const seenDepartments = getDepartments(allRoles);
 
     const optionsHtml = Array.from(seenDepartments.entries()).map(([id, name]) => {
         const isActive = String(id) === String(selectedId);
@@ -196,10 +214,10 @@ function populateStatusDropdown(selectedStatus = null) {
     const optionsHtml = uniqueStatuses.map(status => {
         const isActive = status === selectedStatus;
         if (isActive) updateStatusSelection(status);
-        return `<li><a class="dropdown-item dropdown-element status-option py-2 px-3 ${isActive ? 'fw-bold text-custom-primary' : ''}" href="#" data-status="${status}">${status}</a></li>`;
+        return `<li><a class="dropdown-item dropdown-element status-option text-capitalize py-2 px-3 ${isActive ? 'fw-bold text-custom-primary' : ''}" href="#" data-status="${status}">${status}</a></li>`;
     }).join('');
 
-    dropdownMenu.innerHTML = `<li><a class="dropdown-item dropdown-element text-muted status-option py-2 px-3 ${!selectedStatus ? 'fw-bold text-custom-primary' : ''}" href="#" data-status="">Select Status</a></li>` + optionsHtml;
+    dropdownMenu.innerHTML = `<li><a class="dropdown-item dropdown-element text-muted text-capitalize status-option CAP py-2 px-3 ${!selectedStatus ? 'fw-bold text-custom-primary' : ''}" href="#" data-status="">Select Status</a></li>` + optionsHtml;
 }
 
 function populateRoles(departmentId = null, selectedRoleId = null) {
@@ -226,8 +244,8 @@ function populateRoles(departmentId = null, selectedRoleId = null) {
             return `
                 <li>
                     <a class="dropdown-item dropdown-element d-flex justify-content-between align-items-center  role-option py-2 px-3 ${isActive ? 'fw-bold text-custom-primary' : ''}" href="#" data-id="${role.id}" data-name="${role.role}">
-                        <span class="role-name-text" data-bs-toggle="tooltip" data-bs-delay='{"show":400, "hide":100}' data-bs-custom-class="custom-tooltip"
-                data-bs-placement="top" title="${role.role}">${role.role}</span>
+                        <span class="role-name-text text-capitalize d-inline-block click-pointer" data-bs-toggle="tooltip" data-bs-delay='{"show":400, "hide":100}' data-bs-custom-class="custom-tooltip"
+                data-bs-placement="auto"  title="${role.role}">${role.role}</span>
                         <div class="d-flex gap-2 ms-2 action-btns">
                             <button type="button" class="btn btn-sm btn-outline-warning role-edit-btn border-0" data-id="${role.id}" data-name="${role.role}"><i class="bi bi-pencil-fill"></i></button>
                             <button type="button" class="btn btn-sm btn-outline-danger role-delete-btn border-0" data-id="${role.id}"><i class="bi bi-trash-fill"></i></button>
@@ -236,15 +254,15 @@ function populateRoles(departmentId = null, selectedRoleId = null) {
                 </li>`;
         }).join('');
 
-    // Initialize new tooltips
-    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
-    [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
-
     dropdownMenu.innerHTML = html + `
         <li><hr class="dropdown-divider"></li>
         <li><button type="button" class="dropdown-item dropdown-element text-custom-primary text-center py-2" id="addRoleInDropdownBtn">
             <i class="bi bi-plus-circle-fill me-1"></i> Add New Role
         </button></li>`;
+
+    // Initialize new tooltips
+    const tooltipTriggerList = dropdownMenu.querySelectorAll('[data-bs-toggle="tooltip"]');
+    tooltipTriggerList.forEach(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
 }
 
 function updateRolePickerSelection(name, id) {
@@ -346,7 +364,9 @@ function openRoleModal(roleData = null) {
     }
 
     // Clear any previous error 
-    nameInput.classList.remove('is-invalid');
+    nameInput.classList.remove('is-invalid', 'is-valid');
+    const err = nameInput.parentElement.querySelector('.invalid-feedback');
+    if (err) err.style.display = 'none';
 
     modal.show();
 }
@@ -435,13 +455,9 @@ const newRoleNameInput = document.getElementById('newRoleName');
 if (roleModal) {
     roleModal.addEventListener('hidden.bs.modal', () => {
         newRoleNameInput.value = '';
-        newRoleNameInput.classList.remove('is-invalid');
-
-        const errorDiv = newRoleNameInput.parentElement.querySelector('.invalid-feedback');
-        if (errorDiv) {
-            errorDiv.textContent = '';
-            errorDiv.style.display = 'none';
-        }
+        newRoleNameInput.classList.remove('is-invalid', 'is-valid');
+        const err = newRoleNameInput.parentElement.querySelector('.invalid-feedback');
+        if (err) err.style.display = 'none';
     });
 }
 
@@ -517,20 +533,27 @@ function setupAddRole() {
 
         const apiResponse = await apiCall(targetApiEndpoint, methodType, rolePayload);
 
-        resetBtnLoading(saveRoleButton);
-
         if (apiResponse.ok) {
-            showToast(`Role ${willUpdateExistingRole ? 'updated' : 'added'} successfully!`, 'success');
+            completeBtnLoading(saveRoleButton, willUpdateExistingRole ? 'Updated' : 'Added');
+            
+            setTimeout(async () => {
+                showToast(`Role ${willUpdateExistingRole ? 'updated' : 'added'} successfully!`, 'success');
 
-            const modalDOM = document.getElementById('roleModal');
-            const boostrapModalInstance = bootstrap.Modal.getInstance(modalDOM);
-            if (boostrapModalInstance) {
-                boostrapModalInstance.hide();
-            }
+                const modalDOM = document.getElementById('roleModal');
+                const boostrapModalInstance = bootstrap.Modal.getInstance(modalDOM);
+                if (boostrapModalInstance) {
+                    boostrapModalInstance.hide();
+                }
 
-            await fetchRolesData();
-            populateDepartments(departmentId);
-            populateRoles(departmentId);
+                await fetchRolesData();
+                populateDepartments(departmentId);
+                populateRoles(departmentId);
+                
+                // restore button so next time it opens it is normal
+                setTimeout(() => resetBtnLoading(saveRoleButton), 300);
+            }, 600);
+        } else {
+            resetBtnLoading(saveRoleButton);
         }
     };
 }

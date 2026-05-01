@@ -50,18 +50,23 @@ function populateStatusFilter(employeesList) {
     const statusMenu = document.getElementById('getEmpStatus');
     if (!statusMenu) return;
 
-    const statuses = [...new Set(employeesList.map(emp => emp.status))];
+    const statuses = [...new Set(['active', 'inactive', ...employeesList.map(emp => emp.status).filter(Boolean)])];
 
-    statusMenu.innerHTML = '<li><a class="dropdown-item dropdown-element active-filter fw-bold text-custom-primary" href="#" data-value="">All Statuses</a></li><li><hr class="dropdown-divider"></li>' +
-        statuses.map(status => `<li><a class="dropdown-item dropdown-element" href="#" data-value="${status}">${status}</a></li>`).join('');
+    statusMenu.innerHTML = '<li><a class="dropdown-item dropdown-element active-filter fw-bold text-custom-primary" href="#" data-value="">All Statuses</a></li><li><hr class="dropdown-divider"></li>';
+
+    statuses.forEach(status => {
+        const li = document.createElement('li');
+        const capitalizedStatus = status.charAt(0).toUpperCase() + status.slice(1);
+        li.innerHTML = `<a class="dropdown-item dropdown-element" href="#" data-value="${status}">${capitalizedStatus}</a>`;
+        statusMenu.appendChild(li);
+    })
 }
 
 function populateDeptFilter() {
     const departmentMenu = document.getElementById('getEmpDepartment');
     if (!departmentMenu) return;
 
-    const seenDepartments = new Map();
-    allRoles.forEach(r => r.department && seenDepartments.set(r.department.id, r.department.departmentName));
+    const seenDepartments = getDepartments(allRoles);
 
     departmentMenu.innerHTML = '<li><a class="dropdown-item dropdown-element active-filter fw-bold text-custom-primary" href="#" data-value="">All Departments</a></li><li><hr class="dropdown-divider"></li>' +
         Array.from(seenDepartments.entries()).map(([id, name]) => `<li><a class="dropdown-item dropdown-element" href="#" data-value="${id}">${name}</a></li>`).join('');
@@ -74,7 +79,7 @@ function renderEmployees(employees) {
 
     if (!tableBody) return;
 
-    const existingTooltips = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+    const existingTooltips = tableBody.querySelectorAll('[data-bs-toggle="tooltip"]');
     existingTooltips.forEach(el => {
         const tooltipInstance = bootstrap.Tooltip.getInstance(el);
         if (tooltipInstance) {
@@ -104,13 +109,16 @@ function renderEmployees(employees) {
 
         rowsHtml += `
         <tr class="emp-table-row">
-            <td class="emp-table-td ps-4 text-dark" data-bs-toggle="tooltip" data-bs-delay='{"show":400, "hide":100}' data-bs-custom-class="custom-tooltip"
-                data-bs-placement="top" title="${employee.name}">${employee.name}</td>
-            <td class="emp-table-td" data-bs-toggle="tooltip" data-bs-delay='{"show":500, "hide":100}' data-bs-custom-class="custom-tooltip"
-                data-bs-placement="top" title="${employee.email}">${employee.email}</td>
+            <td class="emp-table-td ps-4 text-dark">
+                <span class="tooltip-text click-pointer" data-bs-toggle="tooltip" data-bs-delay='{"show":400, "hide":100}' data-bs-custom-class="custom-tooltip" data-bs-placement="top" title="${employee.name}">${employee.name}</span>
+            </td>
+            <td class="emp-table-td">
+                <span class="tooltip-text click-pointer" data-bs-toggle="tooltip" data-bs-delay='{"show":500, "hide":100}' data-bs-custom-class="custom-tooltip" data-bs-placement="top" title="${employee.email}">${employee.email}</span>
+            </td>
             <td class="emp-table-td">${employee.role.department.departmentName}</td>
-            <td class="emp-table-td" data-bs-toggle="tooltip" data-bs-delay='{"show":500, "hide":100}' data-bs-custom-class="custom-tooltip"
-                data-bs-placement="top" title="${employee.role.role}">${employee.role.role}</td>
+            <td class="emp-table-td">
+                <span class="tooltip-text click-pointer" data-bs-toggle="tooltip" data-bs-delay='{"show":500, "hide":100}' data-bs-custom-class="custom-tooltip" data-bs-placement="top" title="${employee.role.role}">${employee.role.role}</span>
+            </td>
             <td class="emp-table-td">$${employee.salary}</td>
             <td class="emp-table-td emp-table-td-center">${joiningDate}</td>
             <td class="emp-table-td">
@@ -128,13 +136,12 @@ function renderEmployees(employees) {
     tableBody.innerHTML = rowsHtml;
 
     // Initialize new tooltips
-    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
-    [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+    const tooltipTriggerList = tableBody.querySelectorAll('[data-bs-toggle="tooltip"]');
+    tooltipTriggerList.forEach(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
 }
 
 // Request backend to delete an employee
 async function handleEmployeeDelete(employeeId, employeeName) {
-    const displayName = employeeName || 'this employee';
     const isConfirmed = await confirmUI('Delete Employee', `Are you sure you want to delete? This cannot be undone.`, 'danger');
     if (!isConfirmed) return;
 
@@ -152,7 +159,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     await fetchRolesData();
     populateDeptFilter();
 
-    function debounce(func, delay) {
+    function delayExecution(func, delay) {
         let timeoutId;
         return (...args) => {
             clearTimeout(timeoutId);
@@ -160,7 +167,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         };
     }
 
-    const fetchDebounced = debounce(fetchEmployeesForList, 300);
+    const delayedFetch = delayExecution(fetchEmployeesForList, 300);
 
     function attachInputFilter(elementId, filterKey) {
         const element = document.getElementById(elementId);
@@ -179,17 +186,17 @@ document.addEventListener('DOMContentLoaded', async () => {
                     let hasError = false;
 
                     if (minStr && minVal < 0) {
-                        showFieldError('min_salary', 'Please enter Positive valid number');
+                        showFieldError('min_salary', 'Please enter a valid positive number');
                         hasError = true;
                     } else {
                         clearFieldError('min_salary');
                     }
 
                     if (maxStr && maxVal < 0) {
-                        showFieldError('max_salary', 'Please enter Positive valid number');
+                        showFieldError('max_salary', 'Please enter a valid positive number');
                         hasError = true;
                     } else if (minStr && maxStr && !isNaN(minVal) && !isNaN(maxVal) && maxVal <= minVal) {
-                        showFieldError('max_salary', 'maximum salary must be greater than the minimum salary.');
+                        showFieldError('max_salary', 'Maximum salary must be greater than the minimum salary.');
                         hasError = true;
                     } else {
                         clearFieldError('max_salary');
@@ -198,7 +205,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     if (hasError) return;
                 }
 
-                fetchDebounced();
+                delayedFetch();
             });
         }
     }
