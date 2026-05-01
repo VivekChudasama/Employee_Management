@@ -48,13 +48,16 @@
     content: "*";
     color: red;
     font-size: 12px;
+    position: relative;
+    top: -5px;
+    right: 3px;
 }
 
 /*  Labels  */
 .form .form-body .employee-form .form-label {
     font-weight: var(--font-weight-bold);
     color: var(--secondary-dark-gray);
-    margin-bottom: 8px;
+    margin: 0 0 8px 8px;
     font-size: 15px;
     letter-spacing: 0px;
 }

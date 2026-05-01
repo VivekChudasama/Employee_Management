@@ -4,8 +4,7 @@ const RULES = {
         if (!value || value.trim() === '') return 'Name is required';
         if (!/^[a-zA-Z\s.]+$/.test(value.trim())) return 'Name should contain Letters, spaces and dots only';
         if (value.trim().length < 3) return 'Name should contain at least 3 characters.';
-        if (value.trim().length >= 70) return 'Please enter name below 70 characters'
-
+        if (value.trim().length >= 70) return 'Please enter name below 70 characters';
         return null;
     },
     email: function (value) {
@@ -48,7 +47,6 @@ const RULES = {
     }
 };
 
-// Helper to get associated dropdown button for hidden inputs
 function getDropdownButton(fieldId) {
     const btnId = (fieldId.endsWith('_id') ? fieldId.replace('_id', '') : fieldId) + 'DropdownBtn';
     return document.getElementById(btnId);
@@ -62,7 +60,6 @@ function showFieldError(fieldId, message) {
     element.classList.add('is-invalid');
     element.classList.remove('is-valid');
 
-    // Also highlight the visual dropdown button if the field is hidden
     if (element.type === 'hidden') {
         const dropdownBtn = getDropdownButton(fieldId);
         if (dropdownBtn) {
@@ -89,7 +86,6 @@ function clearFieldError(fieldId) {
     element.classList.remove('is-invalid');
     element.classList.add('is-valid');
 
-    // Clear highlight from visual dropdown button
     if (element.type === 'hidden') {
         const dropdownBtn = getDropdownButton(fieldId);
         if (dropdownBtn) {
