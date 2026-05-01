@@ -245,7 +245,7 @@ function populateRoles(departmentId = null, selectedRoleId = null) {
                 <li>
                     <a class="dropdown-item dropdown-element d-flex justify-content-between align-items-center  role-option py-2 px-3 ${isActive ? 'fw-bold text-custom-primary' : ''}" href="#" data-id="${role.id}" data-name="${role.role}">
                         <span class="role-name-text text-capitalize d-inline-block click-pointer" data-bs-toggle="tooltip" data-bs-delay='{"show":400, "hide":100}' data-bs-custom-class="custom-tooltip"
-                data-bs-placement="auto"  title="${role.role}">${role.role}</span>
+                data-bs-placement="auto" data-bs-container="body" title="${role.role}">${role.role}</span>
                         <div class="d-flex gap-2 ms-2 action-btns">
                             <button type="button" class="btn btn-sm btn-outline-warning ms-3 role-edit-btn border-0" data-id="${role.id}" data-name="${role.role}"><i class="bi bi-pencil-fill"></i></button>
                             <button type="button" class="btn btn-sm btn-outline-danger role-delete-btn border-0" data-id="${role.id}"><i class="bi bi-trash-fill"></i></button>
@@ -260,9 +260,13 @@ function populateRoles(departmentId = null, selectedRoleId = null) {
             <i class="bi bi-plus-circle-fill me-1"></i> Add New Role
         </button></li>`;
 
+
     // Initialize new tooltips
     const tooltipTriggerList = dropdownMenu.querySelectorAll('[data-bs-toggle="tooltip"]');
     tooltipTriggerList.forEach(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+
+
+
 }
 
 function updateRolePickerSelection(name, id) {
@@ -533,7 +537,7 @@ function setupAddRole() {
 
         if (apiResponse.ok) {
             completeBtnLoading(saveRoleButton, willUpdateExistingRole ? 'Updated' : 'Added');
-            
+
             setTimeout(async () => {
                 showToast(`Role ${willUpdateExistingRole ? 'updated' : 'added'} successfully!`, 'success');
 
@@ -546,7 +550,7 @@ function setupAddRole() {
                 await fetchRolesData();
                 populateDepartments(departmentId);
                 populateRoles(departmentId);
-                
+
                 // restore button so next time it opens it is normal
                 setTimeout(() => resetBtnLoading(saveRoleButton), 300);
             }, 600);

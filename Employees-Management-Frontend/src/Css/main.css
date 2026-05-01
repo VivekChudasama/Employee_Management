@@ -250,7 +250,6 @@
 .emp-table .emp-table-body .emp-table-td .tooltip-text {
     display: inline-block;
     max-width: 100%;
-    overflow: hidden;
     text-overflow: ellipsis;
     vertical-align: bottom;
 }
