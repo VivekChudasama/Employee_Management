@@ -174,6 +174,60 @@ function revalidateParentForm(element) {
     }
 }
 
+// Initialize Bootstrap tooltips
+function initTooltips(container) {
+    const isSmallScreen = window.innerWidth <= 1500;
+    container.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el =>
+        new bootstrap.Tooltip(el, {
+            container: 'body',
+            trigger: isSmallScreen ? 'manual' : 'hover focus'
+        })
+    );
+}
+
+// employee form payload 
+function EmployeePayload(formData) {
+    return {
+        name: formData.get('name'),
+        email: formData.get('email').trim(),
+        role_id: Number(formData.get('role_id')),
+        salary: formData.get('salary'),
+        joining_date: formData.get('joining_date'),
+        status: formData.get('status')
+    };
+}
+
+// Handle successful form submission with toast and redirect
+function handleSubmitSuccess(btn, label, toastMessage, redirectUrl, delay = 600) {
+    completeBtnLoading(btn, label);
+    setTimeout(() => {
+        showToast(toastMessage, 'success');
+        setTimeout(() => { location.href = redirectUrl; }, 1000);
+    }, delay);
+}
+
+// Get status values from employee list
+function getUniqueStatuses(employeesList) {
+    return [...new Set(['active', 'inactive', ...employeesList.map(emp => emp.status).filter(Boolean)])];
+}
+
+// Toggle active dropdown item styling
+function setActiveDropdownItem(menu, selector, activeItem) {
+    menu.querySelectorAll(selector).forEach(item => item.classList.remove('fw-bold', 'text-custom-primary'));
+    activeItem.classList.add('fw-bold', 'text-custom-primary');
+}
+
+// Duplicate email error message
+const EMAIL_DUPLICATE_MSG = 'Email address you have entered is already in use by another user.';
+
+// Clear validation state from role name input
+function clearRoleInputState(inputElement) {
+    inputElement.value = '';
+    inputElement.classList.remove('is-invalid', 'is-valid');
+    const err = inputElement.parentElement.querySelector('.invalid-feedback');
+    if (err) err.style.display = 'none';
+}
+
 // Employee Form Dropdown
 function updateDepartmentSelection(name, id) {
     updateDropdownUI('departmentDropdownBtn', 'department_id', 'Select Department', id, name);
@@ -209,7 +263,7 @@ function populateStatusDropdown(selectedStatus = null) {
     const dropdownMenu = document.getElementById('statusDropdownMenu');
     if (!dropdownMenu) return;
 
-    const uniqueStatuses = [...new Set(['active', 'inactive', ...allEmployees.map(emp => emp.status).filter(Boolean)])];
+    const uniqueStatuses = getUniqueStatuses(allEmployees);
 
     const optionsHtml = uniqueStatuses.map(status => {
         const isActive = status === selectedStatus;
@@ -260,13 +314,7 @@ function populateRoles(departmentId = null, selectedRoleId = null) {
             <i class="bi bi-plus-circle-fill me-1"></i> Add New Role
         </button></li>`;
 
-
-    // Initialize new tooltips
-    const tooltipTriggerList = dropdownMenu.querySelectorAll('[data-bs-toggle="tooltip"]');
-    tooltipTriggerList.forEach(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
-
-
-
+    initTooltips(dropdownMenu);
 }
 
 function updateRolePickerSelection(name, id) {
@@ -320,8 +368,7 @@ function setupRoleDropdown() {
         if (clickedOptionItem && !clickedActionArea) {
             event.preventDefault();
 
-            dropdownMenu.querySelectorAll('.role-option').forEach(item => item.classList.remove('fw-bold', 'text-custom-primary'));
-            clickedOptionItem.classList.add('fw-bold', 'text-custom-primary');
+            setActiveDropdownItem(dropdownMenu, '.role-option', clickedOptionItem);
 
             const name = clickedOptionItem.dataset.name;
             const id = clickedOptionItem.dataset.id;
@@ -426,8 +473,7 @@ function setupDepartmentFilter() {
             event.preventDefault();
 
             const menu = deptOption.closest('.dropdown-menu');
-            if (menu) menu.querySelectorAll('.department-option').forEach(item => item.classList.remove('fw-bold', 'text-custom-primary'));
-            deptOption.classList.add('fw-bold', 'text-custom-primary');
+            if (menu) setActiveDropdownItem(menu, '.department-option', deptOption);
 
             const id = deptOption.dataset.id;
             updateDepartmentSelection(deptOption.dataset.name, id);
@@ -444,8 +490,7 @@ function setupDepartmentFilter() {
             event.preventDefault();
 
             const menu = statusOption.closest('.dropdown-menu');
-            if (menu) menu.querySelectorAll('.status-option').forEach(item => item.classList.remove('fw-bold', 'text-custom-primary'));
-            statusOption.classList.add('fw-bold', 'text-custom-primary');
+            if (menu) setActiveDropdownItem(menu, '.status-option', statusOption);
 
             updateStatusSelection(statusOption.dataset.status);
             revalidateParentForm(statusOption);
@@ -458,10 +503,7 @@ const newRoleNameInput = document.getElementById('newRoleName');
 
 if (roleModal) {
     roleModal.addEventListener('hidden.bs.modal', () => {
-        newRoleNameInput.value = '';
-        newRoleNameInput.classList.remove('is-invalid', 'is-valid');
-        const err = newRoleNameInput.parentElement.querySelector('.invalid-feedback');
-        if (err) err.style.display = 'none';
+        clearRoleInputState(newRoleNameInput);
     });
 }
 
@@ -551,7 +593,6 @@ function setupAddRole() {
                 populateDepartments(departmentId);
                 populateRoles(departmentId);
 
-                // restore button so next time it opens it is normal
                 setTimeout(() => resetBtnLoading(saveRoleButton), 300);
             }, 600);
         } else {

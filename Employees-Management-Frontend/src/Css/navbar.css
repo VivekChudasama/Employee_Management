@@ -35,7 +35,7 @@
     border: none;
 }
 
-/*media quearys for responsiveness */
+/* media queries for responsiveness */
 @media (max-width: 320px) {
     .nav-bar .nav-bar-content .navbar-brand {
         font-size: 18px;

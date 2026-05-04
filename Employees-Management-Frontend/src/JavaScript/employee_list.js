@@ -50,7 +50,7 @@ function populateStatusFilter(employeesList) {
     const statusMenu = document.getElementById('getEmpStatus');
     if (!statusMenu) return;
 
-    const statuses = [...new Set(['active', 'inactive', ...employeesList.map(emp => emp.status).filter(Boolean)])];
+    const statuses = getUniqueStatuses(employeesList);
 
     statusMenu.innerHTML = '<li><a class="dropdown-item dropdown-element active-filter fw-bold text-custom-primary" href="#" data-value="">All Statuses</a></li><li><hr class="dropdown-divider"></li>';
 
@@ -110,14 +110,14 @@ function renderEmployees(employees) {
         rowsHtml += `
         <tr class="emp-table-row">
             <td class="emp-table-td ps-4 text-dark">
-                <span class="tooltip-text click-pointer" data-bs-toggle="tooltip" data-bs-delay='{"show":400, "hide":100}' data-bs-custom-class="custom-tooltip" data-bs-placement="top" title="${employee.name}">${employee.name}</span>
+                <span class="tooltip-text click-pointer" data-bs-toggle="tooltip" data-bs-delay='{"show":400, "hide":100}' data-bs-custom-class="custom-tooltip" data-bs-container="body" data-bs-placement="top" title="${employee.name}">${employee.name}</span>
             </td>
             <td class="emp-table-td">
-                <span class="tooltip-text click-pointer" data-bs-toggle="tooltip" data-bs-delay='{"show":500, "hide":100}' data-bs-custom-class="custom-tooltip" data-bs-placement="top" title="${employee.email}">${employee.email}</span>
+                <span class="tooltip-text click-pointer" data-bs-toggle="tooltip" data-bs-delay='{"show":500, "hide":100}' data-bs-custom-class="custom-tooltip" data-bs-container="body" data-bs-placement="top" title="${employee.email}">${employee.email}</span>
             </td>
             <td class="emp-table-td">${employee.role.department.departmentName}</td>
             <td class="emp-table-td">
-                <span class="tooltip-text click-pointer" data-bs-toggle="tooltip" data-bs-delay='{"show":500, "hide":100}' data-bs-custom-class="custom-tooltip" data-bs-placement="top" title="${employee.role.role}">${employee.role.role}</span>
+                <span class="tooltip-text click-pointer" data-bs-toggle="tooltip" data-bs-delay='{"show":500, "hide":100}' data-bs-custom-class="custom-tooltip" data-bs-container="body" data-bs-placement="top" title="${employee.role.role}">${employee.role.role}</span>
             </td>
             <td class="emp-table-td">$${employee.salary}</td>
             <td class="emp-table-td emp-table-td-center">${joiningDate}</td>
@@ -135,9 +135,7 @@ function renderEmployees(employees) {
 
     tableBody.innerHTML = rowsHtml;
 
-    // Initialize new tooltips
-    const tooltipTriggerList = tableBody.querySelectorAll('[data-bs-toggle="tooltip"]');
-    tooltipTriggerList.forEach(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+    initTooltips(tableBody);
 }
 
 // Request backend to delete an employee
@@ -163,7 +161,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         let timeoutId;
         return (...args) => {
             clearTimeout(timeoutId);
-            timeoutId = setTimeout(() => func.apply(this, args), delay);
+            timeoutId = setTimeout(() => func(...args), delay);
         };
     }
 
@@ -226,8 +224,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 event.preventDefault();
                 filters[filterKey] = dropdownItem.dataset.value;
 
-                menu.querySelectorAll('.dropdown-item').forEach(item => item.classList.remove('fw-bold', 'text-custom-primary'));
-                dropdownItem.classList.add('fw-bold', 'text-custom-primary');
+                setActiveDropdownItem(menu, '.dropdown-item', dropdownItem);
 
                 const btn = event.target.closest('.dropdown')?.querySelector('.dropdown-btn');
                 if (btn) {

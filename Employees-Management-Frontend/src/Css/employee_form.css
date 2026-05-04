@@ -44,13 +44,18 @@
     transform: translateY(-2px);
 }
 
-.form .form-body .required-icon::before {
+.form .form-body .required-icon::before,
+#roleModal .required-icon::before {
     content: "*";
     color: red;
     font-size: 12px;
     position: relative;
     top: -5px;
     right: 3px;
+}
+
+#roleModal .required-icon::before{
+    font-size: 16px !important;
 }
 
 /*  Labels  */
@@ -94,12 +99,6 @@
     box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.08);
     outline: none;
     background-color: var(--primary-white);
-}
-
-.dropdown-element:hover,
-.dropdown-element:focus {
-    background-color: rgba(0, 173, 181, 0.3);
-    color: var(--secondary-grey);
 }
 
 .form .form-body .employee-form .date-input-validation.is-valid,
@@ -174,7 +173,7 @@
     }
 }
 
-/* media quearys for responsiveness */
+/* media queries for responsiveness */
 @media (max-width: 320px) {
     .form .form-body {
         padding: 16px;

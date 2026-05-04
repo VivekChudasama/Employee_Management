@@ -44,14 +44,7 @@ async function handleEditFormSubmit(event) {
 
     const targetEmployeeId = formData.get('employeeId') || employeeIdUrlParam;
 
-    const payload = {
-        name: formData.get('name'),
-        email: formData.get('email').trim(),
-        role_id: Number(formData.get('role_id')),
-        salary: formData.get('salary'),
-        joining_date: formData.get('joining_date'),
-        status: formData.get('status')
-    };
+    const payload = EmployeePayload(formData);
 
     if (originalEmployeeData) {
         const rawDate = originalEmployeeData.joining_date;
@@ -74,7 +67,7 @@ async function handleEditFormSubmit(event) {
 
     // check uniqueness of email before updating employee
     if (isEmailDuplicate(payload.email, targetEmployeeId)) {
-        showFieldError('email', 'Email address you have entered is already in use by another user.');
+        showFieldError('email', EMAIL_DUPLICATE_MSG);
         validateForm('editEmployeeForm', null);
         return;
     }
@@ -86,13 +79,7 @@ async function handleEditFormSubmit(event) {
     const { ok: isSuccessful } = await apiCall(`${API.employees}/${targetEmployeeId}`, 'PUT', payload);
 
     if (isSuccessful) {
-        completeBtnLoading(submitBtn, 'Updated');
-        setTimeout(() => {
-            showToast('Employee updated!', 'success');
-            setTimeout(() => {
-                location.href = './employees_list.html';
-            }, 1000);
-        }, 700);
+        handleSubmitSuccess(submitBtn, 'Updated', 'Employee updated!', './employees_list.html');
     } else {
         resetBtnLoading(submitBtn);
         showToast('Failed to update employee. Please try again.', 'danger');

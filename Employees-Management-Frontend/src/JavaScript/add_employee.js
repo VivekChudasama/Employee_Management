@@ -5,18 +5,11 @@ async function handleFormSubmit(event) {
     const addEmployeeForm = event.target;
     const formData = new FormData(addEmployeeForm);
 
-    const payload = {
-        name: formData.get('name'),
-        email: formData.get('email').trim(),
-        role_id: Number(formData.get('role_id')),
-        salary: formData.get('salary'),
-        joining_date: formData.get('joining_date'),
-        status: formData.get('status')
-    };
+    const payload = EmployeePayload(formData);
 
     //check uniqueness of email before Adding employee
     if (isEmailDuplicate(payload.email)) {
-        showFieldError('email', 'Email address you have entered is already in use by another user.');
+        showFieldError('email', EMAIL_DUPLICATE_MSG);
         validateForm('addEmployeeForm', '#submitBtn');
         return;
     }
@@ -28,13 +21,7 @@ async function handleFormSubmit(event) {
     const { ok: isSuccessful } = await apiCall(`${API.employees}/add-employee`, 'POST', payload);
 
     if (isSuccessful) {
-        completeBtnLoading(submitBtn, 'Added');
-        setTimeout(() => {
-            showToast('Employee added!', 'success');
-            setTimeout(() => {
-                location.href = './employees_list.html';
-            }, 1000);
-        }, 600);
+        handleSubmitSuccess(submitBtn, 'Added', 'Employee added!', './employees_list.html');
     } else {
         resetBtnLoading(submitBtn);
         showToast('Failed to Add employee. Please try again.', 'danger');

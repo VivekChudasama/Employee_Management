@@ -1,4 +1,4 @@
-// Validation Rules - returns error string if invalid, or null.
+// Validation Rules - returns error message if invalid, or null.
 const RULES = {
     name: function (value) {
         if (!value || value.trim() === '') return 'Name is required';
@@ -164,7 +164,7 @@ function fieldsValidation(formId, submitBtnSelector, excludeIdProvider = null) {
             const emailValue = document.getElementById('email')?.value || '';
             const excludeId = excludeIdProvider ? excludeIdProvider() : null;
             if (isEmailDuplicate(emailValue, excludeId)) {
-                showFieldError('email', 'Email address you have entered is already in use by another user.');
+                showFieldError('email', EMAIL_DUPLICATE_MSG);
                 isValid = false;
             }
         }

@@ -44,7 +44,7 @@
                         </ul>
                         <div class="nav-profile-wrap ms-4">
                             <a href="#">
-                                <img alt="profile picture" src="../Assets/images/pofile-image.png" loading="eager"
+                                <img alt="profile picture" src="../Assets/images/profile-image.png" loading="eager"
                                     height="40px" width="40px">
                             </a>
                         </div>
@@ -86,7 +86,7 @@
 
                 <!-- Row 2: Department and Role -->
                 <div class="row form-row">
-                    <div class="mb-3 col-12 col-md-6">
+                    <div class="mb-3 col-12 col-md-6 position-relative">
                         <label class="form-label required-icon">Department</label>
                         <button
                             class="btn outline-input-btn dropdown-toggle w-100 text-start d-flex justify-content-between align-items-center department-dropdown-btn"
@@ -96,7 +96,7 @@
                         <ul class="dropdown-menu w-auto" id="departmentDropdownMenu"></ul>
                         <input type="hidden" name="department_id" id="department_id" required>
                     </div>
-                    <div class="mb-3 col-12 col-md-6">
+                    <div class="mb-3 col-12 col-md-6 position-relative">
                         <label class="form-label required-icon">Employee Role</label>
                         <button class="btn outline-input-btn dropdown-toggle w-100 text-start
                             d-flex justify-content-between align-items-center role-dropdown-btn" type="button"
@@ -127,7 +127,7 @@
 
                 <!-- Row 4:  Status -->
                 <div class="row form-row">
-                    <div class="mb-3 col-12 col-md-6">
+                    <div class="mb-3 col-12 col-md-6 position-relative">
                         <label class="form-label required-icon">Status</label>
                         <button
                             class="btn outline-input-btn dropdown-toggle w-100 text-start d-flex justify-content-between align-items-center text-capitalize status-dropdown-btn"
@@ -209,13 +209,11 @@
         </div>
     </div>
 
+    <!-- import all the required JavaScript files -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../JavaScript/validation.js"></script>
+    <script src="../JavaScript/employee_data.js"></script>
+    <script src="../JavaScript/add_employee.js"></script>
 </body>
-
-
-<!-- import all the required JavaScript files -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<script src="../JavaScript/validation.js"></script>
-<script src="../JavaScript/employee_data.js"></script>
-<script src="../JavaScript/add_employee.js"></script>
 
 </html>
